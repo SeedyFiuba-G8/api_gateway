@@ -13,6 +13,8 @@ module.exports = function apiRouter(apiValidatorMiddleware, statusController) {
       // STATUS ROUTES
       .get('/ping', statusController.ping)
 
+      .get('/ping/all', statusController.pingAll)
+
       .get('/health', statusController.health)
 
       // ROUTES

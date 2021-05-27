@@ -29,6 +29,11 @@ function createContainer() {
     return require('config');
   });
 
+  // eslint-disable-next-line prefer-arrow-callback
+  container.register('services', function $services(config) {
+    return config.services;
+  });
+
   entries.forEach((entry) => container.load(path.join(__dirname, entry)));
 
   return container;

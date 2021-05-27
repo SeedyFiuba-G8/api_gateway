@@ -16,5 +16,19 @@ module.exports = {
       stringify: false,
       label: 'api_gateway'
     }
+  },
+  services: {
+    apikeys: {
+      baseUrl: undefined
+    },
+    core: {
+      baseUrl: undefined
+    },
+    users: {
+      baseUrl: 'http://sf-tdp2-users.herokuapp.com/'
+    }
+  },
+  timeouts: {
+    ping: 2000 // ms
   }
 };
