@@ -1,3 +1,5 @@
+# -----------------------------------------------------------------------------
+
 openapi: '3.0.0'
 info:
   title: 'Seedy FIUBA API Gateway'
@@ -8,14 +10,20 @@ info:
     name: Learn more
     url: 'https://github.com/orgs/SeedyFiuba-G8/'
 
+# -----------------------------------------------------------------------------
+
 servers:
-  - url: http://sf-tdp2-gateway.herokuapp.com/
+  - url: https://sf-tdp2-gateway.herokuapp.com/
     description: 'Production'
   - url: http://localhost:3000/
     description: 'Local development'
 
+# -----------------------------------------------------------------------------
+
 paths:
+  # ---------------------------------------------------------------------------
   # STATUS
+
   /ping:
     get:
       tags:
@@ -27,11 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: 'ok'
+                $ref: '#/components/schemas/ping'
 
   /ping/all:
     get:
@@ -44,23 +48,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: 'ok'
-                  services:
-                    type: object
-                    properties:
-                      apikeys:
-                        type: string
-                        example: 'ok'
-                      core:
-                        type: string
-                        example: 'ok'
-                      users:
-                        type: string
-                        example: 'ok'
+                $ref: '#/components/schemas/pingAll'
 
   /health:
     get:
@@ -73,14 +61,52 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  users:
-                    type: string
-                    example: 'UP'
-                  core:
-                    type: string
-                    example: 'UP'
-                  apikeys:
-                    type: string
-                    example: 'UP'
+                $ref: '#/components/schemas/health'
+
+# -----------------------------------------------------------------------------
+
+components:
+  schemas:
+    # -------------------------------------------------------------------------
+    # STATUS
+
+    health:
+      type: object
+      properties:
+        users:
+          type: string
+          example: 'UP'
+        core:
+          type: string
+          example: 'UP'
+        apikeys:
+          type: string
+          example: 'UP'
+
+    ping:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'ok'
+
+    pingAll:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'ok'
+        services:
+          type: object
+          properties:
+            apikeys:
+              type: string
+              example: 'ok'
+            core:
+              type: string
+              example: 'ok'
+            users:
+              type: string
+              example: 'ok'
+#
+# -----------------------------------------------------------------------------
