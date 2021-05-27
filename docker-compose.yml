@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  express:
+    build: ./
+    image: api_gateway
+    container_name: api_gateway
+    env:
+      - PORT=3000
+    ports:
+      - 3000:3000
+    networks:
+      - dev-net
+
+networks:
+  dev-net:
+    driver: bridge

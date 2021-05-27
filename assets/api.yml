@@ -1,0 +1,57 @@
+openapi: '3.0.0'
+info:
+  title: 'Seedy FIUBA API Gateway'
+  description: >
+    API Gateway microservice, part of the **Seedy FIUBA Project**.
+  version: '1.0.0'
+  contact:
+    name: Learn more
+    url: 'https://github.com/orgs/SeedyFiuba-G8/'
+
+servers:
+  - url: http://sf-tdp2-gateway.herokuapp.com/
+    description: 'Production'
+  - url: http://localhost:3000/
+    description: 'Local development'
+
+paths:
+  # STATUS
+  /ping:
+    get:
+      tags:
+        - Status
+      operationId: ping
+      responses:
+        200:
+          description: 'Server is active.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'OK'
+
+  /health:
+    get:
+      tags:
+        - Status
+      operationId: health
+      responses:
+        200:
+          description: 'Microservice general health state reported.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: string
+                    example: 'UP'
+                  core:
+                    type: string
+                    example: 'UP'
+                  apikeys:
+                    type: string
+                    example: 'UP'
