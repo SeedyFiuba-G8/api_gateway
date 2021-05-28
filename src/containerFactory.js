@@ -1,6 +1,5 @@
 const dependable = require('dependable');
 const path = require('path');
-const YAML = require('yamljs');
 
 function createContainer() {
   const container = dependable.container();
@@ -13,11 +12,6 @@ function createContainer() {
     'services',
     'utils'
   ];
-
-  // eslint-disable-next-line prefer-arrow-callback
-  container.register('apiSpecs', function $apiSpecs() {
-    return YAML.load(path.join(__dirname, '../assets/api.yml'));
-  });
 
   // eslint-disable-next-line prefer-arrow-callback
   container.register('config', function $config() {

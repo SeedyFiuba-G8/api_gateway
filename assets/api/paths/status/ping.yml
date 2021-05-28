@@ -1,0 +1,8 @@
+paths:
+  /ping:
+    get:
+      tags:
+        - Status
+      responses:
+        200:
+          $ref: '#/responses/ping/200'

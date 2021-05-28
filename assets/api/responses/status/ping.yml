@@ -1,0 +1,12 @@
+responses:
+  ping:
+    200:
+      description: 'Server is active.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 'ok'

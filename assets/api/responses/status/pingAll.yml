@@ -1,0 +1,24 @@
+responses:
+  pingAll:
+    200:
+      description: 'Server and its services are active.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 'ok'
+              services:
+                type: object
+                properties:
+                  apikeys:
+                    type: string
+                    example: 'ok'
+                  core:
+                    type: string
+                    example: 'ok'
+                  users:
+                    type: string
+                    example: 'ok'

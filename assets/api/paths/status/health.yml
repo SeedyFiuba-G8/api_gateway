@@ -1,0 +1,8 @@
+paths:
+  /health:
+    get:
+      tags:
+        - Status
+      responses:
+        200:
+          $ref: '#/responses/health/200'
