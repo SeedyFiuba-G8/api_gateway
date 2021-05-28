@@ -4,7 +4,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 
 module.exports = function $apiSpecs() {
   const swaggerDefinition = yamljs.load(
-    path.join(__dirname, '../../assets/api/v1.yml')
+    path.join(__dirname, '../../assets/api/index.yml')
   );
 
   const options = {
