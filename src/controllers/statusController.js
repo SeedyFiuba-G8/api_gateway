@@ -1,23 +1,21 @@
-module.exports = function statusController(usersGateway, logger) {
-  async function health(req, res, next) {
-    let usersHealth;
-
-    try {
-      [usersHealth] = await Promise.all([usersGateway.health()]);
-    } catch (err) {
-      logger.warn('Error in statusController.health:', err);
-      return next(err);
-    }
+module.exports = function statusController(statusService) {
+  /**
+   * @returns {Promise}
+   */
+  async function health(req, res) {
+    const servicesHealth = await statusService.servicesHealth();
 
     const response = {
-      apikeys: 'FINE I HOPE',
-      core: 'FINE I HOPE',
-      users: usersHealth
+      status: 'UP',
+      services: servicesHealth
     };
 
     return res.status(200).json(response);
   }
 
+  /**
+   * @returns {Promise}
+   */
   function ping(req, res) {
     const response = {
       status: 'ok'
@@ -26,16 +24,15 @@ module.exports = function statusController(usersGateway, logger) {
     return res.status(200).json(response);
   }
 
+  /**
+   * @returns {Promise}
+   */
   async function pingAll(req, res) {
-    const [usersStatus] = await Promise.all([usersGateway.ping()]);
+    const servicesStatus = await statusService.pingServices();
 
     const response = {
       status: 'ok',
-      services: {
-        apikeys: '?',
-        core: '?',
-        users: usersStatus ? 'ok' : 'timed out'
-      }
+      services: servicesStatus
     };
 
     return res.status(200).json(response);

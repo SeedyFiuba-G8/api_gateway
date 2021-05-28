@@ -29,6 +29,7 @@ module.exports = {
     }
   },
   timeouts: {
-    ping: 2000 // ms
+    ping: 500, // ms
+    health: 2000 // ms
   }
 };

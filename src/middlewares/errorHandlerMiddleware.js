@@ -1,7 +1,7 @@
 module.exports = function $errorHandlerMiddleware() {
   // eslint-disable-next-line no-unused-vars
   return (err, req, res, next) => {
-    const status = err.status || 500;
+    const status = err.status || 404;
 
     const response = {
       error: {

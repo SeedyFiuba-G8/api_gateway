@@ -8,9 +8,19 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
    */
   async function health() {
     const url = urlFactory('/health', services.users);
-    const { data } = await axios(url, { method: 'get' });
-
-    return data;
+    return axios(url, { method: 'get', timeout: config.timeouts.health })
+      .then(({ status, data }) => {
+        if (status === 200) {
+          return data;
+        }
+        return 'bad status';
+      })
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+        throw err;
+      });
   }
 
   /**
@@ -21,8 +31,18 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
   async function ping() {
     const url = urlFactory('/ping', services.users);
     return axios(url, { method: 'get', timeout: config.timeouts.ping })
-      .then(({ status }) => status === 200)
-      .catch(() => false);
+      .then(({ status }) => {
+        if (status === 200) {
+          return 'ok';
+        }
+        return 'bad status';
+      })
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+        throw err;
+      });
   }
 
   return {

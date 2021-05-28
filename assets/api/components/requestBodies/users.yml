@@ -1,0 +1,47 @@
+components:
+  requestBodies:
+    user:
+      # POST /user
+      post:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'memis_pomofot@gmail.com'
+                first_name:
+                  type: string
+                  example: 'Memis'
+                last_name:
+                  type: string
+                  example: 'Pomofot'
+                password:
+                  type: string
+                  example: 'SomePassword123'
+              required:
+                - email
+                - first_name
+                - last_name
+                - password
+
+      # POST /user/session
+      session:
+        post:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: 'memis_pomofot@gmail.com'
+                  password:
+                    type: string
+                    example: 'SomePassword123'
+                required:
+                  - email
+                  - password

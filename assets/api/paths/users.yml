@@ -1,0 +1,36 @@
+paths:
+  /user:
+    post:
+      summary: Register a new user by e-mail
+      description: >
+        Allows users to create a new basic account.
+      tags:
+        - Users
+      requestBody:
+        $ref: '#/components/requestBodies/user/post'
+      responses:
+        201:
+          description: 'User was registered successfully.'
+        400:
+          $ref: '#/components/responses/error/400'
+        409:
+          $ref: '#/components/responses/error/409'
+
+  /user/session:
+    post:
+      summary: Log in an user session
+      description: >
+        Allows users to log in to their account in a new session.
+      tags:
+        - Users
+      requestBody:
+        $ref: '#/components/requestBodies/user/session/post'
+      responses:
+        200:
+          description: 'User was logged in successfully.'
+          content:
+            $ref: '#/components/responses/user/session/post/200'
+        400:
+          $ref: '#/components/responses/error/400'
+        409:
+          $ref: '#/components/responses/error/409'
