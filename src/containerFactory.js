@@ -13,7 +13,6 @@ function createContainer() {
     'utils'
   ];
 
-  // eslint-disable-next-line prefer-arrow-callback
   container.register('config', function $config() {
     if (!process.env.NODE_CONFIG_DIR) {
       process.env.NODE_CONFIG_DIR = `${__dirname}/../config`;
@@ -23,7 +22,6 @@ function createContainer() {
     return require('config');
   });
 
-  // eslint-disable-next-line prefer-arrow-callback
   container.register('services', function $services(config) {
     return config.services;
   });
