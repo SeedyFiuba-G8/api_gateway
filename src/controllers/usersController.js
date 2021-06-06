@@ -10,7 +10,7 @@ module.exports = function usersController(config, usersGateway) {
    * @returns {Promise}
    */
   async function login(req, res, next) {
-    const credentials = req.body;
+    // const credentials = req.body;
     // TODO: verificar que sean correctas
 
     // Todo esto viene de la DB

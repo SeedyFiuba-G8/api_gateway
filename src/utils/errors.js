@@ -1,30 +1,43 @@
 // HTTP Status Codes
 // https://www.restapitutorial.com/httpstatuscodes.html
 
+class CustomError extends Error {
+  constructor(
+    status,
+    name,
+    message = undefined,
+    data = undefined,
+    errors = undefined
+  ) {
+    super(name);
+    this.status = status;
+    this.name = name;
+    this.message = message;
+    this.data = data;
+    this.errors = errors;
+  }
+}
+
 module.exports = function $errors() {
   return {
-    // Auth errors
-    invalidTokenType: BadRequest('Invalid token type: not bearer'),
-    noTokenProvided: BadRequest('No bearer token provided')
+    BadRequest,
+    InternalServerError,
+    Unauthorized
   };
 };
 
-function errorFactory(status, name, message, data = undefined) {
-  const err = {
-    status,
-    name,
-    message
-  };
-
-  if (data) err.data = data;
-
-  return err;
-}
-
 function BadRequest(message, data = undefined) {
-  return errorFactory(400, 'Bad request', message, data);
+  return new CustomError(400, 'Bad Request', message, data);
 }
 
-// function Unauthorized(message, data = undefined) {
-//   return errorFactory(401, 'Unauthorized', message, data);
-// }
+function InternalServerError() {
+  return new CustomError(
+    500,
+    'Internal Server Error',
+    'Unexpected error. Please see output from Server.'
+  );
+}
+
+function Unauthorized(message, data = undefined) {
+  return new CustomError(401, 'Unauthorized', message, data);
+}

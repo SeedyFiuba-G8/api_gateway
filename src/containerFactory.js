@@ -1,5 +1,6 @@
 const dependable = require('dependable');
 const path = require('path');
+const YAML = require('yamljs');
 
 function createContainer() {
   const container = dependable.container();
@@ -12,6 +13,10 @@ function createContainer() {
     'services',
     'utils'
   ];
+
+  container.register('apiSpec', function $apiSpec() {
+    return YAML.load(path.join(__dirname, '../assets/api.yml'));
+  });
 
   container.register('config', function $config() {
     if (!process.env.NODE_CONFIG_DIR) {

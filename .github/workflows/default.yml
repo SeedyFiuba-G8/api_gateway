@@ -45,7 +45,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   # Runs only when push/pr to main
-  deploy:
+  deploy_prod:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     env:
@@ -75,3 +75,35 @@ jobs:
 
       - name: Set JWT_KEY
         run: heroku config:set JWT_KEY=${{ secrets.JWT_KEY }} --app sf-tdp2-gateway
+
+  # Runs only when push/pr to dev
+  deploy_dev:
+    if: ${{ github.ref == 'refs/heads/dev' }}
+    runs-on: ubuntu-latest
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_EMAIL: ${{ secrets.HEROKU_MAIL }}
+    needs: [run_eslint, run_tests]
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Build container
+        run: docker build -t api_gateway .
+
+      - name: Log in to Heroku Container Registry
+        run: heroku container:login
+
+      - name: Tag container
+        run: docker tag api_gateway registry.heroku.com/sf-tdp2-gateway-dev/web
+
+      - name: Push container
+        run: docker push registry.heroku.com/sf-tdp2-gateway-dev/web
+
+      - name: Release container
+        run: heroku container:release web --app sf-tdp2-gateway-dev
+
+      - name: Set NODE_ENV to stage
+        run: heroku config:set NODE_ENV=stage --app sf-tdp2-gateway-dev
+
+      - name: Set JWT_KEY
+        run: heroku config:set JWT_KEY=${{ secrets.JWT_KEY }} --app sf-tdp2-gateway-dev

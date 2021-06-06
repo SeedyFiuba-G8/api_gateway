@@ -4,10 +4,12 @@ const jwt = require('jsonwebtoken');
 module.exports = function $authMiddleware(config, errors) {
   return async function authMiddleware(req, res, next) {
     const bearerHeader = req.headers.authorization;
-    if (!bearerHeader) return next(errors.noTokenProvided);
+    if (!bearerHeader)
+      return next(errors.BadRequest('No bearer token provided'));
 
     const [type, token] = bearerHeader.split(' ');
-    if (type !== 'Bearer') return next(errors.invalidTokenType);
+    if (type !== 'Bearer')
+      return next(errors.BadRequest('Invalid token type, not bearer'));
 
     let sessionPayload;
 

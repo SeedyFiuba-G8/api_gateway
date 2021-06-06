@@ -15,13 +15,12 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
    * @returns {Promise}
    */
   async function register(userData) {
+    console.log('register user:', userData);
     const url = urlFactory('/user', services.users);
     return axios(url, { method: 'POST' });
   }
 
   /**
-   * Fetch for users microservice health
-   *
    * @returns {Promise}
    */
   async function health() {
@@ -44,8 +43,6 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
   }
 
   /**
-   * Fetch for users microservice status
-   *
    * @returns {Promise}
    */
   async function ping() {
