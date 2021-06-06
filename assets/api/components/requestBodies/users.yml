@@ -12,10 +12,10 @@ components:
                 email:
                   type: string
                   example: 'memis_pomofot@gmail.com'
-                first_name:
+                firstName:
                   type: string
                   example: 'Memis'
-                last_name:
+                lastName:
                   type: string
                   example: 'Pomofot'
                 password:
@@ -23,8 +23,8 @@ components:
                   example: 'SomePassword123'
               required:
                 - email
-                - first_name
-                - last_name
+                - firstName
+                - lastName
                 - password
 
       # POST /user/session

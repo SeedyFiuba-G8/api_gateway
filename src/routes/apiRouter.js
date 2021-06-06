@@ -1,10 +1,11 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
 module.exports = function apiRouter(
   apiValidatorMiddleware,
   authMiddleware,
   config,
+  usersController,
   statusController
 ) {
   return (
@@ -16,36 +17,16 @@ module.exports = function apiRouter(
       // OpenAPI Validator Middleware
       .use(apiValidatorMiddleware)
 
-      // STATUS ROUTES
+      // STATUS
       .get('/ping', statusController.ping)
-
       .get('/ping/all', statusController.pingAll)
-
       .get('/health', statusController.health)
 
-      // ROUTES
-      .get('/mock', (req, res) => res.status(200).send('mock route'))
+      // USERS
+      .post('/user', usersController.register)
+      .post('/user/session', usersController.login)
 
-      // Users
-      .post('/user', (req, res, next) => {
-        const sessionData = {
-          name: 'Mauris',
-          uuid: 'algunidfalopa'
-        };
-
-        let token;
-
-        try {
-          token = jwt.sign(sessionData, config.jwt.key, { expiresIn: '30s' });
-        } catch (err) {
-          return next(err);
-        }
-
-        return res.json({ token });
-      })
-
-      .post('/user/session', (req, res) => res.send('not implemented yet'))
-
+      // just for testing JWT
       .get('/user/session', authMiddleware, (req, res) =>
         res.json(req.context.session)
       )

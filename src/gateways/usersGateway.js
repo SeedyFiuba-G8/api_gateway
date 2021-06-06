@@ -2,9 +2,22 @@ const axios = require('axios');
 
 module.exports = function usersGateway(config, logger, services, urlFactory) {
   return {
+    register,
+
+    // Status
     health,
     ping
   };
+
+  /**
+   * Forwards register request
+   *
+   * @returns {Promise}
+   */
+  async function register(userData) {
+    const url = urlFactory('/user', services.users);
+    return axios(url, { method: 'POST' });
+  }
 
   /**
    * Fetch for users microservice health
@@ -17,7 +30,7 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
 
     try {
       response = await axios(url, {
-        method: 'get',
+        method: 'GET',
         timeout: config.timeouts.health
       });
     } catch (err) {
@@ -41,7 +54,7 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
 
     try {
       response = await axios(url, {
-        method: 'get',
+        method: 'GET',
         timeout: config.timeouts.ping
       });
     } catch (err) {
