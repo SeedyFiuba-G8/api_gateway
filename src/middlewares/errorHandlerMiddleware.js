@@ -5,9 +5,9 @@ module.exports = function $errorHandlerMiddleware() {
 
     const response = {
       error: {
-        name: err.name || '',
-        message: err.message || '',
-        data: err.data || {}
+        name: err.name || 'Error',
+        message: err.message,
+        data: err.data
       }
     };
 
