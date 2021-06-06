@@ -1,6 +1,11 @@
 const axios = require('axios');
 
 module.exports = function usersGateway(config, logger, services, urlFactory) {
+  return {
+    health,
+    ping
+  };
+
   /**
    * Fetch for users microservice health
    *
@@ -44,9 +49,4 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
         throw err;
       });
   }
-
-  return {
-    health,
-    ping
-  };
 };

@@ -1,4 +1,10 @@
 module.exports = function statusController(statusService) {
+  return {
+    health,
+    ping,
+    pingAll
+  };
+
   /**
    * @returns {Promise}
    */
@@ -37,10 +43,4 @@ module.exports = function statusController(statusService) {
 
     return res.status(200).json(response);
   }
-
-  return {
-    health,
-    ping,
-    pingAll
-  };
 };
