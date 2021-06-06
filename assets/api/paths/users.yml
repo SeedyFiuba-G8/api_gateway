@@ -34,3 +34,20 @@ paths:
           $ref: '#/components/responses/error/400'
         409:
           $ref: '#/components/responses/error/409'
+
+    #  just for testing JWT
+    get:
+      summary: Gets sensible data
+      description: >
+        Just for testing JWT.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
