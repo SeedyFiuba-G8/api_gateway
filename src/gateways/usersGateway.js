@@ -13,19 +13,21 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
    */
   async function health() {
     const url = urlFactory('/health', services.users);
-    return axios(url, { method: 'get', timeout: config.timeouts.health })
-      .then(({ status, data }) => {
-        if (status === 200) {
-          return data;
-        }
-        return 'bad status';
-      })
-      .catch((err) => {
-        if (err.code === 'ECONNABORTED') {
-          return 'timed out';
-        }
-        throw err;
+    let response;
+
+    try {
+      response = await axios(url, {
+        method: 'get',
+        timeout: config.timeouts.health
       });
+    } catch (err) {
+      if (err.code === 'ECONNABORTED') {
+        return 'timed out';
+      }
+      throw err;
+    }
+
+    return response.status === 200 ? response.data : 'bad status';
   }
 
   /**
@@ -35,18 +37,20 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
    */
   async function ping() {
     const url = urlFactory('/ping', services.users);
-    return axios(url, { method: 'get', timeout: config.timeouts.ping })
-      .then(({ status }) => {
-        if (status === 200) {
-          return 'ok';
-        }
-        return 'bad status';
-      })
-      .catch((err) => {
-        if (err.code === 'ECONNABORTED') {
-          return 'timed out';
-        }
-        throw err;
+    let response;
+
+    try {
+      response = await axios(url, {
+        method: 'get',
+        timeout: config.timeouts.ping
       });
+    } catch (err) {
+      if (err.code === 'ECONNABORTED') {
+        return 'timed out';
+      }
+      throw err;
+    }
+
+    return response.status === 200 ? 'ok' : 'bad status';
   }
 };
