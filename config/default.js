@@ -5,6 +5,9 @@ module.exports = {
     host: '0.0.0.0',
     port: _.get(process.env, 'PORT', 3000)
   },
+  jwt: {
+    key: _.get(process.env, 'JWT_KEY', 'localkey')
+  },
   log: {
     console: {
       enabled: true,
