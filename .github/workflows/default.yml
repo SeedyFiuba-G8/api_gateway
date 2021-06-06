@@ -72,3 +72,6 @@ jobs:
 
       - name: Set NODE_ENV to production
         run: heroku config:set NODE_ENV=production --app sf-tdp2-gateway
+
+      - name: Set JWT_KEY
+        run: heroku config:set JWT_KEY=${{ secrets.JWT_KEY }} --app sf-tdp2-gateway
