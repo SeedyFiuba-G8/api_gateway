@@ -26,10 +26,10 @@ module.exports = {
       baseUrl: undefined
     },
     core: {
-      baseUrl: undefined
+      baseUrl: 'https://sf-tdp2-core.herokuapp.com/'
     },
     users: {
-      baseUrl: 'http://sf-tdp2-users.herokuapp.com/'
+      baseUrl: 'https://sf-tdp2-users.herokuapp.com/'
     }
   },
   timeouts: {

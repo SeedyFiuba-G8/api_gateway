@@ -4,10 +4,10 @@ module.exports = {
       baseUrl: undefined
     },
     core: {
-      baseUrl: undefined
+      baseUrl: 'https://sf-tdp2-core-dev.herokuapp.com/'
     },
     users: {
-      baseUrl: 'http://sf-tdp2-users-dev.herokuapp.com/'
+      baseUrl: 'https://sf-tdp2-users-dev.herokuapp.com/'
     }
   }
 };
