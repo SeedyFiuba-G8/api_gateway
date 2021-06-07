@@ -140,7 +140,7 @@ paths:
         415:
           $ref: '#/components/responses/415'
 
-  /ping/all:
+  /pingAll:
     get:
       tags:
         - Status
