@@ -8,7 +8,7 @@ function main() {
       const { port, host } = config.express;
 
       app.listen(port, host, () => {
-        logger.info(`Listening on ${host}:${port} ...`);
+        logger.info(`Listening on ${host}:${port}...`);
       });
     });
 }

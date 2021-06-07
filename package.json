@@ -28,6 +28,9 @@
   },
   "homepage": "https://github.com/SeedyFiuba-G8/api_gateway#readme",
   "dependencies": {
+    "@seedyfiuba/api_components": "^1.0.3",
+    "@seedyfiuba/error_components": "^1.0.1",
+    "@seedyfiuba/logging_components": "^1.0.1",
     "axios": "^0.21.1",
     "config": "^3.3.6",
     "dependable": "^1.1.0",
@@ -35,9 +38,7 @@
     "express-openapi-validator": "^4.12.11",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
-    "swagger-ui-express": "^4.1.6",
-    "winston": "^3.3.3",
-    "yamljs": "^0.3.0"
+    "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "eslint": "^7.26.0",
