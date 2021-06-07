@@ -1,37 +1,73 @@
-module.exports = function usersController(config, usersService) {
+module.exports = function usersController(usersService) {
   return {
-    login,
-    register
+    // Users
+    loginAdmin,
+    registerAdmin,
+
+    // Admins
+    loginUser,
+    registerUser
   };
 
   /**
    * @returns {Promise}
    */
-  async function login(req, res, next) {
-    const credentials = req.body;
-    let session;
-
-    try {
-      session = await usersService.login(credentials);
-    } catch (err) {
-      return next(err);
-    }
-
-    return res.status(200).json(session);
+  function loginAdmin(req, res, next) {
+    return login(req, res, next, 'ADMIN');
   }
 
   /**
    * @returns {Promise}
    */
-  async function register(req, res, next) {
-    const userData = req.body;
+  async function registerAdmin(req, res, next) {
+    const adminData = req.body;
 
     try {
-      await usersService.register(userData);
+      await usersService.registerAdmin(adminData);
     } catch (err) {
       return next(err);
     }
 
     return res.status(201).send();
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  function loginUser(req, res, next) {
+    return login(req, res, next, 'USER');
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async function registerUser(req, res, next) {
+    const userData = req.body;
+
+    try {
+      await usersService.registerUser(userData);
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(201).send();
+  }
+
+  // Private
+
+  /**
+   * @returns {Promise}
+   */
+  async function login(req, res, next, type) {
+    const credentials = req.body;
+    let session;
+
+    try {
+      session = await usersService.login(credentials, type);
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(200).json(session);
   }
 };

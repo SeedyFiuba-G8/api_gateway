@@ -19,8 +19,14 @@ module.exports = function apiRouter(
       .get('/ping/all', statusController.pingAll)
       .get('/health', statusController.health)
 
-      // USERS
-      .post('/user', usersController.register)
-      .post('/user/session', usersController.login)
+      // USERS MICROSERVICE
+
+      // Users
+      .post('/user', usersController.registerUser)
+      .post('/user/session', usersController.loginUser)
+
+      // Admins
+      .post('/admin', usersController.registerAdmin)
+      .post('/admin/session', usersController.loginAdmin)
   );
 };

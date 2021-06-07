@@ -3,14 +3,15 @@ const jwt = require('jsonwebtoken');
 module.exports = function usersService(config, usersGateway) {
   return {
     login,
-    register
+    registerAdmin,
+    registerUser
   };
 
   /**
    * @returns {Promise}
    */
-  async function login(credentials) {
-    const id = await usersGateway.login(credentials);
+  async function login(credentials, type) {
+    const id = await usersGateway.login(credentials, type);
     const token = await jwt.sign({ id }, config.jwt.key, {
       expiresIn: config.jwt.expiration
     });
@@ -24,7 +25,14 @@ module.exports = function usersService(config, usersGateway) {
   /**
    * @returns {Promise}
    */
-  function register(userData) {
-    return usersGateway.register(userData);
+  function registerUser(userData) {
+    return usersGateway.registerUser(userData);
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  function registerAdmin(adminData) {
+    return usersGateway.registerAdmin(adminData);
   }
 };
