@@ -5,8 +5,7 @@ openapi: '3.0.0'
 info:
   title: 'Seedy FIUBA API Gateway'
   description: >
-    API Gateway microservice, part of the **Seedy FIUBA Project**
-    ([view it on GitHub](https://github.com/orgs/SeedyFiuba-G8/)).
+    Part of the **Seedy FIUBA Project** ([view it on GitHub](https://github.com/orgs/SeedyFiuba-G8/)).
   version: '1.0.0'
 
 # =============================================================================
