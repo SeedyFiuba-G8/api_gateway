@@ -1,10 +1,7 @@
 const express = require('express');
-// const jwt = require('jsonwebtoken');
 
 module.exports = function apiRouter(
   apiValidatorMiddleware,
-  authMiddleware,
-  config,
   usersController,
   statusController
 ) {
@@ -25,10 +22,5 @@ module.exports = function apiRouter(
       // USERS
       .post('/user', usersController.register)
       .post('/user/session', usersController.login)
-
-      // just for testing JWT
-      .get('/user/session', authMiddleware, (req, res) =>
-        res.json(req.context.session)
-      )
   );
 };

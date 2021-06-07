@@ -1,7 +1,8 @@
 const axios = require('axios');
 
-module.exports = function usersGateway(config, logger, services, urlFactory) {
+module.exports = function usersGateway(config, errors, services, urlFactory) {
   return {
+    login,
     register,
 
     // Status
@@ -10,14 +11,36 @@ module.exports = function usersGateway(config, logger, services, urlFactory) {
   };
 
   /**
-   * Forwards register request
-   *
-   * @returns {Promise}
+   * @returns {undefined}
+   */
+  async function login(credentials) {
+    const url = urlFactory('/user/session', services.users);
+    let response;
+
+    try {
+      response = await axios.post(url, credentials, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (err) {
+      throw errors.FromAxios(err);
+    }
+
+    return response.data.id;
+  }
+
+  /**
+   * @returns {undefined}
    */
   async function register(userData) {
-    console.log('register user:', userData);
     const url = urlFactory('/user', services.users);
-    return axios(url, { method: 'POST' });
+
+    try {
+      await axios.post(url, userData, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (err) {
+      throw errors.FromAxios(err);
+    }
   }
 
   /**

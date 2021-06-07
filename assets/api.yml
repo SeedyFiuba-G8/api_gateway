@@ -248,7 +248,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Session'
+            $ref: '#/components/schemas/LoginData'
 
   # ---------------------------------------------------------------------------
   schemas:
@@ -296,7 +296,6 @@ components:
         - lastName
 
     # ADMINS
-
     AdminRegisterData:
       type: object
       properties:
@@ -327,14 +326,14 @@ components:
     Session:
       type: object
       properties:
-        uuid:
+        id:
           type: string
           example: 123e4567-e89b-12d3-a456-426614174000
         token:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
       required:
-        - uuid
+        - id
         - token
 
     # STATUS

@@ -21,6 +21,7 @@ class CustomError extends Error {
 module.exports = function $errors() {
   return {
     BadRequest,
+    FromAxios,
     InternalServerError,
     Unauthorized
   };
@@ -28,6 +29,17 @@ module.exports = function $errors() {
 
 function BadRequest(message, data = undefined) {
   return new CustomError(400, 'Bad Request', message, data);
+}
+
+function FromAxios(axiosErr) {
+  const err = axiosErr.response.data.error;
+  return new CustomError(
+    err.status,
+    err.name,
+    err.message,
+    err.data,
+    err.errors
+  );
 }
 
 function InternalServerError() {

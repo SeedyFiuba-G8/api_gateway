@@ -1,7 +1,10 @@
-module.exports = function statusService(logger, usersGateway) {
+module.exports = function statusService(usersGateway) {
+  return {
+    servicesHealth,
+    pingServices
+  };
+
   /**
-   * Check health of all services
-   *
    * @returns {Promise}
    */
   async function servicesHealth() {
@@ -15,8 +18,6 @@ module.exports = function statusService(logger, usersGateway) {
   }
 
   /**
-   * Check services respond time with ping
-   *
    * @returns {Promise}
    */
   async function pingServices() {
@@ -28,9 +29,4 @@ module.exports = function statusService(logger, usersGateway) {
       users: usersStatus
     };
   }
-
-  return {
-    servicesHealth,
-    pingServices
-  };
 };

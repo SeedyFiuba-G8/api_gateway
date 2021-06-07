@@ -6,7 +6,8 @@ module.exports = {
     port: _.get(process.env, 'PORT', 3000)
   },
   jwt: {
-    key: _.get(process.env, 'JWT_KEY', 'localkey')
+    key: _.get(process.env, 'JWT_KEY', 'localkey'),
+    expiration: '1h'
   },
   log: {
     console: {
