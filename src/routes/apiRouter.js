@@ -16,7 +16,7 @@ module.exports = function apiRouter(
 
       // STATUS
       .get('/ping', statusController.ping)
-      .get('/ping/all', statusController.pingAll)
+      .get('/pingAll', statusController.pingAll)
       .get('/health', statusController.health)
 
       // USERS MICROSERVICE
