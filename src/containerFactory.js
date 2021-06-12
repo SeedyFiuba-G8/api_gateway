@@ -11,7 +11,7 @@ function createContainer() {
     'controllers',
     'gateways',
     'middlewares',
-    'routes',
+    'routers',
     'services',
     'utils'
   ];
