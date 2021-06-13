@@ -1,7 +1,8 @@
 module.exports = function projectController(projectService) {
   return {
     create,
-    getAll
+    getAll,
+    remove
   };
 
   /**
@@ -17,8 +18,6 @@ module.exports = function projectController(projectService) {
       return next(err);
     }
 
-    console.log('RESPONSE: ', response);
-
     return res.status(response.status).send(response.data);
   }
 
@@ -30,6 +29,22 @@ module.exports = function projectController(projectService) {
 
     try {
       response = await projectService.getAll();
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(response.status).send(response.data);
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async function remove(req, res, next) {
+    const { projectId } = req.params;
+    let response;
+
+    try {
+      response = await projectService.remove(projectId);
     } catch (err) {
       return next(err);
     }

@@ -24,6 +24,7 @@ module.exports = function apiRouter(
       // Projects
       .get('/project', projectController.getAll)
       .post('/project', projectController.create)
+      .delete('/project/:projectId', projectController.remove)
 
       // USERS MICROSERVICE
 

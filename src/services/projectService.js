@@ -1,7 +1,8 @@
 module.exports = function projectService(coreGateway) {
   return {
     create,
-    getAll
+    getAll,
+    remove
   };
 
   /**
@@ -16,5 +17,12 @@ module.exports = function projectService(coreGateway) {
    */
   function getAll() {
     return coreGateway.getAllProjects();
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  function remove(projectId) {
+    return coreGateway.removeProject(projectId);
   }
 };

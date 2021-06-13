@@ -116,9 +116,6 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-  # =============================================================================
-  # CORE MICROSERVICE
-
   # PROJECTS
   /project:
     get:
@@ -151,7 +148,32 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-  # =============================================================================
+  /project/{projectId}:
+    delete:
+      summary: Delete a project by ID
+      description: Allows an owner of a project or an admin to delete a project.
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+          description: uuid of the project to delete
+      responses:
+        200:
+          $ref: '#/components/responses/deleteProject'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        409:
+          $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
 
   # STATUS
   /health:
@@ -249,6 +271,13 @@ components:
 
     postProject:
       description: Project created successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectId'
+
+    deleteProject:
+      description: Project deleted successfully.
       content:
         application/json:
           schema:

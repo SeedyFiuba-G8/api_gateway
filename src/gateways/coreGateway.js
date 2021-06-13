@@ -4,6 +4,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   return {
     createProject,
     getAllProjects,
+    removeProject,
 
     // Status
     health,
@@ -44,6 +45,17 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
     }
 
     return { status: response.status, data: response.data };
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async function removeProject(projectId) {
+    const url = urlFactory(`/project/${projectId}`, services.core);
+
+    return axios.delete(url, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
   /**
