@@ -60,6 +60,13 @@ function createContainer() {
     return config.services;
   });
 
+  container.register(
+    'unhandledErrorMiddleware',
+    function $unhandledErrorMiddleware() {
+      return errorComponents.unhandledErrorMiddleware();
+    }
+  );
+
   entries.forEach((entry) => container.load(path.join(__dirname, entry)));
 
   return container;

@@ -12,21 +12,16 @@ module.exports = function usersController(usersService) {
   /**
    * @returns {Promise}
    */
-  function loginAdmin(req, res, next) {
-    return login(req, res, next, 'ADMIN');
+  function loginAdmin(req, res) {
+    return login(req, res, 'ADMIN');
   }
 
   /**
    * @returns {Promise}
    */
-  async function registerAdmin(req, res, next) {
+  async function registerAdmin(req, res) {
     const adminData = req.body;
-
-    try {
-      await usersService.registerAdmin(adminData);
-    } catch (err) {
-      return next(err);
-    }
+    await usersService.registerAdmin(adminData);
 
     return res.status(201).send();
   }
@@ -34,21 +29,16 @@ module.exports = function usersController(usersService) {
   /**
    * @returns {Promise}
    */
-  function loginUser(req, res, next) {
-    return login(req, res, next, 'USER');
+  function loginUser(req, res) {
+    return login(req, res, 'USER');
   }
 
   /**
    * @returns {Promise}
    */
-  async function registerUser(req, res, next) {
+  async function registerUser(req, res) {
     const userData = req.body;
-
-    try {
-      await usersService.registerUser(userData);
-    } catch (err) {
-      return next(err);
-    }
+    await usersService.registerUser(userData);
 
     return res.status(201).send();
   }
@@ -58,15 +48,9 @@ module.exports = function usersController(usersService) {
   /**
    * @returns {Promise}
    */
-  async function login(req, res, next, type) {
+  async function login(req, res, type) {
     const credentials = req.body;
-    let session;
-
-    try {
-      session = await usersService.login(credentials, type);
-    } catch (err) {
-      return next(err);
-    }
+    const session = await usersService.login(credentials, type);
 
     return res.status(200).json(session);
   }

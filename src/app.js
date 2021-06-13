@@ -1,18 +1,20 @@
 const express = require('express');
 
 module.exports = function $app(
+  apiRouter,
   corsMiddleware,
+  docsRouter,
   errorHandlerMiddleware,
   loggingMiddleware,
-  docsRouter,
-  apiRouter
+  unhandledErrorMiddleware
 ) {
   const app = express();
 
   // Pre middleware
-  app.use(express.json());
   app.use(corsMiddleware);
+  app.use(unhandledErrorMiddleware);
   app.use(loggingMiddleware);
+  app.use(express.json());
 
   // Routers
   app.use(docsRouter);
