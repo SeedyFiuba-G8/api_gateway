@@ -23,12 +23,13 @@ servers:
 tags:
   - name: Admins
   - name: Users
+  - name: Projects
   - name: Status
 
 # =============================================================================
 
 paths:
-  # USERS
+  # USERS MICROSERVICE
   /user:
     post:
       summary: Register a new user
@@ -114,6 +115,43 @@ paths:
           $ref: '#/components/responses/415'
         500:
           $ref: '#/components/responses/500'
+
+  # =============================================================================
+  # CORE MICROSERVICE
+
+  # PROJECTS
+  /project:
+    get:
+      summary: Get all projects
+      description: Get info from every project.
+      tags:
+        - Projects
+      responses:
+        200:
+          $ref: '#/components/responses/getAllProjects'
+        500:
+          $ref: '#/components/responses/500'
+
+    post:
+      summary: Create a new project
+      description: Allows an entrepeneur user to create a new project.
+      tags:
+        - Projects
+      requestBody:
+        $ref: '#/components/requestBodies/postProject'
+      responses:
+        201:
+          $ref: '#/components/responses/postProject'
+        400:
+          $ref: '#/components/responses/400'
+        409:
+          $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
+  # =============================================================================
 
   # STATUS
   /health:
@@ -201,6 +239,21 @@ components:
           schema:
             $ref: '#/components/schemas/Session'
 
+    # PROJECTS
+    getAllProjects:
+      description: Projects info retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AllProjects'
+
+    postProject:
+      description: Project created successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectId'
+
     # STATUS
     health:
       description: Microservice general health state reported.
@@ -240,6 +293,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AdminRegisterData'
+
+    # PROJECTS
+    postProject:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostProjectData'
 
     # COMMON
     postSession:
@@ -311,6 +372,100 @@ components:
       required:
         - email
         - password
+
+    # PROJECTS
+    AllProjects:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+      required:
+        - projects
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '670b9562-b30d-52d5-b827-655787665500'
+        title:
+          type: string
+          example: 'Prohibir la utilizacion de Winbugs globalmente'
+        description:
+          type: string
+          example: 'No puede ser que haya gente que use Winbugs'
+        type:
+          type: string
+          example: 'social'
+        objective:
+          type: string
+          example: 'Salvar a la gente de esta maldicion'
+        country:
+          type: string
+          example: 'Argentina'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        publishedOn:
+          type: string
+          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+        finalizedBy:
+          type: string
+          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+      required:
+        - id
+        - title
+        - description
+        - type
+        - objective
+        - country
+        - city
+        - publishedOn
+        - finalizedBy
+
+    PostProjectData:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Prohibir la utilizacion de Winbugs globalmente'
+        description:
+          type: string
+          example: 'No puede ser que haya gente que use Winbugs'
+        type:
+          type: string
+          example: 'social'
+        objective:
+          type: string
+          example: 'Salvar a la gente de esta maldicion'
+        country:
+          type: string
+          example: 'Argentina'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        finalizedBy:
+          type: string
+          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+      required:
+        - title
+        - description
+        - type
+        - objective
+        - country
+        - city
+        - finalizedBy
+
+    ProjectId:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '670b9562-b30d-52d5-b827-655787665500'
+      required:
+        - id
 
     # COMMON
     LoginData:

@@ -3,6 +3,7 @@ const express = require('express');
 module.exports = function apiRouter(
   apiValidatorMiddleware,
   usersController,
+  projectController,
   statusController
 ) {
   return (
@@ -18,6 +19,11 @@ module.exports = function apiRouter(
       .get('/ping', statusController.ping)
       .get('/pingAll', statusController.pingAll)
       .get('/health', statusController.health)
+
+      // CORE MICROSERVICE
+      // Projects
+      .get('/project', projectController.getAll)
+      .post('/project', projectController.create)
 
       // USERS MICROSERVICE
 
