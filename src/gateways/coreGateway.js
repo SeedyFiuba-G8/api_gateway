@@ -52,10 +52,17 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    */
   async function removeProject(projectId) {
     const url = urlFactory(`/project/${projectId}`, services.core);
+    let response;
 
-    return axios.delete(url, {
-      headers: { 'Content-Type': 'application/json' }
-    });
+    try {
+      response = await axios.delete(url, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (err) {
+      throw errors.FromAxios(err);
+    }
+
+    return { status: response.status, data: response.data };
   }
 
   /**
