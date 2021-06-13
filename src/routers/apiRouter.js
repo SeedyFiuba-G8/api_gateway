@@ -2,6 +2,7 @@ const express = require('express');
 
 module.exports = function apiRouter(
   apiValidatorMiddleware,
+  authenticationMiddleware,
   usersController,
   projectController,
   statusController
@@ -22,9 +23,13 @@ module.exports = function apiRouter(
 
       // CORE MICROSERVICE
       // Projects
-      .get('/project', projectController.getAll)
-      .post('/project', projectController.create)
-      .delete('/project/:projectId', projectController.remove)
+      .get('/project', authenticationMiddleware, projectController.getAll)
+      .post('/project', authenticationMiddleware, projectController.create)
+      .delete(
+        '/project/:projectId',
+        authenticationMiddleware,
+        projectController.remove
+      )
 
       // USERS MICROSERVICE
 

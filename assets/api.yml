@@ -121,6 +121,8 @@ paths:
     get:
       summary: Get all projects
       description: Get info from every project.
+      security:
+        - bearerAuth: []
       tags:
         - Projects
       responses:
@@ -132,6 +134,8 @@ paths:
     post:
       summary: Create a new project
       description: Allows an entrepeneur user to create a new project.
+      security:
+        - bearerAuth: []
       tags:
         - Projects
       requestBody:
@@ -152,6 +156,8 @@ paths:
     delete:
       summary: Delete a project by ID
       description: Allows an owner of a project or an admin to delete a project.
+      security:
+        - bearerAuth: []
       tags:
         - Projects
       parameters:
@@ -216,6 +222,12 @@ paths:
 
 components:
   # ---------------------------------------------------------------------------
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   responses:
     # ERRORS
     400:
