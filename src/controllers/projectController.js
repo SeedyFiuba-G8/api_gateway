@@ -13,7 +13,10 @@ module.exports = function projectController(projectService) {
     let response;
 
     try {
-      response = await projectService.create(projectData);
+      response = await projectService.create({
+        userId: req.context.session.id,
+        ...projectData
+      });
     } catch (err) {
       return next(err);
     }
@@ -44,7 +47,10 @@ module.exports = function projectController(projectService) {
     let response;
 
     try {
-      response = await projectService.remove(projectId);
+      response = await projectService.remove({
+        userId: req.context.session.id,
+        projectId
+      });
     } catch (err) {
       return next(err);
     }
