@@ -5,7 +5,9 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
     createProject,
     getAllProjects,
     getProjectById,
+    getProjectsByUserId,
     health,
+    modifyProject,
     ping,
     removeProject
   };
@@ -49,6 +51,24 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
+  async function getProjectsByUserId(userId) {
+    const url = urlFactory(`/project?userId=${userId}`, services.core);
+    let response;
+
+    try {
+      response = await axios.get(url, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (err) {
+      throw errors.FromAxios(err);
+    }
+
+    return { status: response.status, data: response.data };
+  }
+
+  /**
+   * @returns {Promise}
+   */
   async function getProjectById(projectId) {
     const url = urlFactory(`/project/${projectId}`, services.core);
     let response;
@@ -67,15 +87,40 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
-  async function removeProject(projectId) {
+  async function modifyProject(projectId, projectInfo) {
     const url = urlFactory(`/project/${projectId}`, services.core);
     let response;
 
     try {
-      response = await axios.delete(url, {
+      response = await axios.put(url, projectInfo, {
         headers: { 'Content-Type': 'application/json' }
       });
     } catch (err) {
+      throw errors.FromAxios(err);
+    }
+
+    return { status: response.status, data: response.data };
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async function removeProject(projectId, userId) {
+    const url = urlFactory(`/project/${projectId}`, services.core);
+    let response;
+
+    console.log('userId: ', { userId });
+
+    try {
+      response = await axios.delete(
+        url,
+        { userId },
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    } catch (err) {
+      console.log('err: ', err);
       throw errors.FromAxios(err);
     }
 

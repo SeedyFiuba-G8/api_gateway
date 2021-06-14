@@ -3,6 +3,7 @@ module.exports = function projectController(projectService) {
     create,
     get,
     getAll,
+    modify,
     remove
   };
 
@@ -46,9 +47,31 @@ module.exports = function projectController(projectService) {
    */
   async function getAll(req, res, next) {
     let response;
+    const { userId } = req.query;
+    const method = userId ? 'getByUserId' : 'getAll';
 
     try {
-      response = await projectService.getAll();
+      response = await projectService[method](userId);
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(response.status).send(response.data);
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async function modify(req, res, next) {
+    const { projectId } = req.params;
+    const projectData = req.body;
+    let response;
+
+    try {
+      response = await projectService.modify(projectId, {
+        ...projectData,
+        userId: req.context.session.id
+      });
     } catch (err) {
       return next(err);
     }
@@ -64,10 +87,7 @@ module.exports = function projectController(projectService) {
     let response;
 
     try {
-      response = await projectService.remove({
-        userId: req.context.session.id,
-        projectId
-      });
+      response = await projectService.remove(projectId, req.context.session.id);
     } catch (err) {
       return next(err);
     }

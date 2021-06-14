@@ -165,6 +165,8 @@ paths:
     get:
       summary: Get a project by id.
       description: Allos a user to get retrieve a project's information by its id.
+      security:
+        - bearerAuth: []
       tags:
         - Projects
       parameters:
@@ -179,6 +181,36 @@ paths:
           $ref: '#/components/responses/getProject'
         400:
           $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
+    put:
+      summary: Modify the information of the project.
+      description: Allows an owner of a project or an admin to modify the information of a project.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+      requestBody:
+        $ref: '#/components/requestBodies/putProject'
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+          description: uuid of the project to modify
+      responses:
+        200:
+          $ref: '#/components/responses/putProject'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
         404:
           $ref: '#/components/responses/404'
         415:
@@ -205,10 +237,10 @@ paths:
           $ref: '#/components/responses/deleteProject'
         400:
           $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
         404:
           $ref: '#/components/responses/404'
-        409:
-          $ref: '#/components/responses/409'
         415:
           $ref: '#/components/responses/415'
         500:
@@ -265,6 +297,13 @@ components:
     # ERRORS
     400:
       description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    401:
+      description: Unauthorized.
       content:
         application/json:
           schema:
@@ -328,6 +367,13 @@ components:
           schema:
             $ref: '#/components/schemas/ProjectId'
 
+    putProject:
+      description: Project modified successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectId'
+
     deleteProject:
       description: Project deleted successfully.
       content:
@@ -382,6 +428,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PostProjectData'
+
+    putProject:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PutProjectData'
 
     # COMMON
     postSession:
@@ -513,9 +566,6 @@ components:
     PostProjectData:
       type: object
       properties:
-        userId:
-          type: string
-          example: '670b9562-b30d-52d5-b827-655787665500'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -545,6 +595,31 @@ components:
         - country
         - city
         - finalizedBy
+
+    PutProjectData:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Prohibir la utilizacion de Winbugs globalmente'
+        description:
+          type: string
+          example: 'No puede ser que haya gente que use Winbugs'
+        type:
+          type: string
+          example: 'social'
+        objective:
+          type: string
+          example: 'Salvar a la gente de esta maldicion'
+        country:
+          type: string
+          example: 'Argentina'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        finalizedBy:
+          type: string
+          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
 
     ProjectId:
       type: object

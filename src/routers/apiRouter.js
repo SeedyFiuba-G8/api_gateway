@@ -30,6 +30,11 @@ module.exports = function apiRouter(
         authenticationMiddleware,
         projectController.get
       )
+      .put(
+        '/project/:projectId',
+        authenticationMiddleware,
+        projectController.modify
+      )
       .delete(
         '/project/:projectId',
         authenticationMiddleware,

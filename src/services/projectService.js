@@ -3,6 +3,8 @@ module.exports = function projectService(coreGateway) {
     create,
     getById,
     getAll,
+    getByUserId,
+    modify,
     remove
   };
 
@@ -30,7 +32,21 @@ module.exports = function projectService(coreGateway) {
   /**
    * @returns {Promise}
    */
-  function remove(projectId) {
-    return coreGateway.removeProject(projectId);
+  function getByUserId(userId) {
+    return coreGateway.getProjectsByUserId(userId);
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  function modify(projectId, projectInfo) {
+    return coreGateway.modifyProject(projectId, projectInfo);
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  function remove(projectId, userId) {
+    return coreGateway.removeProject(projectId, userId);
   }
 };
