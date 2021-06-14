@@ -1,19 +1,39 @@
 module.exports = function usersController(usersService) {
   return {
-    // Users
+    getAllUsers,
     loginAdmin,
-    registerAdmin,
-
-    // Admins
     loginUser,
+    registerAdmin,
     registerUser
   };
 
   /**
    * @returns {Promise}
    */
+  async function getAllUsers(req, res, next) {
+    let users;
+
+    try {
+      users = await usersService.getAllUsers();
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(200).send(users);
+  }
+
+  /**
+   * @returns {Promise}
+   */
   function loginAdmin(req, res, next) {
     return login(req, res, next, 'ADMIN');
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  function loginUser(req, res, next) {
+    return login(req, res, next, 'USER');
   }
 
   /**
@@ -29,13 +49,6 @@ module.exports = function usersController(usersService) {
     }
 
     return res.status(201).send();
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  function loginUser(req, res, next) {
-    return login(req, res, next, 'USER');
   }
 
   /**

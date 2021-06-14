@@ -2,6 +2,7 @@ const axios = require('axios');
 
 module.exports = function usersGateway(config, errors, services, urlFactory) {
   return {
+    getAllUsers,
     login,
     registerAdmin,
     registerUser,
@@ -12,7 +13,23 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
   };
 
   /**
-   * @returns {undefined}
+   * @returns {Promise<undefined>}
+   */
+  async function getAllUsers() {
+    const url = urlFactory('/user', services.users);
+    let response;
+
+    try {
+      response = await axios.get(url);
+    } catch (err) {
+      throw errors.FromAxios(err);
+    }
+
+    return response.data;
+  }
+
+  /**
+   * @returns {Promise<String>}
    */
   async function login(credentials, type) {
     let url;
@@ -36,7 +53,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
   }
 
   /**
-   * @returns {undefined}
+   * @returns {Promise<undefined>}
    */
   async function registerAdmin(adminData) {
     const url = urlFactory('/admin', services.users);
@@ -51,7 +68,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
   }
 
   /**
-   * @returns {undefined}
+   * @returns {Promise<undefined>}
    */
   async function registerUser(userData) {
     const url = urlFactory('/user', services.users);

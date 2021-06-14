@@ -2,10 +2,18 @@ const jwt = require('jsonwebtoken');
 
 module.exports = function usersService(config, usersGateway) {
   return {
+    getAllUsers,
     login,
     registerAdmin,
     registerUser
   };
+
+  /**
+   * @returns {Promise}
+   */
+  function getAllUsers() {
+    return usersGateway.getAllUsers();
+  }
 
   /**
    * @returns {Promise}

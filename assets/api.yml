@@ -184,7 +184,7 @@ paths:
 
   /project/{projectId}:
     get:
-      summary: Get a project by id.
+      summary: Get a project by id
       description: Allos a user to get retrieve a project's information by its id.
       security:
         - bearerAuth: []
@@ -542,7 +542,6 @@ components:
       required:
         - id
         - email
-        - password
         - banned
         - firstName
         - lastName

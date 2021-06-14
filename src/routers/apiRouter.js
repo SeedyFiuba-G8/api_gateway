@@ -17,11 +17,13 @@ module.exports = function apiRouter(
       .use(apiValidatorMiddleware)
 
       // STATUS
+
       .get('/ping', statusController.ping)
       .get('/pingAll', statusController.pingAll)
       .get('/health', statusController.health)
 
       // CORE MICROSERVICE
+
       // Projects
       .get('/project', authenticationMiddleware, projectController.getAll)
       .post('/project', authenticationMiddleware, projectController.create)
@@ -44,6 +46,7 @@ module.exports = function apiRouter(
       // USERS MICROSERVICE
 
       // Users
+      .get('/user', authenticationMiddleware, usersController.getAllUsers)
       .post('/user', usersController.registerUser)
       .post('/user/session', usersController.loginUser)
 
