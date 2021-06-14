@@ -109,8 +109,6 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
     const url = urlFactory(`/project/${projectId}`, services.core);
     let response;
 
-    console.log('userId: ', { userId });
-
     try {
       response = await axios.delete(
         url,
@@ -120,7 +118,6 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
         }
       );
     } catch (err) {
-      console.log('err: ', err);
       throw errors.FromAxios(err);
     }
 
