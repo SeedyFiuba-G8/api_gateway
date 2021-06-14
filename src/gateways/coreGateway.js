@@ -4,11 +4,10 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   return {
     createProject,
     getAllProjects,
-    removeProject,
-
-    // Status
+    getProjectById,
     health,
-    ping
+    ping,
+    removeProject
   };
 
   /**
@@ -34,6 +33,24 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    */
   async function getAllProjects() {
     const url = urlFactory('/project', services.core);
+    let response;
+
+    try {
+      response = await axios.get(url, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (err) {
+      throw errors.FromAxios(err);
+    }
+
+    return { status: response.status, data: response.data };
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async function getProjectById(projectId) {
+    const url = urlFactory(`/project/${projectId}`, services.core);
     let response;
 
     try {

@@ -1,6 +1,7 @@
 module.exports = function projectController(projectService) {
   return {
     create,
+    get,
     getAll,
     remove
   };
@@ -17,6 +18,22 @@ module.exports = function projectController(projectService) {
         userId: req.context.session.id,
         ...projectData
       });
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(response.status).send(response.data);
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async function get(req, res, next) {
+    const { projectId } = req.params;
+    let response;
+
+    try {
+      response = await projectService.getById(projectId);
     } catch (err) {
       return next(err);
     }

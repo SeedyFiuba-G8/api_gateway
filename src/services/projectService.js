@@ -1,6 +1,7 @@
 module.exports = function projectService(coreGateway) {
   return {
     create,
+    getById,
     getAll,
     remove
   };
@@ -10,6 +11,13 @@ module.exports = function projectService(coreGateway) {
    */
   function create(projectData) {
     return coreGateway.createProject(projectData);
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  function getById(projectId) {
+    return coreGateway.getProjectById(projectId);
   }
 
   /**
