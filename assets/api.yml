@@ -23,12 +23,13 @@ servers:
 tags:
   - name: Admins
   - name: Users
+  - name: Projects
   - name: Status
 
 # =============================================================================
 
 paths:
-  # USERS
+  # USERS MICROSERVICE
   /user:
     post:
       summary: Register a new user
@@ -115,6 +116,136 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
+  # PROJECTS
+  /project:
+    get:
+      summary: Get all projects (optionally, of a specified user)
+      description: Get info from every project (of the app/of the user).
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: userId
+          required: false
+          schema:
+            type: string
+          description: The userId of whom we want to retrieve projects.
+      tags:
+        - Projects
+      responses:
+        200:
+          $ref: '#/components/responses/getAllProjects'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+    post:
+      summary: Create a new project
+      description: Allows an entrepeneur user to create a new project.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+      requestBody:
+        $ref: '#/components/requestBodies/postProject'
+      responses:
+        200:
+          $ref: '#/components/responses/postProject'
+        400:
+          $ref: '#/components/responses/400'
+        409:
+          $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
+  /project/{projectId}:
+    get:
+      summary: Get a project by id.
+      description: Allos a user to get retrieve a project's information by its id.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+          description: uuid of the project to retrieve
+      responses:
+        200:
+          $ref: '#/components/responses/getProject'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
+    put:
+      summary: Modify the information of the project.
+      description: Allows an owner of a project or an admin to modify the information of a project.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+      requestBody:
+        $ref: '#/components/requestBodies/putProject'
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+          description: uuid of the project to modify
+      responses:
+        200:
+          $ref: '#/components/responses/putProject'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
+    delete:
+      summary: Delete a project by ID
+      description: Allows an owner of a project or an admin to delete a project.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+          description: uuid of the project to delete
+      responses:
+        200:
+          $ref: '#/components/responses/deleteProject'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
   # STATUS
   /health:
     get:
@@ -156,10 +287,23 @@ paths:
 
 components:
   # ---------------------------------------------------------------------------
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   responses:
     # ERRORS
     400:
       description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    401:
+      description: Unauthorized.
       content:
         application/json:
           schema:
@@ -201,6 +345,42 @@ components:
           schema:
             $ref: '#/components/schemas/Session'
 
+    # PROJECTS
+    getAllProjects:
+      description: Projects info retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AllProjects'
+
+    getProject:
+      description: Project info retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Project'
+
+    postProject:
+      description: Project created successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectId'
+
+    putProject:
+      description: Project modified successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectId'
+
+    deleteProject:
+      description: Project deleted successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectId'
+
     # STATUS
     health:
       description: Microservice general health state reported.
@@ -240,6 +420,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AdminRegisterData'
+
+    # PROJECTS
+    postProject:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostProjectData'
+
+    putProject:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PutProjectData'
 
     # COMMON
     postSession:
@@ -311,6 +506,129 @@ components:
       required:
         - email
         - password
+
+    # PROJECTS
+    AllProjects:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+      required:
+        - projects
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '670b9562-b30d-52d5-b827-655787665500'
+        userId:
+          type: string
+          example: '670b9562-b30d-52d5-b827-655787665500'
+        title:
+          type: string
+          example: 'Prohibir la utilizacion de Winbugs globalmente'
+        description:
+          type: string
+          example: 'No puede ser que haya gente que use Winbugs'
+        type:
+          type: string
+          example: 'social'
+        objective:
+          type: string
+          example: 'Salvar a la gente de esta maldicion'
+        country:
+          type: string
+          example: 'Argentina'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        publishedOn:
+          type: string
+          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+        finalizedBy:
+          type: string
+          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+      required:
+        - id
+        - userId
+        - title
+        - description
+        - type
+        - objective
+        - country
+        - city
+        - publishedOn
+        - finalizedBy
+
+    PostProjectData:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Prohibir la utilizacion de Winbugs globalmente'
+        description:
+          type: string
+          example: 'No puede ser que haya gente que use Winbugs'
+        type:
+          type: string
+          example: 'social'
+        objective:
+          type: string
+          example: 'Salvar a la gente de esta maldicion'
+        country:
+          type: string
+          example: 'Argentina'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        finalizedBy:
+          type: string
+          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+      required:
+        - title
+        - description
+        - type
+        - objective
+        - country
+        - city
+        - finalizedBy
+
+    PutProjectData:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Prohibir la utilizacion de Winbugs globalmente'
+        description:
+          type: string
+          example: 'No puede ser que haya gente que use Winbugs'
+        type:
+          type: string
+          example: 'social'
+        objective:
+          type: string
+          example: 'Salvar a la gente de esta maldicion'
+        country:
+          type: string
+          example: 'Argentina'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        finalizedBy:
+          type: string
+          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+
+    ProjectId:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '670b9562-b30d-52d5-b827-655787665500'
+      required:
+        - id
 
     # COMMON
     LoginData:
