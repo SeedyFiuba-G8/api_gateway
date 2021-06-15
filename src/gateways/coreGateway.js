@@ -15,156 +15,126 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
-  async function createProject(projectInfo) {
+  function createProject(projectInfo) {
     const url = urlFactory('/project', services.core);
-    let response;
 
-    try {
-      response = await axios.post(url, projectInfo, {
+    return axios
+      .post(url, projectInfo, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+      })
+      .then((res) => res.data.id)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function getAllProjects() {
+  function getAllProjects() {
     const url = urlFactory('/project', services.core);
-    let response;
 
-    try {
-      response = await axios.get(url, {
+    return axios
+      .get(url, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+      })
+      .then((res) => res.data.projects)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function getProjectsByUserId(userId) {
+  function getProjectsByUserId(userId) {
     const url = urlFactory(`/project?userId=${userId}`, services.core);
-    let response;
 
-    try {
-      response = await axios.get(url, {
+    return axios
+      .get(url, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+      })
+      .then((res) => res.data.projects)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function getProjectById(projectId) {
+  function getProjectById(projectId) {
     const url = urlFactory(`/project/${projectId}`, services.core);
-    let response;
 
-    try {
-      response = await axios.get(url, {
+    return axios
+      .get(url, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+      })
+      .then((res) => res.data)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function modifyProject(projectId, projectInfo) {
+  function modifyProject(projectId, projectInfo) {
     const url = urlFactory(`/project/${projectId}`, services.core);
-    let response;
 
-    try {
-      response = await axios.put(url, projectInfo, {
+    return axios
+      .put(url, projectInfo, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+      })
+      .then((res) => res.data.id)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function removeProject(projectId, userId) {
+  function removeProject(projectId, userId) {
     const url = urlFactory(`/project/${projectId}`, services.core);
-    let response;
 
-    try {
-      response = await axios.delete(
+    return axios
+      .delete(
         url,
         { userId },
         {
           headers: { 'Content-Type': 'application/json' }
         }
-      );
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+      )
+      .then((res) => res.data.id)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function health() {
+  function health() {
     const url = urlFactory('/health', services.core);
-    let response;
 
-    try {
-      response = await axios(url, {
-        method: 'GET',
-        timeout: config.timeouts.health
+    return axios(url, {
+      method: 'GET',
+      timeout: config.timeouts.health
+    })
+      .then((res) => (res.status === 200 ? res.data : 'bad status'))
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+        return Promise.reject(errors.FromAxios(err));
       });
-    } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        return 'timed out';
-      }
-      throw err;
-    }
-
-    return response.status === 200 ? response.data : 'bad status';
   }
 
   /**
    * @returns {Promise}
    */
-  async function ping() {
+  function ping() {
     const url = urlFactory('/ping', services.core);
-    let response;
 
-    try {
-      response = await axios(url, {
-        method: 'GET',
-        timeout: config.timeouts.ping
+    return axios(url, {
+      method: 'GET',
+      timeout: config.timeouts.ping
+    })
+      .then((res) => (res.status === 200 ? 'ok' : 'bad status'))
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+        return Promise.reject(errors.FromAxios(err));
       });
-    } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        return 'timed out';
-      }
-      throw err;
-    }
-
-    return response.status === 200 ? 'ok' : 'bad status';
   }
 };

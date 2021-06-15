@@ -3,126 +3,99 @@ const axios = require('axios');
 module.exports = function usersGateway(config, errors, services, urlFactory) {
   return {
     getAllUsers,
-    login,
-    registerAdmin,
-    registerUser,
-
-    // Status
     health,
-    ping
+    login,
+    ping,
+    registerAdmin,
+    registerUser
   };
 
   /**
    * @returns {Promise<undefined>}
    */
-  async function getAllUsers() {
+  function getAllUsers() {
     const url = urlFactory('/user', services.users);
-    let response;
-
-    try {
-      response = await axios.get(url);
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return response.data;
+    return axios
+      .get(url)
+      .then((res) => res.data)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise<String>}
    */
-  async function login(credentials, type) {
-    let url;
-    if (type === 'USER') {
-      url = urlFactory('/user/session', services.users);
-    } else {
-      url = urlFactory('/admin/session', services.users);
-    }
+  function login(credentials, type) {
+    const path = type === 'USER' ? '/user/session' : '/admin/session';
+    const url = urlFactory(path, services.users);
 
-    let response;
-
-    try {
-      response = await axios.post(url, credentials, {
+    return axios
+      .post(url, credentials, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return response.data.id;
+      })
+      .then((res) => res.data.id)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise<undefined>}
    */
-  async function registerAdmin(adminData) {
+  function registerAdmin(adminData) {
     const url = urlFactory('/admin', services.users);
 
-    try {
-      await axios.post(url, adminData, {
+    return axios
+      .post(url, adminData, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
+      })
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise<undefined>}
    */
-  async function registerUser(userData) {
+  function registerUser(userData) {
     const url = urlFactory('/user', services.users);
-
-    try {
-      await axios.post(url, userData, {
+    return axios
+      .post(url, userData, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
+      })
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function health() {
+  function health() {
     const url = urlFactory('/health', services.users);
-    let response;
 
-    try {
-      response = await axios(url, {
-        method: 'GET',
-        timeout: config.timeouts.health
+    return axios(url, {
+      method: 'GET',
+      timeout: config.timeouts.health
+    })
+      .then((res) => (res.status === 200 ? res.data : 'bad status'))
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+        return Promise.reject(errors.FromAxios(err));
       });
-    } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        return 'timed out';
-      }
-      throw err;
-    }
-
-    return response.status === 200 ? response.data : 'bad status';
   }
 
   /**
    * @returns {Promise}
    */
-  async function ping() {
+  function ping() {
     const url = urlFactory('/ping', services.users);
-    let response;
 
-    try {
-      response = await axios(url, {
-        method: 'GET',
-        timeout: config.timeouts.ping
+    return axios(url, {
+      method: 'GET',
+      timeout: config.timeouts.ping
+    })
+      .then((res) => (res.status === 200 ? 'ok' : 'bad status'))
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+        return Promise.reject(errors.FromAxios(err));
       });
-    } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        return 'timed out';
-      }
-      throw err;
-    }
-
-    return response.status === 200 ? 'ok' : 'bad status';
   }
 };
