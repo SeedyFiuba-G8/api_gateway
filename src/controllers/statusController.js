@@ -1,9 +1,9 @@
-module.exports = function statusController(statusService) {
-  return {
+module.exports = function statusController(expressify, statusService) {
+  return expressify({
     health,
     ping,
     pingAll
-  };
+  });
 
   /**
    * @returns {Promise}

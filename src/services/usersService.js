@@ -20,7 +20,7 @@ module.exports = function usersService(config, usersGateway) {
    */
   async function login(credentials, type) {
     const id = await usersGateway.login(credentials, type);
-    const token = await jwt.sign({ id }, config.jwt.key, {
+    const token = await jwt.sign({ id, type }, config.jwt.key, {
       expiresIn: config.jwt.expiration
     });
 

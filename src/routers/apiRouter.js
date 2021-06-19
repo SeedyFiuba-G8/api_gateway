@@ -1,8 +1,9 @@
 const express = require('express');
 
 module.exports = function apiRouter(
+  adminAuthMiddleware,
   apiValidatorMiddleware,
-  authenticationMiddleware,
+  authMiddleware,
   usersController,
   projectController,
   statusController
@@ -25,33 +26,32 @@ module.exports = function apiRouter(
       // CORE MICROSERVICE
 
       // Projects
-      .get('/project', authenticationMiddleware, projectController.getAll)
-      .post('/project', authenticationMiddleware, projectController.create)
-      .get(
-        '/project/:projectId',
-        authenticationMiddleware,
-        projectController.get
-      )
-      .put(
-        '/project/:projectId',
-        authenticationMiddleware,
-        projectController.modify
-      )
-      .delete(
-        '/project/:projectId',
-        authenticationMiddleware,
-        projectController.remove
-      )
+      .use('/project', authMiddleware)
+      .get('/project', projectController.getAll)
+      .post('/project', projectController.create)
+      .get('/project/:projectId', projectController.get)
+      .put('/project/:projectId', projectController.modify)
+      .delete('/project/:projectId', projectController.remove)
 
       // USERS MICROSERVICE
 
       // Users
-      .get('/user', authenticationMiddleware, usersController.getAllUsers)
+      .get(
+        '/user',
+        authMiddleware,
+        adminAuthMiddleware,
+        usersController.getAllUsers
+      )
       .post('/user', usersController.registerUser)
       .post('/user/session', usersController.loginUser)
 
       // Admins
-      .post('/admin', usersController.registerAdmin)
+      .post(
+        '/admin',
+        authMiddleware,
+        adminAuthMiddleware,
+        usersController.registerAdmin
+      )
       .post('/admin/session', usersController.loginAdmin)
   );
 };

@@ -1,25 +1,19 @@
-module.exports = function usersController(usersService) {
-  return {
+module.exports = function usersController(expressify, usersService) {
+  return expressify({
     getAllUsers,
     loginAdmin,
     loginUser,
     registerAdmin,
     registerUser
-  };
+  });
 
   /**
    * @returns {Promise}
    */
-  async function getAllUsers(req, res, next) {
-    let users;
+  async function getAllUsers(req, res) {
+    const users = await usersService.getAllUsers();
 
-    try {
-      users = await usersService.getAllUsers();
-    } catch (err) {
-      return next(err);
-    }
-
-    return res.status(200).send(users);
+    return res.status(200).json(users);
   }
 
   /**
@@ -39,14 +33,9 @@ module.exports = function usersController(usersService) {
   /**
    * @returns {Promise}
    */
-  async function registerAdmin(req, res, next) {
+  async function registerAdmin(req, res) {
     const adminData = req.body;
-
-    try {
-      await usersService.registerAdmin(adminData);
-    } catch (err) {
-      return next(err);
-    }
+    await usersService.registerAdmin(adminData);
 
     return res.status(201).send();
   }
@@ -54,14 +43,9 @@ module.exports = function usersController(usersService) {
   /**
    * @returns {Promise}
    */
-  async function registerUser(req, res, next) {
+  async function registerUser(req, res) {
     const userData = req.body;
-
-    try {
-      await usersService.registerUser(userData);
-    } catch (err) {
-      return next(err);
-    }
+    await usersService.registerUser(userData);
 
     return res.status(201).send();
   }
@@ -73,13 +57,7 @@ module.exports = function usersController(usersService) {
    */
   async function login(req, res, next, type) {
     const credentials = req.body;
-    let session;
-
-    try {
-      session = await usersService.login(credentials, type);
-    } catch (err) {
-      return next(err);
-    }
+    const session = await usersService.login(credentials, type);
 
     return res.status(200).json(session);
   }
