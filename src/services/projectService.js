@@ -2,8 +2,7 @@ module.exports = function projectService(coreGateway) {
   return {
     create,
     getById,
-    getAll,
-    getByUserId,
+    getBy,
     modify,
     remove
   };
@@ -11,42 +10,35 @@ module.exports = function projectService(coreGateway) {
   /**
    * @returns {Promise}
    */
-  function create(projectData) {
-    return coreGateway.createProject(projectData);
+  function create(userId, projectInfo) {
+    return coreGateway.createProject(userId, projectInfo);
   }
 
   /**
    * @returns {Promise}
    */
-  function getById(projectId) {
-    return coreGateway.getProjectById(projectId);
+  function getById(userId, projectId) {
+    return coreGateway.getProjectById(userId, projectId);
   }
 
   /**
    * @returns {Promise}
    */
-  function getAll() {
-    return coreGateway.getAllProjects();
+  function getBy(userId, filters) {
+    return coreGateway.getProjectsBy(userId, filters);
   }
 
   /**
    * @returns {Promise}
    */
-  function getByUserId(userId) {
-    return coreGateway.getProjectsByUserId(userId);
+  function modify(userId, projectId, projectInfo) {
+    return coreGateway.modifyProject(userId, projectId, projectInfo);
   }
 
   /**
    * @returns {Promise}
    */
-  function modify(projectId, projectInfo) {
-    return coreGateway.modifyProject(projectId, projectInfo);
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  function remove(projectId, userId) {
-    return coreGateway.removeProject(projectId, userId);
+  function remove(userId, projectId) {
+    return coreGateway.removeProject(userId, projectId);
   }
 };

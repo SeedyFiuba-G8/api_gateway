@@ -3,9 +3,8 @@ const axios = require('axios');
 module.exports = function coreGateway(config, errors, services, urlFactory) {
   return {
     createProject,
-    getAllProjects,
     getProjectById,
-    getProjectsByUserId,
+    getProjectsBy,
     health,
     modifyProject,
     ping,
@@ -15,12 +14,12 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
-  function createProject(projectInfo) {
-    const url = urlFactory('/project', services.core);
+  function createProject(userId, projectInfo) {
+    const url = urlFactory('/projects', services.core, {});
 
     return axios
       .post(url, projectInfo, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', uid: userId }
       })
       .then((res) => res.data.id)
       .catch((err) => Promise.reject(errors.FromAxios(err)));
@@ -29,12 +28,12 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
-  function getAllProjects() {
-    const url = urlFactory('/project', services.core);
+  function getProjectsBy(userId, filters) {
+    const url = urlFactory(`/projects`, services.core, filters);
 
     return axios
       .get(url, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', uid: userId }
       })
       .then((res) => res.data.projects)
       .catch((err) => Promise.reject(errors.FromAxios(err)));
@@ -43,26 +42,12 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
-  function getProjectsByUserId(userId) {
-    const url = urlFactory(`/project?userId=${userId}`, services.core);
+  function getProjectById(userId, projectId) {
+    const url = urlFactory(`/projects/${projectId}`, services.core, {});
 
     return axios
       .get(url, {
-        headers: { 'Content-Type': 'application/json' }
-      })
-      .then((res) => res.data.projects)
-      .catch((err) => Promise.reject(errors.FromAxios(err)));
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  function getProjectById(projectId) {
-    const url = urlFactory(`/project/${projectId}`, services.core);
-
-    return axios
-      .get(url, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', uid: userId }
       })
       .then((res) => res.data)
       .catch((err) => Promise.reject(errors.FromAxios(err)));
@@ -71,12 +56,12 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
-  function modifyProject(projectId, projectInfo) {
-    const url = urlFactory(`/project/${projectId}`, services.core);
+  function modifyProject(userId, projectId, projectInfo) {
+    const url = urlFactory(`/projects/${projectId}`, services.core, {});
 
     return axios
       .put(url, projectInfo, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', uid: userId }
       })
       .then((res) => res.data.id)
       .catch((err) => Promise.reject(errors.FromAxios(err)));
@@ -85,17 +70,13 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
-  function removeProject(projectId, userId) {
-    const url = urlFactory(`/project/${projectId}`, services.core);
+  function removeProject(userId, projectId) {
+    const url = urlFactory(`/projects/${projectId}`, services.core, {});
 
     return axios
-      .delete(
-        url,
-        { userId },
-        {
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
+      .delete(url, {
+        headers: { 'Content-Type': 'application/json', uid: userId }
+      })
       .then((res) => res.data.id)
       .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
@@ -104,7 +85,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function health() {
-    const url = urlFactory('/health', services.core);
+    const url = urlFactory('/health', services.core, {});
 
     return axios(url, {
       method: 'GET',
@@ -123,7 +104,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function ping() {
-    const url = urlFactory('/ping', services.core);
+    const url = urlFactory('/ping', services.core, {});
 
     return axios(url, {
       method: 'GET',

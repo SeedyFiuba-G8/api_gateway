@@ -26,12 +26,12 @@ module.exports = function apiRouter(
       // CORE MICROSERVICE
 
       // Projects
-      .use('/project', authMiddleware)
-      .get('/project', projectController.getAll)
-      .post('/project', projectController.create)
-      .get('/project/:projectId', projectController.get)
-      .put('/project/:projectId', projectController.modify)
-      .delete('/project/:projectId', projectController.remove)
+      .use('/projects', authMiddleware)
+      .get('/projects', projectController.getBy)
+      .post('/projects', projectController.create)
+      .get('/projects/:projectId', projectController.get)
+      .put('/projects/:projectId', projectController.modify)
+      .delete('/projects/:projectId', projectController.remove)
 
       // USERS MICROSERVICE
 

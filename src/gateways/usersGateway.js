@@ -14,7 +14,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
    * @returns {Promise<undefined>}
    */
   function getAllUsers() {
-    const url = urlFactory('/user', services.users);
+    const url = urlFactory('/user', services.users, {});
     return axios
       .get(url)
       .then((res) => res.data)
@@ -26,7 +26,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
    */
   function login(credentials, type) {
     const path = type === 'USER' ? '/user/session' : '/admin/session';
-    const url = urlFactory(path, services.users);
+    const url = urlFactory(path, services.users, {});
 
     return axios
       .post(url, credentials, {
@@ -40,7 +40,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
    * @returns {Promise<undefined>}
    */
   function registerAdmin(adminData) {
-    const url = urlFactory('/admin', services.users);
+    const url = urlFactory('/admin', services.users, {});
 
     return axios
       .post(url, adminData, {
@@ -53,7 +53,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
    * @returns {Promise<undefined>}
    */
   function registerUser(userData) {
-    const url = urlFactory('/user', services.users);
+    const url = urlFactory('/user', services.users, {});
     return axios
       .post(url, userData, {
         headers: { 'Content-Type': 'application/json' }
@@ -65,7 +65,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function health() {
-    const url = urlFactory('/health', services.users);
+    const url = urlFactory('/health', services.users, {});
 
     return axios(url, {
       method: 'GET',
@@ -84,7 +84,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function ping() {
-    const url = urlFactory('/ping', services.users);
+    const url = urlFactory('/ping', services.users, {});
 
     return axios(url, {
       method: 'GET',

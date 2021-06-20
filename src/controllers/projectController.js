@@ -2,17 +2,14 @@ module.exports = function projectController(expressify, projectService) {
   return expressify({
     create,
     get,
-    getAll,
+    getBy,
     modify,
     remove
   });
 
   async function create(req, res) {
-    const projectData = req.body;
-    const id = await projectService.create({
-      userId: req.context.session.id,
-      ...projectData
-    });
+    const projectInfo = req.body;
+    const id = await projectService.create(req.context.session.id, projectInfo);
 
     return res.status(200).json({ id });
   }
@@ -22,7 +19,10 @@ module.exports = function projectController(expressify, projectService) {
    */
   async function get(req, res) {
     const { projectId } = req.params;
-    const project = await projectService.getById(projectId);
+    const project = await projectService.getById(
+      req.context.session.id,
+      projectId
+    );
 
     return res.status(200).json(project);
   }
@@ -30,15 +30,13 @@ module.exports = function projectController(expressify, projectService) {
   /**
    * @returns {Promise}
    */
-  async function getAll(req, res) {
-    const { userId } = req.query;
-    let projects;
+  async function getBy(req, res) {
+    const filters = req.query;
 
-    if (!userId) {
-      projects = await projectService.getAll();
-    } else {
-      projects = await projectService.getByUserId(userId);
-    }
+    const projects = await projectService.getBy(
+      req.context.session.id,
+      filters
+    );
 
     return res.status(200).json({ projects });
   }
@@ -48,11 +46,12 @@ module.exports = function projectController(expressify, projectService) {
    */
   async function modify(req, res) {
     const { projectId } = req.params;
-    const projectData = req.body;
-    const id = await projectService.modify(projectId, {
-      ...projectData,
-      userId: req.context.session.id
-    });
+    const projectInfo = req.body;
+    const id = await projectService.modify(
+      req.context.session.id,
+      projectId,
+      projectInfo
+    );
 
     return res.status(200).json({ id });
   }
@@ -62,7 +61,7 @@ module.exports = function projectController(expressify, projectService) {
    */
   async function remove(req, res) {
     const { projectId } = req.params;
-    const id = await projectService.remove(projectId, req.context.session.id);
+    const id = await projectService.remove(req.context.session.id, projectId);
 
     return res.status(200).json({ id });
   }
