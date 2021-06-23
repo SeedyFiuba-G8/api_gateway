@@ -15,7 +15,7 @@ module.exports = function apiRouter(
       .get('/', (req, res) => res.redirect('/api-docs'))
 
       // OpenAPI Validator Middleware
-      .use(apiValidatorMiddleware)
+      // .use(apiValidatorMiddleware)
 
       // STATUS
 
