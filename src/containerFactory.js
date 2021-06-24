@@ -48,8 +48,8 @@ function createContainer() {
 
   container.register(
     'errorHandlerMiddleware',
-    function $errorHandlerMiddleware() {
-      return errorComponents.errorHandlerMiddleware();
+    function $errorHandlerMiddleware(logger) {
+      return errorComponents.errorHandlerMiddleware(logger);
     }
   );
 
