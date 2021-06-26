@@ -29,8 +29,8 @@
   "homepage": "https://github.com/SeedyFiuba-G8/api_gateway#readme",
   "dependencies": {
     "@seedyfiuba/api_components": "^1.0.3",
-    "@seedyfiuba/error_components": "^1.2.0",
-    "@seedyfiuba/logging_components": "^1.0.1",
+    "@seedyfiuba/error_components": "^1.2.1",
+    "@seedyfiuba/logging_components": "^1.0.2",
     "axios": "^0.21.1",
     "config": "^3.3.6",
     "cors": "^2.8.5",

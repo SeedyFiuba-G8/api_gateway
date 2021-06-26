@@ -33,13 +33,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
         headers: { 'Content-Type': 'application/json' }
       })
       .then((res) => res.data.id)
-      .catch((err) => {
-        console.log(
-          `[TEMP] [usersGateway:login] Fetch to ${url} failed with error:`,
-          err
-        );
-        return Promise.reject(errors.FromAxios(err));
-      });
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
@@ -52,13 +46,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
       .post(url, adminData, {
         headers: { 'Content-Type': 'application/json' }
       })
-      .catch((err) => {
-        console.log(
-          `[TEMP] [usersGateway:registerAdmin] Fetch to ${url} failed with error:`,
-          err
-        );
-        return Promise.reject(errors.FromAxios(err));
-      });
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
@@ -71,13 +59,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
       .post(url, userData, {
         headers: { 'Content-Type': 'application/json' }
       })
-      .catch((err) => {
-        console.log(
-          `[TEMP] [usersGateway:registerUser] Fetch to ${url} failed with error:`,
-          err
-        );
-        return Promise.reject(errors.FromAxios(err));
-      });
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
