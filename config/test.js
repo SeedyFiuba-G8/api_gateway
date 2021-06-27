@@ -1,13 +1,13 @@
 module.exports = {
   services: {
     apikeys: {
-      baseUrl: 'apikeys-test'
+      baseUrl: 'http://apikeys-test/'
     },
     core: {
-      baseUrl: 'core-test'
+      baseUrl: 'http://core-test/'
     },
     users: {
-      baseUrl: 'users-test'
+      baseUrl: 'http://users-test/'
     }
   }
 };
