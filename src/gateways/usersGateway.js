@@ -6,8 +6,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
     health,
     login,
     ping,
-    registerAdmin,
-    registerUser
+    register
   };
 
   /**
@@ -15,6 +14,7 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
    */
   function getAllUsers() {
     const url = urlFactory('/users', services.users);
+
     return axios
       .get(url)
       .then((res) => res.data)
@@ -39,24 +39,12 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise<undefined>}
    */
-  function registerAdmin(adminData) {
-    const url = urlFactory('/admins', services.users);
+  function register(registerData, type) {
+    const path = type === 'USER' ? '/users' : '/admins';
+    const url = urlFactory(path, services.users);
 
     return axios
-      .post(url, adminData, {
-        headers: { 'Content-Type': 'application/json' }
-      })
-      .catch((err) => Promise.reject(errors.FromAxios(err)));
-  }
-
-  /**
-   * @returns {Promise<undefined>}
-   */
-  function registerUser(userData) {
-    const url = urlFactory('/users', services.users);
-
-    return axios
-      .post(url, userData, {
+      .post(url, registerData, {
         headers: { 'Content-Type': 'application/json' }
       })
       .catch((err) => Promise.reject(errors.FromAxios(err)));

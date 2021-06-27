@@ -2,9 +2,10 @@ const express = require('express');
 
 module.exports = function apiRouter(
   adminAuthMiddleware,
+  adminController,
   apiValidatorMiddleware,
   authMiddleware,
-  usersController,
+  userController,
   projectController,
   statusController
 ) {
@@ -36,22 +37,17 @@ module.exports = function apiRouter(
       // USERS MICROSERVICE
 
       // Users
-      .get(
-        '/users',
-        authMiddleware,
-        adminAuthMiddleware,
-        usersController.getAllUsers
-      )
-      .post('/users', usersController.registerUser)
-      .post('/users/session', usersController.loginUser)
+      .get('/users', authMiddleware, adminAuthMiddleware, userController.getAll)
+      .post('/users', userController.register)
+      .post('/users/session', userController.login)
 
       // Admins
       .post(
         '/admins',
         authMiddleware,
         adminAuthMiddleware,
-        usersController.registerAdmin
+        adminController.register
       )
-      .post('/admins/session', usersController.loginAdmin)
+      .post('/admins/session', adminController.login)
   );
 };
