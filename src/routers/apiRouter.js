@@ -19,9 +19,9 @@ module.exports = function apiRouter(
 
       // STATUS
 
+      .get('/health', statusController.health)
       .get('/ping', statusController.ping)
       .get('/pingAll', statusController.pingAll)
-      .get('/health', statusController.health)
 
       // CORE MICROSERVICE
 
@@ -37,21 +37,21 @@ module.exports = function apiRouter(
 
       // Users
       .get(
-        '/user',
+        '/users',
         authMiddleware,
         adminAuthMiddleware,
         usersController.getAllUsers
       )
-      .post('/user', usersController.registerUser)
-      .post('/user/session', usersController.loginUser)
+      .post('/users', usersController.registerUser)
+      .post('/users/session', usersController.loginUser)
 
       // Admins
       .post(
-        '/admin',
+        '/admins',
         authMiddleware,
         adminAuthMiddleware,
         usersController.registerAdmin
       )
-      .post('/admin/session', usersController.loginAdmin)
+      .post('/admins/session', usersController.loginAdmin)
   );
 };

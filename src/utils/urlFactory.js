@@ -3,7 +3,7 @@ const querystring = require('querystring');
 const _ = require('lodash');
 
 module.exports = function $urlFactory() {
-  return function urlFactory(route, service, query) {
+  return function urlFactory(route, service, query = {}) {
     const { baseUrl } = service;
     let queryParams = '';
 

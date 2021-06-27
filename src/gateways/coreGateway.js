@@ -15,7 +15,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function createProject(userId, projectInfo) {
-    const url = urlFactory('/projects', services.core, {});
+    const url = urlFactory('/projects', services.core);
 
     return axios
       .post(url, projectInfo, {
@@ -43,7 +43,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function getProjectById(userId, projectId) {
-    const url = urlFactory(`/projects/${projectId}`, services.core, {});
+    const url = urlFactory(`/projects/${projectId}`, services.core);
 
     return axios
       .get(url, {
@@ -57,7 +57,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function modifyProject(userId, projectId, projectInfo) {
-    const url = urlFactory(`/projects/${projectId}`, services.core, {});
+    const url = urlFactory(`/projects/${projectId}`, services.core);
 
     return axios
       .put(url, projectInfo, {
@@ -71,7 +71,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function removeProject(userId, projectId) {
-    const url = urlFactory(`/projects/${projectId}`, services.core, {});
+    const url = urlFactory(`/projects/${projectId}`, services.core);
 
     return axios
       .delete(url, {
@@ -85,7 +85,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function health() {
-    const url = urlFactory('/health', services.core, {});
+    const url = urlFactory('/health', services.core);
 
     return axios(url, {
       method: 'GET',
@@ -104,7 +104,7 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
    * @returns {Promise}
    */
   function ping() {
-    const url = urlFactory('/ping', services.core, {});
+    const url = urlFactory('/ping', services.core);
 
     return axios(url, {
       method: 'GET',
