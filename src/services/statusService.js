@@ -1,4 +1,4 @@
-module.exports = function statusService(usersGateway) {
+module.exports = function statusService(coreGateway, usersGateway) {
   return {
     servicesHealth,
     pingServices
@@ -8,11 +8,14 @@ module.exports = function statusService(usersGateway) {
    * @returns {Promise}
    */
   async function servicesHealth() {
-    const [usersHealth] = await Promise.all([usersGateway.health()]);
+    const [coreHealth, usersHealth] = await Promise.all([
+      coreGateway.health(),
+      usersGateway.health()
+    ]);
 
     return {
       apikeys: {},
-      core: {},
+      core: coreHealth,
       users: usersHealth
     };
   }
@@ -21,11 +24,14 @@ module.exports = function statusService(usersGateway) {
    * @returns {Promise}
    */
   async function pingServices() {
-    const [usersStatus] = await Promise.all([usersGateway.ping()]);
+    const [coreStatus, usersStatus] = await Promise.all([
+      coreGateway.ping(),
+      usersGateway.ping()
+    ]);
 
     return {
       apikeys: '?',
-      core: '?',
+      core: coreStatus,
       users: usersStatus
     };
   }

@@ -91,12 +91,13 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
       method: 'GET',
       timeout: config.timeouts.health
     })
-      .then((res) => (res.status === 200 ? res.data : 'bad status'))
+      .then((res) => res.data)
       .catch((err) => {
         if (err.code === 'ECONNABORTED') {
           return 'timed out';
         }
-        return Promise.reject(errors.FromAxios(err));
+
+        return 'bad status';
       });
   }
 
@@ -110,12 +111,13 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
       method: 'GET',
       timeout: config.timeouts.ping
     })
-      .then((res) => (res.status === 200 ? 'ok' : 'bad status'))
+      .then(() => 'ok')
       .catch((err) => {
         if (err.code === 'ECONNABORTED') {
           return 'timed out';
         }
-        return Promise.reject(errors.FromAxios(err));
+
+        return 'bad status';
       });
   }
 };

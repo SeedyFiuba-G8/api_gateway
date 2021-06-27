@@ -9,9 +9,6 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
     register
   };
 
-  /**
-   * @returns {Promise<undefined>}
-   */
   function getAllUsers() {
     const url = urlFactory('/users', services.users);
 
@@ -21,9 +18,6 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
       .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
-  /**
-   * @returns {Promise<String>}
-   */
   function login(credentials, type) {
     const path = type === 'USER' ? '/users/session' : '/admins/session';
     const url = urlFactory(path, services.users);
@@ -36,9 +30,6 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
       .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
-  /**
-   * @returns {Promise<undefined>}
-   */
   function register(registerData, type) {
     const path = type === 'USER' ? '/users' : '/admins';
     const url = urlFactory(path, services.users);
@@ -50,9 +41,6 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
       .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
-  /**
-   * @returns {Promise}
-   */
   function health() {
     const url = urlFactory('/health', services.users);
 
@@ -60,18 +48,16 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
       method: 'GET',
       timeout: config.timeouts.health
     })
-      .then((res) => (res.status === 200 ? res.data : 'bad status'))
+      .then((res) => res.data)
       .catch((err) => {
         if (err.code === 'ECONNABORTED') {
           return 'timed out';
         }
-        return Promise.reject(errors.FromAxios(err));
+
+        return 'bad status';
       });
   }
 
-  /**
-   * @returns {Promise}
-   */
   function ping() {
     const url = urlFactory('/ping', services.users);
 
@@ -79,12 +65,13 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
       method: 'GET',
       timeout: config.timeouts.ping
     })
-      .then((res) => (res.status === 200 ? 'ok' : 'bad status'))
+      .then(() => 'ok')
       .catch((err) => {
         if (err.code === 'ECONNABORTED') {
           return 'timed out';
         }
-        return Promise.reject(errors.FromAxios(err));
+
+        return 'bad status';
       });
   }
 };

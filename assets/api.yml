@@ -794,14 +794,12 @@ components:
           type: object
           properties:
             apikeys:
-              type: object
-              example: { 'database': 'UP' }
+              $ref: '#/components/schemas/HealthServiceStatus'
             core:
-              type: object
-              example: { 'database': 'UP' }
+              $ref: '#/components/schemas/HealthServiceStatus'
             users:
-              type: object
-              example: { 'database': 'UP' }
+              $ref: '#/components/schemas/HealthServiceStatus'
+
           required:
             - apikeys
             - core
@@ -809,5 +807,12 @@ components:
       required:
         - status
         - services
+
+    HealthServiceStatus:
+      oneOf:
+        - type: object
+          example: { 'database': 'UP' }
+        - type: string
+          example: 'timed out'
 #
 # =============================================================================
