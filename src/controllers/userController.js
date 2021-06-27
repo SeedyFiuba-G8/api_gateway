@@ -9,7 +9,7 @@ module.exports = function $userController(expressify, userService) {
    * @returns {Promise}
    */
   async function getAll(req, res) {
-    const users = await userService.getAllUsers();
+    const users = await userService.getAll();
 
     return res.status(200).json(users);
   }
