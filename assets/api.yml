@@ -199,7 +199,7 @@ paths:
   /projects/{projectId}:
     get:
       summary: Get a project by id
-      description: Allos a user to get retrieve a project's information by its id.
+      description: Allows a user to retrieve a project's information by its id.
       security:
         - bearerAuth: []
       tags:
