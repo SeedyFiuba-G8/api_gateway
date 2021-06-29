@@ -271,7 +271,7 @@ paths:
         200:
           $ref: '#/components/responses/deleteProject'
         400:
-          $ref: '#/components/responses/deleteProject' #authMiddleware
+          $ref: '#/components/responses/400'
         403:
           $ref: '#/components/responses/403'
         404:
