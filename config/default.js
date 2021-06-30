@@ -6,6 +6,15 @@ module.exports = {
     host: '0.0.0.0',
     port: _.get(process.env, 'PORT', 3000)
   },
+  fetch: {
+    forwardHeaders: [
+      {
+        header: 'uid',
+        contextField: 'session.id'
+      }
+    ],
+    timeout: 1000 // ms
+  },
   jwt: {
     key: _.get(process.env, 'JWT_KEY', 'localkey'),
     expiration: '1h'
@@ -32,9 +41,5 @@ module.exports = {
     users: {
       baseUrl: 'https://sf-tdp2-users.herokuapp.com/'
     }
-  },
-  timeouts: {
-    ping: 500, // ms
-    health: 2000 // ms
   }
 };

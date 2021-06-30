@@ -1,13 +1,11 @@
 const axios = require('axios');
 
-module.exports = function coreGateway(config, errors, services, urlFactory) {
+module.exports = function coreGateway(errors, services, urlFactory) {
   return {
     createProject,
     getProjectById,
     getProjectsBy,
-    health,
     modifyProject,
-    ping,
     removeProject
   };
 
@@ -79,45 +77,5 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
       })
       .then((res) => res.data.id)
       .catch((err) => Promise.reject(errors.FromAxios(err)));
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  function health() {
-    const url = urlFactory('/health', services.core);
-
-    return axios(url, {
-      method: 'GET',
-      timeout: config.timeouts.health
-    })
-      .then((res) => res.data)
-      .catch((err) => {
-        if (err.code === 'ECONNABORTED') {
-          return 'timed out';
-        }
-
-        return 'bad status';
-      });
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  function ping() {
-    const url = urlFactory('/ping', services.core);
-
-    return axios(url, {
-      method: 'GET',
-      timeout: config.timeouts.ping
-    })
-      .then(() => 'ok')
-      .catch((err) => {
-        if (err.code === 'ECONNABORTED') {
-          return 'timed out';
-        }
-
-        return 'bad status';
-      });
   }
 };
