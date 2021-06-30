@@ -89,6 +89,35 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
+  /users/{userId}/profile:
+    get:
+      summary: Get a user's profile
+      description: Allow users to retrieve a user's profile by id.
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        200:
+          $ref: '#/components/responses/getProfile'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
   # ADMINS
   /admins:
     post:
@@ -153,7 +182,7 @@ paths:
           name: userId
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Id'
           description: The userId of whom we want to retrieve projects.
         - in: query
           name: limit
@@ -208,7 +237,7 @@ paths:
         - in: path
           name: projectId
           schema:
-            type: string
+            $ref: '#/components/schemas/Id'
           required: true
           description: uuid of the project to retrieve
       responses:
@@ -236,7 +265,7 @@ paths:
         - in: path
           name: projectId
           schema:
-            type: string
+            $ref: '#/components/schemas/Id'
           required: true
           description: uuid of the project to modify
       responses:
@@ -264,7 +293,7 @@ paths:
         - in: path
           name: projectId
           schema:
-            type: string
+            $ref: '#/components/schemas/Id'
           required: true
           description: uuid of the project to delete
       responses:
@@ -386,6 +415,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AllUsers'
+
+    getProfile:
+      description: User profile retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Profile'
 
     # COMMON
     postSession:
@@ -521,6 +557,30 @@ components:
       required:
         - error
 
+    # TYPES
+    Date:
+      type: string
+      format: date-time
+      example: '2021-06-13T21:29:29.330Z'
+
+    Email:
+      type: string
+      format: email
+      example: 'example@email.com'
+
+    Id:
+      type: string
+      format: uuid
+      example: '123e4567-e89b-12d3-a456-426614174000'
+
+    Token:
+      type: string
+      example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+
+    Picture:
+      type: string
+      example: 'https://imgur.com/gallery/rFvivtw'
+
     # USERS
     AllUsers:
       type: object
@@ -536,11 +596,9 @@ components:
       type: object
       properties:
         id:
-          type: string
-          example: 'SomePassword123'
+          $ref: '#/components/schemas/Id'
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         banned:
           type: boolean
           example: false
@@ -551,8 +609,7 @@ components:
           type: string
           example: 'Pomofot'
         signupDate:
-          type: string
-          example: '2021-06-13T21:29:29.340Z'
+          $ref: '#/components/schemas/Date'
       required:
         - id
         - email
@@ -565,8 +622,7 @@ components:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -582,13 +638,35 @@ components:
         - firstName
         - lastName
 
+    Profile:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+        banned:
+          type: boolean
+          example: false
+        signupDate:
+          $ref: '#/components/schemas/Date'
+        profilePicUrl:
+          $ref: '#/components/schemas/Picture'
+      required:
+        - firstName
+        - lastName
+        - banned
+        - signupDate
+        - profilePicUrl
+
     # ADMINS
     AdminRegisterData:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -611,11 +689,9 @@ components:
       type: object
       properties:
         id:
-          type: string
-          example: '670b9562-b30d-52d5-b827-655787665500'
+          $ref: '#/components/schemas/Id'
         userId:
-          type: string
-          example: '670b9562-b30d-52d5-b827-655787665500'
+          $ref: '#/components/schemas/Id'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -635,11 +711,9 @@ components:
           type: string
           example: 'Buenos Aires'
         publishedOn:
-          type: string
-          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+          $ref: '#/components/schemas/Date'
         finalizedBy:
-          type: string
-          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+          $ref: '#/components/schemas/Date'
       required:
         - id
         - userId
@@ -674,8 +748,7 @@ components:
           type: string
           example: 'Buenos Aires'
         finalizedBy:
-          type: string
-          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+          $ref: '#/components/schemas/Date'
       required:
         - title
         - description
@@ -707,32 +780,17 @@ components:
           type: string
           example: 'Buenos Aires'
         finalizedBy:
-          type: string
-          example: 'Sun Jun 06 2021 19:27:45 GMT-0300 (Argentina Standard Time)' #Date.toString()
+          $ref: '#/components/schemas/Date'
 
     ProjectId:
       type: object
       properties:
         id:
-          type: string
-          example: '670b9562-b30d-52d5-b827-655787665500'
+          $ref: '#/components/schemas/Id'
       required:
         - id
 
     # COMMON
-    LoginData:
-      type: object
-      properties:
-        email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
-        password:
-          type: string
-          example: 'SomePassword123'
-      required:
-        - email
-        - password
-
     FBLoginData:
       type: object
       properties:
@@ -741,16 +799,26 @@ components:
           example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
       required:
         - fbToken
+        - password
+
+    LoginData:
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/Email'
+        password:
+          type: string
+          example: 'SomePassword123'
+      required:
+        - email
 
     Session:
       type: object
       properties:
         id:
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
+          $ref: '#/components/schemas/Id'
         token:
-          type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+          $ref: '#/components/schemas/Token'
       required:
         - id
         - token

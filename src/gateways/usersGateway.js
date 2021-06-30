@@ -3,6 +3,7 @@ const axios = require('axios');
 module.exports = function usersGateway(config, errors, services, urlFactory) {
   return {
     getAllUsers,
+    getProfile,
     health,
     login,
     ping,
@@ -11,6 +12,15 @@ module.exports = function usersGateway(config, errors, services, urlFactory) {
 
   function getAllUsers() {
     const url = urlFactory('/users', services.users);
+
+    return axios
+      .get(url)
+      .then((res) => res.data)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
+  }
+
+  function getProfile(userId) {
+    const url = urlFactory(`/users/${userId}/profile`, services.users);
 
     return axios
       .get(url)

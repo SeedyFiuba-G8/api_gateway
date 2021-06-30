@@ -1,22 +1,24 @@
 module.exports = function $userController(expressify, userService) {
   return expressify({
     getAll,
+    getProfile,
     login,
     register
   });
 
-  /**
-   * @returns {Promise}
-   */
   async function getAll(req, res) {
     const users = await userService.getAll();
 
     return res.status(200).json(users);
   }
 
-  /**
-   * @returns {Promise}
-   */
+  async function getProfile(req, res) {
+    const { userId } = req.params;
+    const profile = await userService.getProfile(userId);
+
+    return res.status(200).json(profile);
+  }
+
   async function login(req, res) {
     const credentials = req.body;
     const session = await userService.login(credentials);
@@ -24,9 +26,6 @@ module.exports = function $userController(expressify, userService) {
     return res.status(200).json(session);
   }
 
-  /**
-   * @returns {Promise}
-   */
   async function register(req, res) {
     const userData = req.body;
     await userService.register(userData);

@@ -40,6 +40,7 @@ module.exports = function apiRouter(
       .get('/users', authMiddleware, adminAuthMiddleware, userController.getAll)
       .post('/users', userController.register)
       .post('/users/session', userController.login)
+      .get('/users/:userId/profile', userController.getProfile)
 
       // Admins
       .post(
