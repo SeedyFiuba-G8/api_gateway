@@ -1,20 +1,20 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 
-module.exports = function $authenticationMiddleware(config, errors) {
-  return async function authenticationMiddleware(req, res, next) {
+module.exports = function $authMiddleware(config, errors) {
+  return async function authMiddleware(req, res, next) {
     const bearerHeader = req.headers.authorization;
     if (!bearerHeader)
-      return next(errors.BadRequest('No bearer token provided'));
+      return next(errors.create(400, 'No bearer token provided'));
 
     const [type, token] = bearerHeader.split(' ');
     if (type !== 'Bearer')
-      return next(errors.BadRequest('Invalid token type, not bearer'));
+      return next(errors.create(400, 'Invalid token type, not bearer'));
 
     let sessionPayload;
 
     try {
-      sessionPayload = jwt.verify(token, config.jwt.key);
+      sessionPayload = await jwt.verify(token, config.jwt.key);
     } catch (err) {
       return next(err);
     }

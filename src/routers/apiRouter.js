@@ -1,9 +1,11 @@
 const express = require('express');
 
 module.exports = function apiRouter(
+  adminAuthMiddleware,
+  adminController,
   apiValidatorMiddleware,
-  authenticationMiddleware,
-  usersController,
+  authMiddleware,
+  userController,
   projectController,
   statusController
 ) {
@@ -17,38 +19,35 @@ module.exports = function apiRouter(
       .use(apiValidatorMiddleware)
 
       // STATUS
+
+      .get('/health', statusController.health)
       .get('/ping', statusController.ping)
       .get('/pingAll', statusController.pingAll)
-      .get('/health', statusController.health)
 
       // CORE MICROSERVICE
+
       // Projects
-      .get('/project', authenticationMiddleware, projectController.getAll)
-      .post('/project', authenticationMiddleware, projectController.create)
-      .get(
-        '/project/:projectId',
-        authenticationMiddleware,
-        projectController.get
-      )
-      .put(
-        '/project/:projectId',
-        authenticationMiddleware,
-        projectController.modify
-      )
-      .delete(
-        '/project/:projectId',
-        authenticationMiddleware,
-        projectController.remove
-      )
+      .use('/projects', authMiddleware)
+      .get('/projects', projectController.getBy)
+      .post('/projects', projectController.create)
+      .get('/projects/:projectId', projectController.get)
+      .put('/projects/:projectId', projectController.modify)
+      .delete('/projects/:projectId', projectController.remove)
 
       // USERS MICROSERVICE
 
       // Users
-      .post('/user', usersController.registerUser)
-      .post('/user/session', usersController.loginUser)
+      .get('/users', authMiddleware, adminAuthMiddleware, userController.getAll)
+      .post('/users', userController.register)
+      .post('/users/session', userController.login)
 
       // Admins
-      .post('/admin', usersController.registerAdmin)
-      .post('/admin/session', usersController.loginAdmin)
+      .post(
+        '/admins',
+        authMiddleware,
+        adminAuthMiddleware,
+        adminController.register
+      )
+      .post('/admins/session', adminController.login)
   );
 };

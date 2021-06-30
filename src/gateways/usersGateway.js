@@ -2,110 +2,76 @@ const axios = require('axios');
 
 module.exports = function usersGateway(config, errors, services, urlFactory) {
   return {
-    login,
-    registerAdmin,
-    registerUser,
-
-    // Status
+    getAllUsers,
     health,
-    ping
+    login,
+    ping,
+    register
   };
 
-  /**
-   * @returns {undefined}
-   */
-  async function login(credentials, type) {
-    let url;
-    if (type === 'USER') {
-      url = urlFactory('/user/session', services.users);
-    } else {
-      url = urlFactory('/admin/session', services.users);
-    }
+  function getAllUsers() {
+    const url = urlFactory('/users', services.users);
 
-    let response;
-
-    try {
-      response = await axios.post(url, credentials, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return response.data.id;
+    return axios
+      .get(url)
+      .then((res) => res.data)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
-  /**
-   * @returns {undefined}
-   */
-  async function registerAdmin(adminData) {
-    const url = urlFactory('/admin', services.users);
+  function login(credentials, type) {
+    const path = type === 'USER' ? '/users/session' : '/admins/session';
+    const url = urlFactory(path, services.users);
 
-    try {
-      await axios.post(url, adminData, {
+    return axios
+      .post(url, credentials, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
+      })
+      .then((res) => res.data.id)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
-  /**
-   * @returns {undefined}
-   */
-  async function registerUser(userData) {
-    const url = urlFactory('/user', services.users);
+  function register(registerData, type) {
+    const path = type === 'USER' ? '/users' : '/admins';
+    const url = urlFactory(path, services.users);
 
-    try {
-      await axios.post(url, userData, {
+    return axios
+      .post(url, registerData, {
         headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
+      })
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
-  /**
-   * @returns {Promise}
-   */
-  async function health() {
+  function health() {
     const url = urlFactory('/health', services.users);
-    let response;
 
-    try {
-      response = await axios(url, {
-        method: 'GET',
-        timeout: config.timeouts.health
+    return axios(url, {
+      method: 'GET',
+      timeout: config.timeouts.health
+    })
+      .then((res) => res.data)
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+
+        return 'bad status';
       });
-    } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        return 'timed out';
-      }
-      throw err;
-    }
-
-    return response.status === 200 ? response.data : 'bad status';
   }
 
-  /**
-   * @returns {Promise}
-   */
-  async function ping() {
+  function ping() {
     const url = urlFactory('/ping', services.users);
-    let response;
 
-    try {
-      response = await axios(url, {
-        method: 'GET',
-        timeout: config.timeouts.ping
+    return axios(url, {
+      method: 'GET',
+      timeout: config.timeouts.ping
+    })
+      .then(() => 'ok')
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+
+        return 'bad status';
       });
-    } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        return 'timed out';
-      }
-      throw err;
-    }
-
-    return response.status === 200 ? 'ok' : 'bad status';
   }
 };

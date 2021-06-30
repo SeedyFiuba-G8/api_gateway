@@ -3,9 +3,8 @@ const axios = require('axios');
 module.exports = function coreGateway(config, errors, services, urlFactory) {
   return {
     createProject,
-    getAllProjects,
     getProjectById,
-    getProjectsByUserId,
+    getProjectsBy,
     health,
     modifyProject,
     ping,
@@ -15,156 +14,110 @@ module.exports = function coreGateway(config, errors, services, urlFactory) {
   /**
    * @returns {Promise}
    */
-  async function createProject(projectInfo) {
-    const url = urlFactory('/project', services.core);
-    let response;
+  function createProject(userId, projectInfo) {
+    const url = urlFactory('/projects', services.core);
 
-    try {
-      response = await axios.post(url, projectInfo, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+    return axios
+      .post(url, projectInfo, {
+        headers: { 'Content-Type': 'application/json', uid: userId }
+      })
+      .then((res) => res.data.id)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function getAllProjects() {
-    const url = urlFactory('/project', services.core);
-    let response;
+  function getProjectsBy(userId, filters) {
+    const url = urlFactory(`/projects`, services.core, filters);
 
-    try {
-      response = await axios.get(url, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+    return axios
+      .get(url, {
+        headers: { 'Content-Type': 'application/json', uid: userId }
+      })
+      .then((res) => res.data.projects)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function getProjectsByUserId(userId) {
-    const url = urlFactory(`/project?userId=${userId}`, services.core);
-    let response;
+  function getProjectById(userId, projectId) {
+    const url = urlFactory(`/projects/${projectId}`, services.core);
 
-    try {
-      response = await axios.get(url, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+    return axios
+      .get(url, {
+        headers: { 'Content-Type': 'application/json', uid: userId }
+      })
+      .then((res) => res.data)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function getProjectById(projectId) {
-    const url = urlFactory(`/project/${projectId}`, services.core);
-    let response;
+  function modifyProject(userId, projectId, projectInfo) {
+    const url = urlFactory(`/projects/${projectId}`, services.core);
 
-    try {
-      response = await axios.get(url, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+    return axios
+      .put(url, projectInfo, {
+        headers: { 'Content-Type': 'application/json', uid: userId }
+      })
+      .then((res) => res.data.id)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function modifyProject(projectId, projectInfo) {
-    const url = urlFactory(`/project/${projectId}`, services.core);
-    let response;
+  function removeProject(userId, projectId) {
+    const url = urlFactory(`/projects/${projectId}`, services.core);
 
-    try {
-      response = await axios.put(url, projectInfo, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
+    return axios
+      .delete(url, {
+        headers: { 'Content-Type': 'application/json', uid: userId }
+      })
+      .then((res) => res.data.id)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 
   /**
    * @returns {Promise}
    */
-  async function removeProject(projectId, userId) {
-    const url = urlFactory(`/project/${projectId}`, services.core);
-    let response;
-
-    try {
-      response = await axios.delete(
-        url,
-        { userId },
-        {
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return { status: response.status, data: response.data };
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  async function health() {
+  function health() {
     const url = urlFactory('/health', services.core);
-    let response;
 
-    try {
-      response = await axios(url, {
-        method: 'GET',
-        timeout: config.timeouts.health
+    return axios(url, {
+      method: 'GET',
+      timeout: config.timeouts.health
+    })
+      .then((res) => res.data)
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+
+        return 'bad status';
       });
-    } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        return 'timed out';
-      }
-      throw err;
-    }
-
-    return response.status === 200 ? response.data : 'bad status';
   }
 
   /**
    * @returns {Promise}
    */
-  async function ping() {
+  function ping() {
     const url = urlFactory('/ping', services.core);
-    let response;
 
-    try {
-      response = await axios(url, {
-        method: 'GET',
-        timeout: config.timeouts.ping
+    return axios(url, {
+      method: 'GET',
+      timeout: config.timeouts.ping
+    })
+      .then(() => 'ok')
+      .catch((err) => {
+        if (err.code === 'ECONNABORTED') {
+          return 'timed out';
+        }
+
+        return 'bad status';
       });
-    } catch (err) {
-      if (err.code === 'ECONNABORTED') {
-        return 'timed out';
-      }
-      throw err;
-    }
-
-    return response.status === 200 ? 'ok' : 'bad status';
   }
 };

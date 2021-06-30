@@ -29,8 +29,27 @@ tags:
 # =============================================================================
 
 paths:
-  # USERS MICROSERVICE
-  /user:
+  # USERS
+  /users:
+    get:
+      summary: Get all users
+      description: Get info from every user (only for admins).
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+      responses:
+        200:
+          $ref: '#/components/responses/getAllUsers'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        409:
+          $ref: '#/components/responses/409'
+        500:
+          $ref: '#/components/responses/500'
+
     post:
       summary: Register a new user
       description: Allows users to create a new basic account by email.
@@ -50,7 +69,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-  /user/session:
+  /users/session:
     post:
       summary: Log in an user session
       description: Allows users to log in to their account in a new session.
@@ -71,15 +90,17 @@ paths:
           $ref: '#/components/responses/500'
 
   # ADMINS
-  /admin:
+  /admins:
     post:
       summary: Register a new admin
       description: >
         Allows to add new admins to the webadmin system.
 
-        [TEMP: Will change process later. A link will be send to the
+        [TEMP: Process will change later. A link will be send to the
         email provided and the user will be able to create an admin
         account using that link.]
+      security:
+        - bearerAuth: []
       tags:
         - Admins
       requestBody:
@@ -89,6 +110,10 @@ paths:
           description: 'Admin was registered successfully.'
         400:
           $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
         409:
           $ref: '#/components/responses/409'
         415:
@@ -96,7 +121,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-  /admin/session:
+  /admins/session:
     post:
       summary: Log in an admin session
       description: Allows admins to log in to their account in a new session.
@@ -117,10 +142,10 @@ paths:
           $ref: '#/components/responses/500'
 
   # PROJECTS
-  /project:
+  /projects:
     get:
-      summary: Get all projects (optionally, of a specified user)
-      description: Get info from every project (of the app/of the user).
+      summary: Get all projects (optionally, of a specified user) ordered by creation date
+      description: Get info from every project (of the app/of the user) ordered by creation date.
       security:
         - bearerAuth: []
       parameters:
@@ -130,13 +155,25 @@ paths:
           schema:
             type: string
           description: The userId of whom we want to retrieve projects.
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+          description: The number of projects to be retrieved.
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+          description: The number of projects we want to take as offset.
       tags:
         - Projects
       responses:
         200:
-          $ref: '#/components/responses/getAllProjects'
-        404:
-          $ref: '#/components/responses/404'
+          $ref: '#/components/responses/getProjects'
+        400:
+          $ref: '#/components/responses/deleteProject' #authMiddleware
         500:
           $ref: '#/components/responses/500'
 
@@ -153,18 +190,16 @@ paths:
         200:
           $ref: '#/components/responses/postProject'
         400:
-          $ref: '#/components/responses/400'
-        409:
-          $ref: '#/components/responses/409'
+          $ref: '#/components/responses/400' #authMiddleware
         415:
           $ref: '#/components/responses/415'
         500:
           $ref: '#/components/responses/500'
 
-  /project/{projectId}:
+  /projects/{projectId}:
     get:
-      summary: Get a project by id.
-      description: Allos a user to get retrieve a project's information by its id.
+      summary: Get a project by id
+      description: Allows a user to retrieve a project's information by its id.
       security:
         - bearerAuth: []
       tags:
@@ -180,7 +215,7 @@ paths:
         200:
           $ref: '#/components/responses/getProject'
         400:
-          $ref: '#/components/responses/400'
+          $ref: '#/components/responses/deleteProject' #aithMiddleware
         404:
           $ref: '#/components/responses/404'
         415:
@@ -188,7 +223,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-    put:
+    patch:
       summary: Modify the information of the project.
       description: Allows an owner of a project or an admin to modify the information of a project.
       security:
@@ -196,7 +231,7 @@ paths:
       tags:
         - Projects
       requestBody:
-        $ref: '#/components/requestBodies/putProject'
+        $ref: '#/components/requestBodies/patchProject'
       parameters:
         - in: path
           name: projectId
@@ -206,11 +241,11 @@ paths:
           description: uuid of the project to modify
       responses:
         200:
-          $ref: '#/components/responses/putProject'
+          $ref: '#/components/responses/patchProject'
         400:
-          $ref: '#/components/responses/400'
-        401:
-          $ref: '#/components/responses/401'
+          $ref: '#/components/responses/400' #authMiddleware
+        403:
+          $ref: '#/components/responses/403'
         404:
           $ref: '#/components/responses/404'
         415:
@@ -237,8 +272,8 @@ paths:
           $ref: '#/components/responses/deleteProject'
         400:
           $ref: '#/components/responses/400'
-        401:
-          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
         404:
           $ref: '#/components/responses/404'
         415:
@@ -309,6 +344,13 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 
+    403:
+      description: Forbidden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
     404:
       description: Not found.
       content:
@@ -337,6 +379,14 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 
+    # USERS
+    getAllUsers:
+      description: Users info retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AllUsers'
+
     # COMMON
     postSession:
       description: Logged in successfully.
@@ -346,7 +396,7 @@ components:
             $ref: '#/components/schemas/Session'
 
     # PROJECTS
-    getAllProjects:
+    getProjects:
       description: Projects info retrieved successfully.
       content:
         application/json:
@@ -367,7 +417,7 @@ components:
           schema:
             $ref: '#/components/schemas/ProjectId'
 
-    putProject:
+    patchProject:
       description: Project modified successfully.
       content:
         application/json:
@@ -429,12 +479,12 @@ components:
           schema:
             $ref: '#/components/schemas/PostProjectData'
 
-    putProject:
+    patchProject:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PutProjectData'
+            $ref: '#/components/schemas/PatchProjectData'
 
     # COMMON
     postSession:
@@ -462,9 +512,9 @@ components:
             message:
               type: string
             errors:
-              type: object
-            data:
-              type: object
+              type: array
+              items:
+                type: object
           required:
             - status
             - name
@@ -472,6 +522,45 @@ components:
         - error
 
     # USERS
+    AllUsers:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+      required:
+        - users
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'SomePassword123'
+        email:
+          type: string
+          example: 'memis_pomofot@gmail.com'
+        banned:
+          type: boolean
+          example: false
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+        signupDate:
+          type: string
+          example: '2021-06-13T21:29:29.340Z'
+      required:
+        - id
+        - email
+        - banned
+        - firstName
+        - lastName
+        - signupDate
+
     UserRegisterData:
       type: object
       properties:
@@ -596,7 +685,7 @@ components:
         - city
         - finalizedBy
 
-    PutProjectData:
+    PatchProjectData:
       type: object
       properties:
         title:
@@ -705,14 +794,12 @@ components:
           type: object
           properties:
             apikeys:
-              type: object
-              example: { 'database': 'UP' }
+              $ref: '#/components/schemas/HealthServiceStatus'
             core:
-              type: object
-              example: { 'database': 'UP' }
+              $ref: '#/components/schemas/HealthServiceStatus'
             users:
-              type: object
-              example: { 'database': 'UP' }
+              $ref: '#/components/schemas/HealthServiceStatus'
+
           required:
             - apikeys
             - core
@@ -720,5 +807,12 @@ components:
       required:
         - status
         - services
+
+    HealthServiceStatus:
+      oneOf:
+        - type: object
+          example: { 'database': 'UP' }
+        - type: string
+          example: 'timed out'
 #
 # =============================================================================

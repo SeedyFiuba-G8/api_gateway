@@ -1,97 +1,68 @@
-module.exports = function projectController(projectService) {
-  return {
+module.exports = function projectController(expressify, projectService) {
+  return expressify({
     create,
     get,
-    getAll,
+    getBy,
     modify,
     remove
-  };
+  });
 
-  /**
-   * @returns {Promise}
-   */
-  async function create(req, res, next) {
-    const projectData = req.body;
-    let response;
+  async function create(req, res) {
+    const projectInfo = req.body;
+    const id = await projectService.create(req.context.session.id, projectInfo);
 
-    try {
-      response = await projectService.create({
-        userId: req.context.session.id,
-        ...projectData
-      });
-    } catch (err) {
-      return next(err);
-    }
-
-    return res.status(response.status).send(response.data);
+    return res.status(200).json({ id });
   }
 
   /**
    * @returns {Promise}
    */
-  async function get(req, res, next) {
+  async function get(req, res) {
     const { projectId } = req.params;
-    let response;
+    const project = await projectService.getById(
+      req.context.session.id,
+      projectId
+    );
 
-    try {
-      response = await projectService.getById(projectId);
-    } catch (err) {
-      return next(err);
-    }
-
-    return res.status(response.status).send(response.data);
+    return res.status(200).json(project);
   }
 
   /**
    * @returns {Promise}
    */
-  async function getAll(req, res, next) {
-    let response;
-    const { userId } = req.query;
-    const method = userId ? 'getByUserId' : 'getAll';
+  async function getBy(req, res) {
+    const filters = req.query;
 
-    try {
-      response = await projectService[method](userId);
-    } catch (err) {
-      return next(err);
-    }
+    const projects = await projectService.getBy(
+      req.context.session.id,
+      filters
+    );
 
-    return res.status(response.status).send(response.data);
+    return res.status(200).json({ projects });
   }
 
   /**
    * @returns {Promise}
    */
-  async function modify(req, res, next) {
+  async function modify(req, res) {
     const { projectId } = req.params;
-    const projectData = req.body;
-    let response;
+    const projectInfo = req.body;
+    const id = await projectService.modify(
+      req.context.session.id,
+      projectId,
+      projectInfo
+    );
 
-    try {
-      response = await projectService.modify(projectId, {
-        ...projectData,
-        userId: req.context.session.id
-      });
-    } catch (err) {
-      return next(err);
-    }
-
-    return res.status(response.status).send(response.data);
+    return res.status(200).json({ id });
   }
 
   /**
    * @returns {Promise}
    */
-  async function remove(req, res, next) {
+  async function remove(req, res) {
     const { projectId } = req.params;
-    let response;
+    const id = await projectService.remove(req.context.session.id, projectId);
 
-    try {
-      response = await projectService.remove(projectId, req.context.session.id);
-    } catch (err) {
-      return next(err);
-    }
-
-    return res.status(response.status).send(response.data);
+    return res.status(200).json({ id });
   }
 };
