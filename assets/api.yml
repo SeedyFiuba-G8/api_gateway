@@ -76,7 +76,7 @@ paths:
       tags:
         - Users
       requestBody:
-        $ref: '#/components/requestBodies/postSession'
+        $ref: '#/components/requestBodies/postUserSession'
       responses:
         200:
           $ref: '#/components/responses/postSession'
@@ -157,7 +157,7 @@ paths:
       tags:
         - Admins
       requestBody:
-        $ref: '#/components/requestBodies/postSession'
+        $ref: '#/components/requestBodies/postAdminSession'
       responses:
         200:
           $ref: '#/components/responses/postSession'
@@ -357,6 +357,56 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
+  # ---------------------------------------------------------------------------
+  requestBodies:
+    # USERS
+    postUser:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserRegisterData'
+
+    postUserSession:
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/LoginData'
+              - $ref: '#/components/schemas/FBLoginData'
+
+    # ADMINS
+    postAdmin:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AdminRegisterData'
+
+    postAdminSession:
+      required: true
+      content:
+        application/json:
+          schema:
+            - $ref: '#/components/schemas/LoginData'
+
+    # PROJECTS
+    postProject:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostProjectData'
+
+    patchProject:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PatchProjectData'
+
+  # ---------------------------------------------------------------------------
   responses:
     # ERRORS
     400:
@@ -490,49 +540,6 @@ components:
             $ref: '#/components/schemas/PingAll'
 
   # ---------------------------------------------------------------------------
-  requestBodies:
-    # USERS
-    postUser:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UserRegisterData'
-
-    # ADMINS
-    postAdmin:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AdminRegisterData'
-
-    # PROJECTS
-    postProject:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PostProjectData'
-
-    patchProject:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PatchProjectData'
-
-    # COMMON
-    postSession:
-      required: true
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/LoginData'
-              - $ref: '#/components/schemas/FBLoginData'
-
-  # ---------------------------------------------------------------------------
   schemas:
     # GENERAL
     Error:
@@ -568,6 +575,10 @@ components:
       format: email
       example: 'example@email.com'
 
+    FBToken:
+      type: string
+      example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
+
     Id:
       type: string
       format: uuid
@@ -591,6 +602,37 @@ components:
             $ref: '#/components/schemas/User'
       required:
         - users
+
+    FBLoginData:
+      type: object
+      properties:
+        fbToken:
+          $ref: '#/components/schemas/FBToken'
+      required:
+        - fbToken
+
+    Profile:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+        banned:
+          type: boolean
+          example: false
+        signupDate:
+          $ref: '#/components/schemas/Date'
+        profilePicUrl:
+          $ref: '#/components/schemas/Picture'
+      required:
+        - firstName
+        - lastName
+        - banned
+        - signupDate
+        - profilePicUrl
 
     User:
       type: object
@@ -637,29 +679,6 @@ components:
         - password
         - firstName
         - lastName
-
-    Profile:
-      type: object
-      properties:
-        firstName:
-          type: string
-          example: 'Memis'
-        lastName:
-          type: string
-          example: 'Pomofot'
-        banned:
-          type: boolean
-          example: false
-        signupDate:
-          $ref: '#/components/schemas/Date'
-        profilePicUrl:
-          $ref: '#/components/schemas/Picture'
-      required:
-        - firstName
-        - lastName
-        - banned
-        - signupDate
-        - profilePicUrl
 
     # ADMINS
     AdminRegisterData:
@@ -792,16 +811,6 @@ components:
         - id
 
     # COMMON
-    FBLoginData:
-      type: object
-      properties:
-        fbToken:
-          type: string
-          example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
-      required:
-        - fbToken
-        - password
-
     LoginData:
       type: object
       properties:
@@ -881,6 +890,8 @@ components:
       oneOf:
         - type: object
           example: { 'database': 'UP' }
+        - type: string
+          example: 'bad status'
         - type: string
           example: 'timed out'
 #
