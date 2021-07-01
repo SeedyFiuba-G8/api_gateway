@@ -1,15 +1,12 @@
-module.exports = function statusController(expressify, statusService) {
+module.exports = function $statusController(expressify, statusService) {
   return expressify({
     health,
     ping,
     pingAll
   });
 
-  /**
-   * @returns {Promise}
-   */
   async function health(req, res) {
-    const servicesHealth = await statusService.servicesHealth();
+    const servicesHealth = await statusService.healthServices();
 
     const response = {
       status: 'UP',
@@ -19,20 +16,10 @@ module.exports = function statusController(expressify, statusService) {
     return res.status(200).json(response);
   }
 
-  /**
-   * @returns {Promise}
-   */
-  function ping(req, res) {
-    const response = {
-      status: 'ok'
-    };
-
-    return res.status(200).json(response);
+  async function ping(req, res) {
+    return res.status(200).json({ status: 'ok' });
   }
 
-  /**
-   * @returns {Promise}
-   */
   async function pingAll(req, res) {
     const servicesStatus = await statusService.pingServices();
 

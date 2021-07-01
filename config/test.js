@@ -1,7 +1,7 @@
 module.exports = {
   services: {
     apikeys: {
-      baseUrl: 'http://apikeys-test/'
+      baseUrl: undefined
     },
     core: {
       baseUrl: 'http://core-test/'

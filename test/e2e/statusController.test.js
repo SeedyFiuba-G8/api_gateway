@@ -4,18 +4,12 @@ const containerFactory = require('../testContainerFactory');
 const container = containerFactory.createContainer();
 
 describe('statusController', () => {
-  let coreGateway;
-  let coreNocks;
   let request;
-  let usersGateway;
-  let usersNocks;
+  let statusNocks;
 
   beforeEach(() => {
-    coreGateway = container.get('coreGateway');
-    coreNocks = container.get('coreNocks');
     request = supertest(container.get('app'));
-    usersGateway = container.get('usersGateway');
-    usersNocks = container.get('usersNocks');
+    statusNocks = container.get('statusNocks');
   });
 
   afterEach(() => {
@@ -42,8 +36,8 @@ describe('statusController', () => {
           }
         };
 
-        coreNocks.nockHealth();
-        usersNocks.nockHealth();
+        statusNocks.nockCoreHealth();
+        statusNocks.nockUsersHealth();
       });
 
       describe('when apikeys is down', () => {
@@ -56,7 +50,7 @@ describe('statusController', () => {
         describe('when core times out', () => {
           beforeEach(() => {
             response.services.core = 'timed out';
-            jest.spyOn(coreGateway, 'health').mockReturnValueOnce('timed out');
+            statusNocks.nockCoreHealth(504);
           });
 
           it('should respond with correct status and body', () =>
@@ -69,7 +63,7 @@ describe('statusController', () => {
         describe('when core returns bad status', () => {
           beforeEach(() => {
             response.services.core = 'bad status';
-            coreNocks.nockHealth(500);
+            statusNocks.nockCoreHealth(500);
           });
 
           it('should respond with correct status and body', () =>
@@ -84,7 +78,7 @@ describe('statusController', () => {
         describe('when users times out', () => {
           beforeEach(() => {
             response.services.users = 'timed out';
-            jest.spyOn(usersGateway, 'health').mockReturnValueOnce('timed out');
+            statusNocks.nockUsersHealth(504);
           });
 
           it('should respond with correct status and body', () =>
@@ -97,7 +91,7 @@ describe('statusController', () => {
         describe('when users returns bad status', () => {
           beforeEach(() => {
             response.services.users = 'bad status';
-            usersNocks.nockHealth(500);
+            statusNocks.nockUsersHealth(500);
           });
 
           it('should respond with correct status and body', () =>
@@ -146,8 +140,8 @@ describe('statusController', () => {
           }
         };
 
-        coreNocks.nockPing();
-        usersNocks.nockPing();
+        statusNocks.nockCorePing();
+        statusNocks.nockUsersPing();
       });
 
       describe('when apikeys is down', () => {
@@ -160,7 +154,7 @@ describe('statusController', () => {
         describe('when core times out', () => {
           beforeEach(() => {
             response.services.core = 'timed out';
-            jest.spyOn(coreGateway, 'ping').mockReturnValueOnce('timed out');
+            statusNocks.nockCorePing(504);
           });
 
           afterEach(() => {
@@ -177,7 +171,7 @@ describe('statusController', () => {
         describe('when core returns bad status', () => {
           beforeEach(() => {
             response.services.core = 'bad status';
-            coreNocks.nockPing(500);
+            statusNocks.nockCorePing(500);
           });
 
           it('should respond with correct status and body', () =>
@@ -192,7 +186,7 @@ describe('statusController', () => {
         describe('when users times out', () => {
           beforeEach(() => {
             response.services.users = 'timed out';
-            jest.spyOn(usersGateway, 'ping').mockReturnValueOnce('timed out');
+            statusNocks.nockUsersPing(504);
           });
 
           it('should respond with correct status and body', () =>
@@ -205,7 +199,7 @@ describe('statusController', () => {
         describe('when users returns bad status', () => {
           beforeEach(() => {
             response.services.users = 'bad status';
-            usersNocks.nockPing(500);
+            statusNocks.nockUsersPing(500);
           });
 
           it('should respond with correct status and body', () =>

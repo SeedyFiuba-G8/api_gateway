@@ -11,8 +11,8 @@ module.exports = function $app(
 
   // Pre middleware
   app.use(corsMiddleware);
-  app.use(loggingMiddleware);
   app.use(express.json());
+  app.use(loggingMiddleware);
 
   // Routers
   app.use(docsRouter);
