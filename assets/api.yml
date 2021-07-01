@@ -389,7 +389,7 @@ components:
       content:
         application/json:
           schema:
-            - $ref: '#/components/schemas/LoginData'
+            $ref: '#/components/schemas/LoginData'
 
     # PROJECTS
     postProject:
@@ -877,7 +877,6 @@ components:
               $ref: '#/components/schemas/HealthServiceStatus'
             users:
               $ref: '#/components/schemas/HealthServiceStatus'
-
           required:
             - apikeys
             - core
@@ -890,8 +889,6 @@ components:
       oneOf:
         - type: object
           example: { 'database': 'UP' }
-        - type: string
-          example: 'bad status'
         - type: string
           example: 'timed out'
 #
