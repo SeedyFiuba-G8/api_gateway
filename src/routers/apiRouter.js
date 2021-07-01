@@ -1,12 +1,10 @@
 const express = require('express');
 
-module.exports = function apiRouter(
-  adminAuthMiddleware,
-  adminController,
+module.exports = function $apiRouter(
   apiValidatorMiddleware,
-  authMiddleware,
-  userController,
-  projectController,
+  forwardCoreRouter,
+  forwardUsersRouter,
+  sessionController,
   statusController
 ) {
   return (
@@ -16,39 +14,25 @@ module.exports = function apiRouter(
       .get('/', (req, res) => res.redirect('/api-docs'))
 
       // OpenAPI Validator Middleware
+      // (every route defined after this point needs to be API-defined)
       .use(apiValidatorMiddleware)
 
-      // STATUS
+      // Forwarded routes
+      .use(forwardCoreRouter)
+      .use(forwardUsersRouter)
 
+      // SPECIAL TREATMENT ROUTES
+      // Routes defined below cannot be directly forwarded either because
+      // they need special treatment from gateway, or because they don't
+      // map 1:1 to a particular microservice
+
+      // STATUS
       .get('/health', statusController.health)
       .get('/ping', statusController.ping)
       .get('/pingAll', statusController.pingAll)
 
-      // CORE MICROSERVICE
-
-      // Projects
-      .use('/projects', authMiddleware)
-      .get('/projects', projectController.getBy)
-      .post('/projects', projectController.create)
-      .get('/projects/:projectId', projectController.get)
-      .put('/projects/:projectId', projectController.modify)
-      .delete('/projects/:projectId', projectController.remove)
-
       // USERS MICROSERVICE
-
-      // Users
-      .get('/users', authMiddleware, adminAuthMiddleware, userController.getAll)
-      .post('/users', userController.register)
-      .post('/users/session', userController.login)
-      .get('/users/:userId/profile', userController.getProfile)
-
-      // Admins
-      .post(
-        '/admins',
-        authMiddleware,
-        adminAuthMiddleware,
-        adminController.register
-      )
-      .post('/admins/session', adminController.login)
+      .post('/users/session', sessionController.loginUser)
+      .post('/admins/session', sessionController.loginAdmin)
   );
 };

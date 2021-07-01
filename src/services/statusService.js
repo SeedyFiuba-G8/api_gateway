@@ -1,38 +1,37 @@
-module.exports = function statusService(coreGateway, usersGateway) {
+const _ = require('lodash');
+
+module.exports = function statusService(services, statusGateway) {
   return {
-    servicesHealth,
+    healthServices,
     pingServices
   };
 
-  /**
-   * @returns {Promise}
-   */
-  async function servicesHealth() {
-    const [coreHealth, usersHealth] = await Promise.all([
-      coreGateway.health(),
-      usersGateway.health()
-    ]);
-
-    return {
-      apikeys: {},
-      core: coreHealth,
-      users: usersHealth
-    };
+  async function healthServices() {
+    return awaitMethodForServices(statusGateway.health, {});
   }
 
-  /**
-   * @returns {Promise}
-   */
   async function pingServices() {
-    const [coreStatus, usersStatus] = await Promise.all([
-      coreGateway.ping(),
-      usersGateway.ping()
-    ]);
+    return awaitMethodForServices(statusGateway.ping, '?');
+  }
 
-    return {
-      apikeys: '?',
-      core: coreStatus,
-      users: usersStatus
-    };
+  // Private
+
+  async function awaitMethodForServices(method, defaultValue) {
+    const response = {};
+    const promisesToAwait = [];
+
+    Object.entries(services).forEach(([service, { baseUrl }]) => {
+      if (!baseUrl) {
+        response[service] = defaultValue;
+        return;
+      }
+
+      promisesToAwait.push(
+        method(baseUrl).then((res) => _.set(response, service, res))
+      );
+    });
+
+    await Promise.all(promisesToAwait);
+    return response;
   }
 };
