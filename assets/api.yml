@@ -219,7 +219,9 @@ paths:
         200:
           $ref: '#/components/responses/postProject'
         400:
-          $ref: '#/components/responses/400' #authMiddleware
+          $ref: '#/components/responses/400'
+        403:
+          $ref: '#/components/responses/403'
         415:
           $ref: '#/components/responses/415'
         500:
