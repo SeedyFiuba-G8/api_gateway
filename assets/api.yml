@@ -332,7 +332,6 @@ components:
 
   # ---------------------------------------------------------------------------
   responses:
-    # ERRORS
     Error:
       description: >
         An error has occured. Check response body for more
