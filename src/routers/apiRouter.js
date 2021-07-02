@@ -39,7 +39,7 @@ module.exports = function $apiRouter(
       .get('/users', sessionMiddleware, onlyAdmins, forward2users)
       .post('/users', forward2users)
       .post('/users/session', sessionController.loginUser)
-      .get('/users/:userId/profile', forward2users)
+      .get('/users/:userId', forward2users)
 
       // ADMINS ---------------------------------------------------------------
 
