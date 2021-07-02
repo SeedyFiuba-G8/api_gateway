@@ -177,6 +177,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+
   /projects/{projectId}:
     get:
       summary: Get a project by id
