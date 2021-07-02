@@ -428,24 +428,19 @@ components:
     Error:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            status:
-              type: integer
-            name:
-              type: string
-            message:
-              type: string
-            errors:
-              type: array
-              items:
-                type: object
-          required:
-            - status
-            - name
+        status:
+          type: integer
+        name:
+          type: string
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
       required:
-        - error
+        - status
+        - name
 
     # TYPES
     Date:
