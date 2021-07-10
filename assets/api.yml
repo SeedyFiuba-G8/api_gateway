@@ -550,6 +550,17 @@ components:
           example: false
         signupDate:
           $ref: '#/components/schemas/Date'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        country:
+          type: string
+          example: 'Argentina'
+        interests:
+          type: array
+          items:
+            type: string
+          example: ['music', 'entertainment', 'productivity']
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
       required:
@@ -557,6 +568,9 @@ components:
         - lastName
         - banned
         - signupDate
+        - city
+        - country
+        - interests
         - profilePicUrl
 
     User:
