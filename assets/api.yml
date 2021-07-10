@@ -625,7 +625,7 @@ components:
         projects:
           type: array
           items:
-            $ref: '#/components/schemas/Project'
+            $ref: '#/components/schemas/ProjectPreview'
       required:
         - projects
 
@@ -658,6 +658,8 @@ components:
           $ref: '#/components/schemas/Date'
         finalizedBy:
           $ref: '#/components/schemas/Date'
+        tags:
+          $ref: '#/components/schemas/Tags'
       required:
         - id
         - userId
@@ -669,6 +671,42 @@ components:
         - city
         - publishedOn
         - finalizedBy
+        - tags
+
+    ProjectPreview:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        title:
+          type: string
+          example: 'Prohibir la utilizacion de Winbugs globalmente'
+        description:
+          type: string
+          example: 'No puede ser que haya gente que use Winbugs'
+        type:
+          type: string
+          example: 'social'
+        country:
+          type: string
+          example: 'Argentina'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        finalizedBy:
+          $ref: '#/components/schemas/Date'
+        tags:
+          $ref: '#/components/schemas/Tags'
+      required:
+        - id
+        - title
+        - description
+        - type
+        - objective
+        - country
+        - city
+        - finalizedBy
+        - tags
 
     PostProjectData:
       type: object
@@ -693,6 +731,8 @@ components:
           example: 'Buenos Aires'
         finalizedBy:
           $ref: '#/components/schemas/Date'
+        tags:
+          $ref: '#/components/schemas/Tags'
       required:
         - title
         - description
@@ -725,6 +765,8 @@ components:
           example: 'Buenos Aires'
         finalizedBy:
           $ref: '#/components/schemas/Date'
+        tags:
+          $ref: '#/components/schemas/Tags'
       minProperties: 1
 
     ProjectId:
@@ -734,6 +776,12 @@ components:
           $ref: '#/components/schemas/Id'
       required:
         - id
+
+    Tags:
+      type: array
+      items:
+        type: string
+      example: ['javascript', 'python', 'food']
 
     # COMMON
     LoginData:
