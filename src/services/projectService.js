@@ -6,6 +6,8 @@ module.exports = function $projectService(coreGateway, usersGateway) {
   async function get(projectId) {
     const project = await coreGateway.get(projectId);
     const { reviewers } = project;
+    if (!reviewers.length) return project;
+
     const reviewerIds = reviewers.map((reviewer) => reviewer.reviewerId);
     const names = await usersGateway.getNames(reviewerIds);
 
