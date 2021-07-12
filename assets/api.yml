@@ -845,6 +845,8 @@ components:
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
+        status:
+          $ref: '#/components/schemas/PublishedProjectStatus'
         description:
           type: string
           example: 'No puede ser que haya gente que use Winbugs'
@@ -875,6 +877,18 @@ components:
           $ref: '#/components/schemas/Id'
       required:
         - id
+
+    ProjectStatus:
+      type: string
+      enum:
+        - DRAFT
+        - PUBLISHED
+        - FINALIZED
+
+    PublishedProjectStatus:
+      type: string
+      enum:
+        - PUBLISHED
 
     Tags:
       type: array
@@ -915,13 +929,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Email'
-
-    ProjectStatus:
-      type: string
-      enum:
-        - DRAFT
-        - PUBLISHED
-        - FINALIZED
 
     ReviewerStatus:
       type: string
