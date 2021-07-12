@@ -1,11 +1,20 @@
 module.exports = function $usersGateway(fetch, services, urlFactory) {
   return {
+    getIds,
     getNames,
     login
   };
 
+  function getIds(emails) {
+    const url = urlFactory('/emailtranslation', services.users.baseUrl);
+
+    return fetch(url, { method: 'POST', body: emails }).then(
+      ({ data }) => data
+    );
+  }
+
   function getNames(userIds) {
-    const url = urlFactory('/names', services.users.baseUrl);
+    const url = urlFactory('/idtranslation', services.users.baseUrl);
 
     return fetch(url, { method: 'POST', body: userIds }).then(
       ({ data }) => data

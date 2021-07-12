@@ -889,6 +889,8 @@ components:
       properties:
         reviewerId:
           $ref: '#/components/schemas/Id'
+        email:
+          $ref: '#/components/schemas/Email'
         firstName:
           type: string
           example: 'Memis'
@@ -899,6 +901,9 @@ components:
           $ref: '#/components/schemas/ReviewerStatus'
       required:
         - reviewerId
+        - email
+        - firstName
+        - lastName
         - status
 
     Reviewers:
@@ -909,7 +914,7 @@ components:
     ReviewersRaw:
       type: array
       items:
-        $ref: '#/components/schemas/Id'
+        $ref: '#/components/schemas/Email'
 
     ProjectStatus:
       type: string
