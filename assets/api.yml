@@ -41,14 +41,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/getAllUsers'
-        401:
-          $ref: '#/components/responses/401'
-        403:
-          $ref: '#/components/responses/403'
-        409:
-          $ref: '#/components/responses/409'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
     post:
       summary: Register a new user
@@ -60,14 +54,8 @@ paths:
       responses:
         201:
           description: 'User was registered successfully.'
-        400:
-          $ref: '#/components/responses/400'
-        409:
-          $ref: '#/components/responses/409'
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
   /users/session:
     post:
@@ -80,16 +68,10 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/postSession'
-        400:
-          $ref: '#/components/responses/400'
-        409:
-          $ref: '#/components/responses/409'
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
-  /users/{userId}/profile:
+  /users/{userId}:
     get:
       summary: Get a user's profile
       description: Allow users to retrieve a user's profile by id.
@@ -107,16 +89,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/getProfile'
-        400:
-          $ref: '#/components/responses/400'
-        401:
-          $ref: '#/components/responses/401'
-        404:
-          $ref: '#/components/responses/404'
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
+
+    patch:
+      summary: Modify the information of a user's profile
+      description: Allows the user to update its information.
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      requestBody:
+        $ref: '#/components/requestBodies/patchUser'
+      responses:
+        200:
+          description: 'User information updated successfully.'
+        default:
+          $ref: '#/components/responses/Error'
 
   # ADMINS
   /admins:
@@ -137,18 +133,8 @@ paths:
       responses:
         201:
           description: 'Admin was registered successfully.'
-        400:
-          $ref: '#/components/responses/400'
-        401:
-          $ref: '#/components/responses/401'
-        403:
-          $ref: '#/components/responses/403'
-        409:
-          $ref: '#/components/responses/409'
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
   /admins/session:
     post:
@@ -161,14 +147,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/postSession'
-        400:
-          $ref: '#/components/responses/400'
-        409:
-          $ref: '#/components/responses/409'
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
   # PROJECTS
   /projects:
@@ -201,10 +181,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/getProjects'
-        400:
-          $ref: '#/components/responses/deleteProject' #authMiddleware
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
     post:
       summary: Create a new project
@@ -218,12 +196,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/postProject'
-        400:
-          $ref: '#/components/responses/400' #authMiddleware
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
   /projects/{projectId}:
     get:
@@ -243,14 +217,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/getProject'
-        400:
-          $ref: '#/components/responses/deleteProject' #aithMiddleware
-        404:
-          $ref: '#/components/responses/404'
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
     patch:
       summary: Modify the information of the project.
@@ -271,16 +239,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/patchProject'
-        400:
-          $ref: '#/components/responses/400' #authMiddleware
-        403:
-          $ref: '#/components/responses/403'
-        404:
-          $ref: '#/components/responses/404'
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
     delete:
       summary: Delete a project by ID
@@ -299,16 +259,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/deleteProject'
-        400:
-          $ref: '#/components/responses/400'
-        403:
-          $ref: '#/components/responses/403'
-        404:
-          $ref: '#/components/responses/404'
-        415:
-          $ref: '#/components/responses/415'
-        500:
-          $ref: '#/components/responses/500'
+        default:
+          $ref: '#/components/responses/Error'
 
   # STATUS
   /health:
@@ -318,10 +270,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/health'
-        400:
-          $ref: '#/components/responses/400'
-        415:
-          $ref: '#/components/responses/415'
+        default:
+          $ref: '#/components/responses/Error'
 
   /ping:
     get:
@@ -330,10 +280,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/ping'
-        400:
-          $ref: '#/components/responses/400'
-        415:
-          $ref: '#/components/responses/415'
+        default:
+          $ref: '#/components/responses/Error'
 
   /pingAll:
     get:
@@ -342,10 +290,8 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/pingAll'
-        400:
-          $ref: '#/components/responses/400'
-        415:
-          $ref: '#/components/responses/415'
+        default:
+          $ref: '#/components/responses/Error'
 
 # =============================================================================
 
@@ -360,6 +306,13 @@ components:
   # ---------------------------------------------------------------------------
   requestBodies:
     # USERS
+    patchUser:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PatchUserData'
+
     postUser:
       required: true
       content:
@@ -408,51 +361,10 @@ components:
 
   # ---------------------------------------------------------------------------
   responses:
-    # ERRORS
-    400:
-      description: Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    401:
-      description: Unauthorized.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    403:
-      description: Forbidden.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    404:
-      description: Not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    409:
-      description: Conflict.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    415:
-      description: Unsupported Media Type.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    500:
-      description: Internal Server Error.
+    Error:
+      description: >
+        An error has occured. Check response body for more
+        information about what happened.
       content:
         application/json:
           schema:
@@ -545,24 +457,19 @@ components:
     Error:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            status:
-              type: integer
-            name:
-              type: string
-            message:
-              type: string
-            errors:
-              type: array
-              items:
-                type: object
-          required:
-            - status
-            - name
+        status:
+          type: integer
+        name:
+          type: string
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
       required:
-        - error
+        - status
+        - name
 
     # TYPES
     Date:
@@ -611,6 +518,24 @@ components:
       required:
         - fbToken
 
+    PatchUserData:
+      type: object
+      properties:
+        city:
+          type: string
+          example: 'Buenos Aires'
+        country:
+          type: string
+          example: 'Argentina'
+        interests:
+          type: array
+          items:
+            type: string
+          example: ['music', 'entertainment', 'productivity']
+        profilePicUrl:
+          $ref: '#/components/schemas/Picture'
+      minProperties: 1
+
     Profile:
       type: object
       properties:
@@ -625,6 +550,17 @@ components:
           example: false
         signupDate:
           $ref: '#/components/schemas/Date'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        country:
+          type: string
+          example: 'Argentina'
+        interests:
+          type: array
+          items:
+            type: string
+          example: ['music', 'entertainment', 'productivity']
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
       required:
@@ -632,6 +568,9 @@ components:
         - lastName
         - banned
         - signupDate
+        - city
+        - country
+        - interests
         - profilePicUrl
 
     User:
@@ -700,7 +639,7 @@ components:
         projects:
           type: array
           items:
-            $ref: '#/components/schemas/Project'
+            $ref: '#/components/schemas/ProjectPreview'
       required:
         - projects
 
@@ -733,6 +672,8 @@ components:
           $ref: '#/components/schemas/Date'
         finalizedBy:
           $ref: '#/components/schemas/Date'
+        tags:
+          $ref: '#/components/schemas/Tags'
       required:
         - id
         - userId
@@ -744,6 +685,42 @@ components:
         - city
         - publishedOn
         - finalizedBy
+        - tags
+
+    ProjectPreview:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        title:
+          type: string
+          example: 'Prohibir la utilizacion de Winbugs globalmente'
+        description:
+          type: string
+          example: 'No puede ser que haya gente que use Winbugs'
+        type:
+          type: string
+          example: 'social'
+        country:
+          type: string
+          example: 'Argentina'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        finalizedBy:
+          $ref: '#/components/schemas/Date'
+        tags:
+          $ref: '#/components/schemas/Tags'
+      required:
+        - id
+        - title
+        - description
+        - type
+        - objective
+        - country
+        - city
+        - finalizedBy
+        - tags
 
     PostProjectData:
       type: object
@@ -768,6 +745,8 @@ components:
           example: 'Buenos Aires'
         finalizedBy:
           $ref: '#/components/schemas/Date'
+        tags:
+          $ref: '#/components/schemas/Tags'
       required:
         - title
         - description
@@ -776,6 +755,7 @@ components:
         - country
         - city
         - finalizedBy
+        - tags
 
     PatchProjectData:
       type: object
@@ -800,6 +780,8 @@ components:
           example: 'Buenos Aires'
         finalizedBy:
           $ref: '#/components/schemas/Date'
+        tags:
+          $ref: '#/components/schemas/Tags'
       minProperties: 1
 
     ProjectId:
@@ -809,6 +791,12 @@ components:
           $ref: '#/components/schemas/Id'
       required:
         - id
+
+    Tags:
+      type: array
+      items:
+        type: string
+      example: ['javascript', 'python', 'food']
 
     # COMMON
     LoginData:

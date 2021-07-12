@@ -1,29 +1,33 @@
-const _ = require('lodash');
-const jwt = require('jsonwebtoken');
+module.exports = function $adminAuthMiddleware(errors) {
+  return {
+    admin,
+    user
+  };
 
-module.exports = function $authMiddleware(config, errors) {
-  return async function authMiddleware(req, res, next) {
-    const bearerHeader = req.headers.authorization;
-    if (!bearerHeader)
-      return next(errors.create(400, 'No bearer token provided'));
+  function admin(req, res, next) {
+    return innerAuth(req, next, 'ADMIN');
+  }
 
-    const [type, token] = bearerHeader.split(' ');
-    if (type !== 'Bearer')
-      return next(errors.create(400, 'Invalid token type, not bearer'));
+  function user(req, res, next) {
+    return innerAuth(req, next, 'USER');
+  }
 
-    let sessionPayload;
+  // Private
 
-    try {
-      sessionPayload = await jwt.verify(token, config.jwt.key);
-    } catch (err) {
-      return next(err);
-    }
+  function innerAuth(req, next, typeNeeded) {
+    const { type } = req.context.session;
 
-    _.set(req, 'context.session', {
-      token: { type, signature: token },
-      ...sessionPayload
-    });
+    if (type !== typeNeeded)
+      return next(
+        errors.create(403, `${capitalize(typeNeeded)} rights needed`)
+      );
 
     return next();
-  };
+  }
+
+  // Aux
+
+  function capitalize(type) {
+    return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+  }
 };
