@@ -29,7 +29,7 @@
   "homepage": "https://github.com/SeedyFiuba-G8/api_gateway#readme",
   "dependencies": {
     "@seedyfiuba/api_components": "^1.0.3",
-    "@seedyfiuba/error_components": "^1.2.6",
+    "@seedyfiuba/error_components": "^1.2.7",
     "@seedyfiuba/logging_components": "^1.0.2",
     "axios": "^0.21.1",
     "config": "^3.3.6",
