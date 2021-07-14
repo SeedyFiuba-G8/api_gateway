@@ -1,12 +1,12 @@
-module.exports = function $coreGateway(fetch, services, urlFactory) {
+module.exports = function $coreGateway(gatewayUtils, services) {
   return {
     get
   };
 
   function get(projectId) {
     const path = `/projects/${projectId}`;
-    const url = urlFactory(path, services.core.baseUrl);
+    const url = gatewayUtils.urlFactory(path, services.core.baseUrl);
 
-    return fetch(url, { method: 'GET' }).then(({ data }) => data);
+    return gatewayUtils.fetch(url, { method: 'GET' }).then(({ data }) => data);
   }
 };

@@ -1,13 +1,14 @@
-module.exports = function $statusGateway(fetch, urlFactory) {
+module.exports = function $statusGateway(gatewayUtils) {
   return {
     ping,
     health
   };
 
   function health(baseUrl) {
-    const url = urlFactory('/health', baseUrl);
+    const url = gatewayUtils.urlFactory('/health', baseUrl);
 
-    return fetch(url)
+    return gatewayUtils
+      .fetch(url)
       .then(({ data }) => data)
       .catch((err) => {
         if (err.status === 504) {
@@ -19,9 +20,10 @@ module.exports = function $statusGateway(fetch, urlFactory) {
   }
 
   function ping(baseUrl) {
-    const url = urlFactory('/ping', baseUrl);
+    const url = gatewayUtils.urlFactory('/ping', baseUrl);
 
-    return fetch(url)
+    return gatewayUtils
+      .fetch(url)
       .then(() => 'ok')
       .catch((err) => {
         if (err.status === 504) {

@@ -1,4 +1,4 @@
-module.exports = function $statusNocks(axiosMock, urlFactory, services) {
+module.exports = function $statusNocks(axiosMock, gatewayUtils, services) {
   return { nockCoreHealth, nockCorePing, nockUsersHealth, nockUsersPing };
 
   function nockCoreHealth(statusCode) {
@@ -23,7 +23,7 @@ module.exports = function $statusNocks(axiosMock, urlFactory, services) {
     baseUrl,
     { statusCode = 200, data = { database: 'UP' } } = {}
   ) {
-    const url = urlFactory('/health', baseUrl);
+    const url = gatewayUtils.urlFactory('/health', baseUrl);
 
     axiosMock.onGet(url).reply(statusCode, data);
   }
@@ -32,7 +32,7 @@ module.exports = function $statusNocks(axiosMock, urlFactory, services) {
     baseUrl,
     { statusCode = 200, data = { status: 'ok' } } = {}
   ) {
-    const url = urlFactory('/ping', baseUrl);
+    const url = gatewayUtils.urlFactory('/ping', baseUrl);
 
     axiosMock.onGet(url).reply(statusCode, data);
   }
