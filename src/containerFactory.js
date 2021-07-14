@@ -2,8 +2,8 @@ const dependable = require('dependable');
 const path = require('path');
 const apiComponents = require('@seedyfiuba/api_components');
 const errorComponents = require('@seedyfiuba/error_components');
+const gatewayComponents = require('@seedyfiuba/gateway_components');
 const loggingComponents = require('@seedyfiuba/logging_components');
-const gatewayComponents = require('../../gateway_components');
 
 function createContainer() {
   const container = dependable.container();

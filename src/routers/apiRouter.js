@@ -52,10 +52,10 @@ module.exports = function $apiRouter(
       .use('/projects', sessionMiddleware)
 
       .get('/projects', forward2core)
-      .post('/projects', onlyUsers, forward2core)
+      .post('/projects', onlyUsers, projectController.create)
       .get('/projects/:projectId', projectController.get)
       .delete('/projects/:projectId', forward2core)
-      .patch('/projects/:projectId', forward2core)
+      .patch('/projects/:projectId', projectController.update)
 
       // REVIEWERS ------------------------------------------------------------
       .use('/reviewrequests', sessionMiddleware)
