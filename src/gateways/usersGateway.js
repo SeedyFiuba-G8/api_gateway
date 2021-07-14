@@ -1,4 +1,4 @@
-module.exports = function $usersGateway(fetch, services, urlFactory) {
+module.exports = function $usersGateway(gatewayUtils, services) {
   return {
     getIds,
     getNames,
@@ -6,27 +6,33 @@ module.exports = function $usersGateway(fetch, services, urlFactory) {
   };
 
   function getIds(emails) {
-    const url = urlFactory('/emailtranslation', services.users.baseUrl);
-
-    return fetch(url, { method: 'POST', body: emails }).then(
-      ({ data }) => data
+    const url = gatewayUtils.urlFactory(
+      '/emailtranslation',
+      services.users.baseUrl
     );
+
+    return gatewayUtils
+      .fetch(url, { method: 'POST', body: emails })
+      .then(({ data }) => data);
   }
 
   function getNames(userIds) {
-    const url = urlFactory('/idtranslation', services.users.baseUrl);
-
-    return fetch(url, { method: 'POST', body: userIds }).then(
-      ({ data }) => data
+    const url = gatewayUtils.urlFactory(
+      '/idtranslation',
+      services.users.baseUrl
     );
+
+    return gatewayUtils
+      .fetch(url, { method: 'POST', body: userIds })
+      .then(({ data }) => data);
   }
 
   function login(credentials, type) {
     const path = type === 'USER' ? '/users/session' : '/admins/session';
-    const url = urlFactory(path, services.users.baseUrl);
+    const url = gatewayUtils.urlFactory(path, services.users.baseUrl);
 
-    return fetch(url, { method: 'POST', body: credentials }).then(
-      ({ data }) => data.id
-    );
+    return gatewayUtils
+      .fetch(url, { method: 'POST', body: credentials })
+      .then(({ data }) => data.id);
   }
 };
