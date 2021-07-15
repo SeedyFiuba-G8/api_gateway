@@ -13,14 +13,14 @@ module.exports = function $projectService(coreGateway, errors, usersGateway) {
   }
 
   async function get(context, projectId) {
-    const requesterId = context.session.id;
+    const { type, id: requesterId } = context.session;
 
     const project = await coreGateway.get(projectId);
     const { reviewers, userId } = project;
 
     if (!reviewers) return project;
 
-    if (requesterId !== userId && !_.includes(reviewers, requesterId))
+    if (requesterId !== userId && type !== 'ADMIN')
       return _.omit(project, ['reviewers']);
 
     if (!reviewers.length) return project;
