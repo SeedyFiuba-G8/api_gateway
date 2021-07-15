@@ -1,8 +1,8 @@
 module.exports = function $forwardingController(
   expressify,
   forwardingService,
-  gatewayUtils,
-  services
+  services,
+  urlFactory
 ) {
   return expressify({
     core,
@@ -10,12 +10,12 @@ module.exports = function $forwardingController(
   });
 
   function core(req, res) {
-    req.url = gatewayUtils.urlFactory(req.originalUrl, services.core.baseUrl);
+    req.url = urlFactory(req.originalUrl, services.core.baseUrl);
     return forward(req, res);
   }
 
   function users(req, res) {
-    req.url = gatewayUtils.urlFactory(req.originalUrl, services.users.baseUrl);
+    req.url = urlFactory(req.originalUrl, services.users.baseUrl);
     return forward(req, res);
   }
 

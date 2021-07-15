@@ -4,15 +4,18 @@ const containerFactory = require('../testContainerFactory');
 const container = containerFactory.createContainer();
 
 describe('statusController', () => {
+  let axiosMock;
   let request;
   let statusNocks;
 
   beforeEach(() => {
+    axiosMock = container.get('axiosMock');
     request = supertest(container.get('app'));
     statusNocks = container.get('statusNocks');
   });
 
   afterEach(() => {
+    axiosMock.reset();
     jest.clearAllMocks();
   });
 
@@ -50,7 +53,7 @@ describe('statusController', () => {
         describe('when core times out', () => {
           beforeEach(() => {
             response.services.core = 'timed out';
-            statusNocks.nockCoreHealth(504);
+            statusNocks.nockCoreTimeout('/health');
           });
 
           it('should respond with correct status and body', () =>
@@ -78,7 +81,7 @@ describe('statusController', () => {
         describe('when users times out', () => {
           beforeEach(() => {
             response.services.users = 'timed out';
-            statusNocks.nockUsersHealth(504);
+            statusNocks.nockUsersTimeout('/health');
           });
 
           it('should respond with correct status and body', () =>
@@ -154,7 +157,7 @@ describe('statusController', () => {
         describe('when core times out', () => {
           beforeEach(() => {
             response.services.core = 'timed out';
-            statusNocks.nockCorePing(504);
+            statusNocks.nockCoreTimeout('/ping');
           });
 
           afterEach(() => {
@@ -186,7 +189,7 @@ describe('statusController', () => {
         describe('when users times out', () => {
           beforeEach(() => {
             response.services.users = 'timed out';
-            statusNocks.nockUsersPing(504);
+            statusNocks.nockUsersTimeout('/ping');
           });
 
           it('should respond with correct status and body', () =>

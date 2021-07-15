@@ -1,4 +1,4 @@
-module.exports = function $forwardingService(gatewayUtils) {
+module.exports = function $forwardingService(fetch) {
   return {
     forward
   };
@@ -7,6 +7,6 @@ module.exports = function $forwardingService(gatewayUtils) {
     // if we need to add some more logic to the forwarding, we can do it here
     // this way we keep the basic structure controller-service
 
-    return gatewayUtils.fetch(url, { method, body }, context);
+    return fetch(url, { method, body }, context);
   }
 };

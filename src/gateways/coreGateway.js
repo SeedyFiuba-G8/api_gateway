@@ -1,4 +1,4 @@
-module.exports = function $coreGateway(gatewayUtils, services) {
+module.exports = function $coreGateway(fetch, services, urlFactory) {
   return {
     create,
     get,
@@ -6,30 +6,24 @@ module.exports = function $coreGateway(gatewayUtils, services) {
   };
 
   function create(context, projectInfo) {
-    const url = gatewayUtils.urlFactory('/projects', services.core.baseUrl);
+    const url = urlFactory('/projects', services.core.baseUrl);
 
-    return gatewayUtils
-      .fetch(url, { method: 'POST', body: projectInfo }, context)
-      .then(({ data }) => data.id);
+    return fetch(url, { method: 'POST', body: projectInfo }, context).then(
+      ({ data }) => data.id
+    );
   }
 
   function get(projectId) {
-    const url = gatewayUtils.urlFactory(
-      `/projects/${projectId}`,
-      services.core.baseUrl
-    );
+    const url = urlFactory(`/projects/${projectId}`, services.core.baseUrl);
 
-    return gatewayUtils.fetch(url, { method: 'GET' }).then(({ data }) => data);
+    return fetch(url, { method: 'GET' }).then(({ data }) => data);
   }
 
   function update(context, projectId, projectInfo) {
-    const url = gatewayUtils.urlFactory(
-      `/projects/${projectId}`,
-      services.core.baseUrl
-    );
+    const url = urlFactory(`/projects/${projectId}`, services.core.baseUrl);
 
-    return gatewayUtils
-      .fetch(url, { method: 'PATCH', body: projectInfo }, context)
-      .then(({ data }) => data.id);
+    return fetch(url, { method: 'PATCH', body: projectInfo }, context).then(
+      ({ data }) => data.id
+    );
   }
 };

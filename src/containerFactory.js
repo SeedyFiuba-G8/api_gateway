@@ -42,13 +42,13 @@ function createContainer() {
     return errorComponents.errors();
   });
 
-  container.register('gatewayUtils', function $gatewayUtils(config, errors) {
-    return gatewayComponents.gatewayUtils(config, errors);
-  });
-
   container.register('expressify', function $expressify() {
     // eslint-disable-next-line global-require
     return require('expressify')();
+  });
+
+  container.register('fetch', function $commonFetch(config, errors) {
+    return gatewayComponents.fetch(config, errors);
   });
 
   container.register(
@@ -70,6 +70,10 @@ function createContainer() {
 
   container.register('services', function $services(config) {
     return config.services;
+  });
+
+  container.register('urlFactory', function $commonUrlFactory() {
+    return gatewayComponents.urlFactory();
   });
 
   entries.forEach((entry) => container.load(path.join(__dirname, entry)));
