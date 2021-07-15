@@ -12,23 +12,31 @@ module.exports = function $projectService(coreGateway, errors, usersGateway) {
     return coreGateway.create(context, parsedProjectInfo);
   }
 
-  async function get(projectId) {
+  async function get(context, projectId) {
+    const requesterId = context.session.id;
+
     const project = await coreGateway.get(projectId);
-    const { reviewers } = project;
+    const { reviewers, userId } = project;
+
+    if (!reviewers) return project;
+
+    if (requesterId !== userId && !_.includes(reviewers, requesterId))
+      return _.omit(project, ['reviewers']);
+
     if (!reviewers.length) return project;
 
     const reviewerIds = reviewers.map((reviewer) => reviewer.reviewerId);
     const names = await usersGateway.getNames(reviewerIds);
 
     project.reviewers = reviewers.map((reviewer) => {
-      const { reviewerId } = reviewer;
+      const { reviewerId, status } = reviewer;
       const { email, firstName, lastName } = names[reviewerId];
 
       return {
-        ...reviewer,
         email,
         firstName,
-        lastName
+        lastName,
+        status
       };
     });
 
@@ -44,7 +52,7 @@ module.exports = function $projectService(coreGateway, errors, usersGateway) {
 
   async function buildProjectInfo(context, projectInfo) {
     const { reviewers: reviewerEmails } = projectInfo;
-    if (!reviewerEmails.length) return projectInfo;
+    if (!reviewerEmails || !reviewerEmails.length) return projectInfo;
 
     const reviewersById = await usersGateway.getIds(reviewerEmails);
     const requesterId = context.session.id;

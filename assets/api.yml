@@ -761,7 +761,6 @@ components:
         - publishedOn
         - finalizedBy
         - tags
-        - reviewers
 
     ProjectPreview:
       type: object
@@ -846,7 +845,7 @@ components:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
         status:
-          $ref: '#/components/schemas/PublishedProjectStatus'
+          $ref: '#/components/schemas/FundingProjectStatus'
         description:
           type: string
           example: 'No puede ser que haya gente que use Winbugs'
@@ -882,13 +881,13 @@ components:
       type: string
       enum:
         - DRAFT
-        - PUBLISHED
+        - FUNDING
         - FINALIZED
 
-    PublishedProjectStatus:
+    FundingProjectStatus:
       type: string
       enum:
-        - PUBLISHED
+        - FUNDING
 
     Tags:
       type: array
@@ -901,8 +900,6 @@ components:
     Reviewer:
       type: object
       properties:
-        reviewerId:
-          $ref: '#/components/schemas/Id'
         email:
           $ref: '#/components/schemas/Email'
         firstName:
@@ -914,7 +911,6 @@ components:
         status:
           $ref: '#/components/schemas/ReviewerStatus'
       required:
-        - reviewerId
         - email
         - firstName
         - lastName

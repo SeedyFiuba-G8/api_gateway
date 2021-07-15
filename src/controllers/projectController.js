@@ -14,8 +14,9 @@ module.exports = function $projectController(projectService, expressify) {
   }
 
   async function get(req, res) {
+    const { context } = req;
     const { projectId } = req.params;
-    const project = await projectService.get(projectId);
+    const project = await projectService.get(context, projectId);
 
     return res.status(200).json(project);
   }
