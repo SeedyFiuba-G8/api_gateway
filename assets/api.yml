@@ -652,7 +652,6 @@ components:
         - city
         - country
         - interests
-        - profilePicUrl
 
     User:
       type: object
@@ -741,6 +740,8 @@ components:
         description:
           type: string
           example: 'No puede ser que haya gente que use Winbugs'
+        coverPicUrl:
+          $ref: '#/components/schemas/Picture'
         type:
           type: string
           example: 'social'
@@ -788,6 +789,8 @@ components:
         description:
           type: string
           example: 'No puede ser que haya gente que use Winbugs'
+        coverPicUrl:
+          $ref: '#/components/schemas/Picture'
         type:
           type: string
           example: 'social'
@@ -822,6 +825,8 @@ components:
         description:
           type: string
           example: 'No puede ser que haya gente que use Winbugs'
+        coverPicUrl:
+          $ref: '#/components/schemas/Picture'
         type:
           type: string
           example: 'social'
@@ -862,6 +867,8 @@ components:
         description:
           type: string
           example: 'No puede ser que haya gente que use Winbugs'
+        coverPicUrl:
+          $ref: '#/components/schemas/Picture'
         type:
           type: string
           example: 'social'
