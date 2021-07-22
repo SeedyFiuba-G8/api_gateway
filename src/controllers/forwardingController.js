@@ -1,8 +1,8 @@
 module.exports = function $forwardingController(
   expressify,
   forwardingService,
-  urlFactory,
-  services
+  services,
+  urlFactory
 ) {
   return expressify({
     core,

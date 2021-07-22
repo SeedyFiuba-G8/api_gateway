@@ -4,6 +4,7 @@ module.exports = function $apiRouter(
   apiValidatorMiddleware,
   authMiddleware,
   forwardingController,
+  projectController,
   sessionController,
   sessionMiddleware,
   statusController
@@ -51,9 +52,15 @@ module.exports = function $apiRouter(
       .use('/projects', sessionMiddleware)
 
       .get('/projects', forward2core)
-      .post('/projects', onlyUsers, forward2core)
-      .get('/projects/:projectId', forward2core)
+      .post('/projects', onlyUsers, projectController.create)
+      .get('/projects/:projectId', projectController.get)
       .delete('/projects/:projectId', forward2core)
-      .patch('/projects/:projectId', forward2core)
+      .patch('/projects/:projectId', projectController.update)
+
+      // REVIEWERS ------------------------------------------------------------
+      .use('/reviewrequests', sessionMiddleware)
+
+      .get('/reviewrequests/:reviewerId', forward2core)
+      .put('/reviewrequests/:reviewerId/:projectId', forward2core)
   );
 };

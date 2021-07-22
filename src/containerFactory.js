@@ -2,6 +2,7 @@ const dependable = require('dependable');
 const path = require('path');
 const apiComponents = require('@seedyfiuba/api_components');
 const errorComponents = require('@seedyfiuba/error_components');
+const gatewayComponents = require('@seedyfiuba/gateway_components');
 const loggingComponents = require('@seedyfiuba/logging_components');
 
 function createContainer() {
@@ -46,6 +47,10 @@ function createContainer() {
     return require('expressify')();
   });
 
+  container.register('fetch', function $commonFetch(config, errors) {
+    return gatewayComponents.fetch(config, errors);
+  });
+
   container.register(
     'errorHandlerMiddleware',
     function $errorHandlerMiddleware(logger) {
@@ -65,6 +70,10 @@ function createContainer() {
 
   container.register('services', function $services(config) {
     return config.services;
+  });
+
+  container.register('urlFactory', function $commonUrlFactory() {
+    return gatewayComponents.urlFactory();
   });
 
   entries.forEach((entry) => container.load(path.join(__dirname, entry)));

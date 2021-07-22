@@ -1,5 +1,12 @@
-module.exports = function $statusNocks(axiosMock, urlFactory, services) {
-  return { nockCoreHealth, nockCorePing, nockUsersHealth, nockUsersPing };
+module.exports = function $statusNocks(axiosMock, services, urlFactory) {
+  return {
+    nockCoreHealth,
+    nockCorePing,
+    nockCoreTimeout,
+    nockUsersHealth,
+    nockUsersPing,
+    nockUsersTimeout
+  };
 
   function nockCoreHealth(statusCode) {
     nockHealth(services.core.baseUrl, { statusCode });
@@ -7,6 +14,10 @@ module.exports = function $statusNocks(axiosMock, urlFactory, services) {
 
   function nockCorePing(statusCode) {
     nockPing(services.core.baseUrl, { statusCode });
+  }
+
+  function nockCoreTimeout(path) {
+    nockGetTimeout(path, services.core.baseUrl);
   }
 
   function nockUsersHealth(statusCode) {
@@ -17,23 +28,32 @@ module.exports = function $statusNocks(axiosMock, urlFactory, services) {
     nockPing(services.users.baseUrl, { statusCode });
   }
 
-  // Private
+  function nockUsersTimeout(path) {
+    nockGetTimeout(path, services.users.baseUrl);
+  }
 
+  // Aux
   function nockHealth(
     baseUrl,
     { statusCode = 200, data = { database: 'UP' } } = {}
   ) {
-    const url = urlFactory('/health', baseUrl);
-
-    axiosMock.onGet(url).reply(statusCode, data);
+    return nockGet('/health', baseUrl, { statusCode, data });
   }
 
   function nockPing(
     baseUrl,
-    { statusCode = 200, data = { status: 'ok' } } = {}
+    { statusCode = 200, data = { database: 'ok' } } = {}
   ) {
-    const url = urlFactory('/ping', baseUrl);
+    return nockGet('/ping', baseUrl, { statusCode, data });
+  }
 
+  function nockGetTimeout(path, baseUrl) {
+    const url = urlFactory(path, baseUrl);
+    axiosMock.onGet(url).timeout();
+  }
+
+  function nockGet(path, baseUrl, { statusCode, data } = {}) {
+    const url = urlFactory(path, baseUrl);
     axiosMock.onGet(url).reply(statusCode, data);
   }
 };
