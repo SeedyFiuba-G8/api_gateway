@@ -30,6 +30,9 @@ describe('statusController', () => {
           status: 'UP',
           services: {
             apikeys: {},
+            sc: {
+              database: 'UP'
+            },
             core: {
               database: 'UP'
             },
@@ -40,6 +43,7 @@ describe('statusController', () => {
         };
 
         statusNocks.nockCoreHealth();
+        statusNocks.nockSCHealth();
         statusNocks.nockUsersHealth();
       });
 
@@ -67,6 +71,34 @@ describe('statusController', () => {
           beforeEach(() => {
             response.services.core = 'bad status';
             statusNocks.nockCoreHealth(500);
+          });
+
+          it('should respond with correct status and body', () =>
+            request
+              .get(path)
+              .expect('Content-Type', /json/)
+              .expect(200, response));
+        });
+      });
+
+      describe('when sc is down', () => {
+        describe('when sc times out', () => {
+          beforeEach(() => {
+            response.services.sc = 'timed out';
+            statusNocks.nockSCTimeout('/health');
+          });
+
+          it('should respond with correct status and body', () =>
+            request
+              .get(path)
+              .expect('Content-Type', /json/)
+              .expect(200, response));
+        });
+
+        describe('when sc returns bad status', () => {
+          beforeEach(() => {
+            response.services.sc = 'bad status';
+            statusNocks.nockSCHealth(500);
           });
 
           it('should respond with correct status and body', () =>
@@ -138,12 +170,14 @@ describe('statusController', () => {
           status: 'ok',
           services: {
             apikeys: '?',
+            sc: 'ok',
             core: 'ok',
             users: 'ok'
           }
         };
 
         statusNocks.nockCorePing();
+        statusNocks.nockSCPing();
         statusNocks.nockUsersPing();
       });
 
@@ -175,6 +209,38 @@ describe('statusController', () => {
           beforeEach(() => {
             response.services.core = 'bad status';
             statusNocks.nockCorePing(500);
+          });
+
+          it('should respond with correct status and body', () =>
+            request
+              .get(path)
+              .expect('Content-Type', /json/)
+              .expect(200, response));
+        });
+      });
+
+      describe('when sc is down', () => {
+        describe('when sc times out', () => {
+          beforeEach(() => {
+            response.services.sc = 'timed out';
+            statusNocks.nockSCTimeout('/ping');
+          });
+
+          afterEach(() => {
+            jest.clearAllMocks();
+          });
+
+          it('should respond with correct status and body', () =>
+            request
+              .get(path)
+              .expect('Content-Type', /json/)
+              .expect(200, response));
+        });
+
+        describe('when sc returns bad status', () => {
+          beforeEach(() => {
+            response.services.sc = 'bad status';
+            statusNocks.nockSCPing(500);
           });
 
           it('should respond with correct status and body', () =>

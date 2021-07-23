@@ -17,6 +17,13 @@ module.exports = {
         'https://sf-tdp2-core-dev.herokuapp.com/'
       )
     },
+    sc: {
+      baseUrl: _.get(
+        process.env,
+        'SC_URL',
+        'https://sf-tdp2-sc-dev.herokuapp.com/'
+      )
+    },
     users: {
       baseUrl: _.get(
         process.env,
