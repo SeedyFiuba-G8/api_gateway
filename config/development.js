@@ -3,8 +3,13 @@ const _ = require('lodash');
 module.exports = {
   log: {
     console: {
-      level: 'debug'
+      level: 'debug',
+      prettyPrint: true,
+      colorize: true
     }
+  },
+  monitoring: {
+    enabled: false
   },
   services: {
     apikeys: {

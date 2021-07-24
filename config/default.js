@@ -28,12 +28,15 @@ module.exports = {
       enabled: true,
       level: 'info',
       timestamp: true,
-      prettyPrint: true,
+      prettyPrint: false,
       json: false,
-      colorize: true,
-      stringify: false,
+      colorize: false,
+      stringify: true,
       label: 'api_gateway'
     }
+  },
+  monitoring: {
+    enabled: true
   },
   services: {
     apikeys: {

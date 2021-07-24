@@ -12,5 +12,8 @@ module.exports = {
     users: {
       baseUrl: 'http://users-test/'
     }
+  },
+  monitoring: {
+    enabled: false
   }
 };
