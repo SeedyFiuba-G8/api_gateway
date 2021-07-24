@@ -39,9 +39,7 @@ module.exports = function $userController(
       `Wallet address ${postWalletRes.data} created for user ${postUserRes.data.id}`
     );
 
-    return res
-      .status(postUserRes.status)
-      .json({ ...postUserRes.data, address: postWalletRes.data });
+    return res.status(postUserRes.status).json({ id: postUserRes.data.id });
   }
 
   async function get(req, res) {

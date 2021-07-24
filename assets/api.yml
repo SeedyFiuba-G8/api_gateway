@@ -644,22 +644,8 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/Id'
-        email:
-          $ref: '#/components/schemas/Email'
-        firstName:
-          type: string
-          example: 'Memis'
-        lastName:
-          type: string
-          example: 'Pomofot'
-        address:
-          $ref: '#/components/schemas/Address'
       required:
         - id
-        - email
-        - firstName
-        - lastName
-        - address
 
     Profile:
       type: object
