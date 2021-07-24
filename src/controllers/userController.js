@@ -26,8 +26,9 @@ module.exports = function $userController(
     );
 
     const postWalletRes = await forwardingService.forward(
-      { uid: postUserRes.data.id },
+      {},
       {
+        body: { uid: postUserRes.data.id },
         method,
         url: postWalletUrl
       }

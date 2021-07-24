@@ -591,6 +591,13 @@ components:
       type: string
       example: 'https://imgur.com/gallery/rFvivtw'
 
+    StagesCost:
+      type: array
+      items:
+        type: number
+      minItems: 1
+      example: [0.002, 0.0023, 0.001]
+
     # USERS
     AllUsers:
       type: object
@@ -795,6 +802,8 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/Reviewers'
+        stagesCost:
+          $ref: '#/components/schemas/StagesCost'
       required:
         - id
         - status
@@ -808,6 +817,7 @@ components:
         - publishedOn
         - finalizedBy
         - tags
+        - stagesCost
 
     ProjectPreview:
       type: object
@@ -837,6 +847,8 @@ components:
           $ref: '#/components/schemas/Date'
         tags:
           $ref: '#/components/schemas/Tags'
+        stagesCost:
+          $ref: '#/components/schemas/StagesCost'
       required:
         - id
         - status
@@ -848,6 +860,7 @@ components:
         - city
         - finalizedBy
         - tags
+        - stagesCost
 
     PostProjectData:
       type: object
@@ -878,6 +891,8 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/ReviewersRaw'
+        stagesCost:
+          $ref: '#/components/schemas/StagesCost'
       required:
         - title
         - description
@@ -888,6 +903,7 @@ components:
         - finalizedBy
         - tags
         - reviewers
+        - stagesCost
 
     PatchProjectData:
       type: object
@@ -920,6 +936,8 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/ReviewersRaw'
+        stagesCost:
+          $ref: '#/components/schemas/StagesCost'
       minProperties: 1
 
     ProjectId:
