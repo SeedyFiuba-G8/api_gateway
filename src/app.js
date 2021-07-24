@@ -9,7 +9,7 @@ module.exports = function $app(
   apiRouter
 ) {
   // eslint-disable-next-line global-require
-  if (config.monitoring.enabled) require('newrelic');
+  if (config.monitoring) require('newrelic');
 
   const app = express();
 
