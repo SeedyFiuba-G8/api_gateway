@@ -11,10 +11,6 @@ module.exports = {
       {
         header: 'uid',
         contextField: 'session.id'
-      },
-      {
-        header: 'uid',
-        contextField: 'uid'
       }
     ],
     timeout: 10000 // ms
