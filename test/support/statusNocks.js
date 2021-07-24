@@ -1,33 +1,36 @@
 module.exports = function $statusNocks(axiosMock, services, urlFactory) {
   return {
-    // API KEYS
-    nockApiKeysHealth: (statusCode) =>
-      nockHealth(services.apikeys.baseUrl, { statusCode }),
-    nockApiKeysPing: (statusCode) =>
-      nockPing(services.apikeys.baseUrl, { statusCode }),
-    nockApiKeysTimeout: (path) =>
-      nockGetTimeout(path, services.apikeys.baseUrl),
-
-    // CORE
-    nockCoreHealth: (statusCode) =>
-      nockHealth(services.core.baseUrl, { statusCode }),
-    nockCorePing: (statusCode) =>
-      nockPing(services.core.baseUrl, { statusCode }),
-    nockCoreTimeout: (path) => nockGetTimeout(path, services.core.baseUrl),
-
-    // SC
-    nockSCHealth: (statusCode) =>
-      nockHealth(services.sc.baseUrl, { statusCode }),
-    nockSCPing: (statusCode) => nockPing(services.sc.baseUrl, { statusCode }),
-    nockSCTimeout: (path) => nockGetTimeout(path, services.sc.baseUrl),
-
-    // USERS
-    nockUsersHealth: (statusCode) =>
-      nockHealth(services.users.baseUrl, { statusCode }),
-    nockUsersPing: (statusCode) =>
-      nockPing(services.users.baseUrl, { statusCode }),
-    nockUsersTimeout: (path) => nockGetTimeout(path, services.users.baseUrl)
+    nockCoreHealth,
+    nockCorePing,
+    nockCoreTimeout,
+    nockUsersHealth,
+    nockUsersPing,
+    nockUsersTimeout
   };
+
+  function nockCoreHealth(statusCode) {
+    nockHealth(services.core.baseUrl, { statusCode });
+  }
+
+  function nockCorePing(statusCode) {
+    nockPing(services.core.baseUrl, { statusCode });
+  }
+
+  function nockCoreTimeout(path) {
+    nockGetTimeout(path, services.core.baseUrl);
+  }
+
+  function nockUsersHealth(statusCode) {
+    nockHealth(services.users.baseUrl, { statusCode });
+  }
+
+  function nockUsersPing(statusCode) {
+    nockPing(services.users.baseUrl, { statusCode });
+  }
+
+  function nockUsersTimeout(path) {
+    nockGetTimeout(path, services.users.baseUrl);
+  }
 
   // Aux
   function nockHealth(
