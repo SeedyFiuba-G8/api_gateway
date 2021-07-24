@@ -8,9 +8,7 @@ module.exports = {
       colorize: true
     }
   },
-  monitoring: {
-    enabled: false
-  },
+  monitoring: false,
   services: {
     apikeys: {
       baseUrl: undefined

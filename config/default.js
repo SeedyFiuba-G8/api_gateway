@@ -35,9 +35,7 @@ module.exports = {
       label: 'api_gateway'
     }
   },
-  monitoring: {
-    enabled: true
-  },
+  monitoring: true,
   services: {
     apikeys: {
       baseUrl: undefined
