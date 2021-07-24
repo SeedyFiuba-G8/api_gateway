@@ -7,7 +7,6 @@
  * description of configuration variables and their potential values.
  */
 exports.config = {
-  app_name: ['API Gateway'],
   /**
    * This setting controls distributed tracing.
    * Distributed tracing lets you see the path that a request takes through your
