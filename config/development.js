@@ -3,8 +3,13 @@ const _ = require('lodash');
 module.exports = {
   log: {
     console: {
-      level: 'debug'
+      level: 'debug',
+      prettyPrint: true,
+      colorize: true
     }
+  },
+  monitoring: {
+    enabled: false
   },
   services: {
     apikeys: {
@@ -15,6 +20,13 @@ module.exports = {
         process.env,
         'CORE_URL',
         'https://sf-tdp2-core-dev.herokuapp.com/'
+      )
+    },
+    sc: {
+      baseUrl: _.get(
+        process.env,
+        'SC_URL',
+        'https://sf-tdp2-sc-dev.herokuapp.com/'
       )
     },
     users: {

@@ -7,11 +7,91 @@ describe('statusController', () => {
   let axiosMock;
   let request;
   let statusNocks;
+  let nockFuncs;
+
+  const services = ['apikeys', 'core', 'sc', 'users'];
+  const expected = {
+    apikeys: {
+      health: {
+        database: 'UP'
+      },
+      ping: 'ok'
+    },
+    core: {
+      health: {
+        database: 'UP'
+      },
+      ping: 'ok'
+    },
+    sc: {
+      health: {
+        database: 'UP'
+      },
+      ping: 'ok'
+    },
+    users: {
+      health: {
+        database: 'UP'
+      },
+      ping: 'ok'
+    }
+  };
 
   beforeEach(() => {
     axiosMock = container.get('axiosMock');
     request = supertest(container.get('app'));
     statusNocks = container.get('statusNocks');
+
+    nockFuncs = {
+      apikeys: {
+        health: {
+          ok: () => statusNocks.nockApiKeysHealth(),
+          badStatus: () => statusNocks.nockApiKeysHealth(500),
+          timeout: () => statusNocks.nockApiKeysTimeout('/health')
+        },
+        ping: {
+          ok: () => statusNocks.nockApiKeysPing(),
+          badStatus: () => statusNocks.nockApiKeysPing(500),
+          timeout: () => statusNocks.nockApiKeysTimeout('/ping')
+        }
+      },
+      core: {
+        health: {
+          ok: () => statusNocks.nockCoreHealth(),
+          badStatus: () => statusNocks.nockCoreHealth(500),
+          timeout: () => statusNocks.nockCoreTimeout('/health')
+        },
+        ping: {
+          ok: () => statusNocks.nockCorePing(),
+          badStatus: () => statusNocks.nockCorePing(500),
+          timeout: () => statusNocks.nockCoreTimeout('/ping')
+        }
+      },
+      sc: {
+        health: {
+          ok: () => statusNocks.nockSCHealth(),
+          badStatus: () => statusNocks.nockSCHealth(500),
+          timeout: () => statusNocks.nockSCTimeout('/health')
+        },
+        ping: {
+          ok: () => statusNocks.nockSCPing(),
+          badStatus: () => statusNocks.nockSCPing(500),
+          timeout: () => statusNocks.nockSCTimeout('/ping')
+        }
+      },
+      users: {
+        health: {
+          ok: () => statusNocks.nockUsersHealth(),
+          badStatus: () => statusNocks.nockUsersHealth(500),
+          timeout: () => statusNocks.nockUsersTimeout('/health')
+        },
+        ping: {
+          ok: () => statusNocks.nockUsersPing(),
+          badStatus: () => statusNocks.nockUsersPing(500),
+          timeout: () => statusNocks.nockUsersTimeout('/ping')
+        }
+      }
+    };
   });
 
   afterEach(() => {
@@ -28,80 +108,41 @@ describe('statusController', () => {
       beforeEach(() => {
         response = {
           status: 'UP',
-          services: {
-            apikeys: {},
-            core: {
-              database: 'UP'
-            },
-            users: {
-              database: 'UP'
-            }
-          }
+          services: {}
         };
-
-        statusNocks.nockCoreHealth();
-        statusNocks.nockUsersHealth();
-      });
-
-      describe('when apikeys is down', () => {
-        describe('when apikeys times out', () => {});
-
-        describe('when apikeys returns bad status', () => {});
-      });
-
-      describe('when core is down', () => {
-        describe('when core times out', () => {
-          beforeEach(() => {
-            response.services.core = 'timed out';
-            statusNocks.nockCoreTimeout('/health');
-          });
-
-          it('should respond with correct status and body', () =>
-            request
-              .get(path)
-              .expect('Content-Type', /json/)
-              .expect(200, response));
-        });
-
-        describe('when core returns bad status', () => {
-          beforeEach(() => {
-            response.services.core = 'bad status';
-            statusNocks.nockCoreHealth(500);
-          });
-
-          it('should respond with correct status and body', () =>
-            request
-              .get(path)
-              .expect('Content-Type', /json/)
-              .expect(200, response));
+        services.forEach((service) => {
+          response.services[service] = expected[service].health;
+          nockFuncs[service].health.ok();
         });
       });
 
-      describe('when users is down', () => {
-        describe('when users times out', () => {
-          beforeEach(() => {
-            response.services.users = 'timed out';
-            statusNocks.nockUsersTimeout('/health');
+      services.forEach((service) => {
+        describe(`when ${service} is down`, () => {
+          describe(`when ${service} times out`, () => {
+            beforeEach(() => {
+              response.services[service] = 'timed out';
+              nockFuncs[service].health.timeout();
+            });
+
+            it('should respond with correct status and body', () =>
+              request
+                .get(path)
+                .expect('Content-Type', /json/)
+                .expect(200, response));
           });
 
-          it('should respond with correct status and body', () =>
-            request
-              .get(path)
-              .expect('Content-Type', /json/)
-              .expect(200, response));
-        });
+          describe(`when ${service} returns bad status`, () => {
+            beforeEach(() => {
+              response.services[service] = 'bad status';
+              nockFuncs[service].health.badStatus();
+            });
 
-        describe('when users returns bad status', () => {
-          beforeEach(() => {
-            response.services.users = 'bad status';
-            statusNocks.nockUsersHealth(500);
+            it('should respond with correct status and body', () =>
+              request
+                .get(path)
+                .expect('Content-Type', /json/)
+                .expect(200, response));
           });
-
-          it('should respond with correct status and body', () =>
-            request
-              .get(path)
-              .expect('Content-Type', /json/)
-              .expect(200, response));
         });
       });
 
@@ -136,84 +177,45 @@ describe('statusController', () => {
       beforeEach(() => {
         response = {
           status: 'ok',
-          services: {
-            apikeys: '?',
-            core: 'ok',
-            users: 'ok'
-          }
+          services: {}
         };
-
-        statusNocks.nockCorePing();
-        statusNocks.nockUsersPing();
-      });
-
-      describe('when apikeys is down', () => {
-        describe('when apikeys times out', () => {});
-
-        describe('when apikeys returns bad status', () => {});
-      });
-
-      describe('when core is down', () => {
-        describe('when core times out', () => {
-          beforeEach(() => {
-            response.services.core = 'timed out';
-            statusNocks.nockCoreTimeout('/ping');
-          });
-
-          afterEach(() => {
-            jest.clearAllMocks();
-          });
-
-          it('should respond with correct status and body', () =>
-            request
-              .get(path)
-              .expect('Content-Type', /json/)
-              .expect(200, response));
-        });
-
-        describe('when core returns bad status', () => {
-          beforeEach(() => {
-            response.services.core = 'bad status';
-            statusNocks.nockCorePing(500);
-          });
-
-          it('should respond with correct status and body', () =>
-            request
-              .get(path)
-              .expect('Content-Type', /json/)
-              .expect(200, response));
+        services.forEach((service) => {
+          response.services[service] = expected[service].ping;
+          nockFuncs[service].ping.ok();
         });
       });
 
-      describe('when users is down', () => {
-        describe('when users times out', () => {
-          beforeEach(() => {
-            response.services.users = 'timed out';
-            statusNocks.nockUsersTimeout('/ping');
+      services.forEach((service) => {
+        describe(`when ${service} is down`, () => {
+          describe(`when ${service} times out`, () => {
+            beforeEach(() => {
+              response.services[service] = 'timed out';
+              nockFuncs[service].ping.timeout();
+            });
+
+            it('should respond with correct status and body', () =>
+              request
+                .get(path)
+                .expect('Content-Type', /json/)
+                .expect(200, response));
           });
 
-          it('should respond with correct status and body', () =>
-            request
-              .get(path)
-              .expect('Content-Type', /json/)
-              .expect(200, response));
-        });
+          describe(`when ${service} returns bad status`, () => {
+            beforeEach(() => {
+              response.services[service] = 'bad status';
+              nockFuncs[service].ping.badStatus();
+            });
 
-        describe('when users returns bad status', () => {
-          beforeEach(() => {
-            response.services.users = 'bad status';
-            statusNocks.nockUsersPing(500);
+            it('should respond with correct status and body', () =>
+              request
+                .get(path)
+                .expect('Content-Type', /json/)
+                .expect(200, response));
           });
-
-          it('should respond with correct status and body', () =>
-            request
-              .get(path)
-              .expect('Content-Type', /json/)
-              .expect(200, response));
         });
       });
 
-      describe('when all services are up', () => {
+      describe('when all services are UP', () => {
         it('should respond with correct status and body', () =>
           request
             .get(path)

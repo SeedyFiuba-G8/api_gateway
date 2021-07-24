@@ -54,7 +54,7 @@ paths:
         $ref: '#/components/requestBodies/postUser'
       responses:
         201:
-          description: 'User was registered successfully.'
+          $ref: '#/components/responses/postUser'
         default:
           $ref: '#/components/responses/Error'
 
@@ -458,6 +458,13 @@ components:
           schema:
             $ref: '#/components/schemas/Profile'
 
+    postUser:
+      description: 'User was registered successfully.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostUserData'
+
     # COMMON
     postSession:
       description: Logged in successfully.
@@ -553,6 +560,10 @@ components:
         - name
 
     # TYPES
+    Address:
+      type: string
+      example: '0xf018Be4Fe4fBD4cA1B1162A44bB139a343C2087b'
+
     Date:
       type: string
       format: date-time
@@ -616,6 +627,28 @@ components:
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
       minProperties: 1
+
+    PostUserData:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        email:
+          $ref: '#/components/schemas/Email'
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+        address:
+          $ref: '#/components/schemas/Address'
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
+        - address
 
     Profile:
       type: object
