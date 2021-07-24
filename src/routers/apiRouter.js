@@ -7,7 +7,8 @@ module.exports = function $apiRouter(
   projectController,
   sessionController,
   sessionMiddleware,
-  statusController
+  statusController,
+  userController
 ) {
   // Forwarding controllers
   const forward2core = forwardingController.core;
@@ -38,7 +39,7 @@ module.exports = function $apiRouter(
       // USERS ----------------------------------------------------------------
 
       .get('/users', sessionMiddleware, onlyAdmins, forward2users)
-      .post('/users', forward2users)
+      .post('/users', userController.create)
       .post('/users/session', sessionController.loginUser)
       .get('/users/:userId', sessionMiddleware, forward2users)
       .patch('/users/:userId', sessionMiddleware, onlyUsers, forward2users)
