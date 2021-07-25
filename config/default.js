@@ -13,7 +13,7 @@ module.exports = {
         contextField: 'session.id'
       }
     ],
-    timeout: 60000 // ms
+    timeout: 300000 // ms
   },
   jwt: {
     key: _.get(process.env, 'JWT_KEY', 'localkey'),
