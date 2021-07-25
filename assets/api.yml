@@ -806,6 +806,8 @@ components:
           $ref: '#/components/schemas/Reviewers'
         stages:
           $ref: '#/components/schemas/Stages'
+        totalFunded:
+          $ref: '#/components/schemas/ETHAmount'
       required:
         - id
         - status
@@ -820,6 +822,7 @@ components:
         - finalizedBy
         - tags
         - stages
+        - totalFunded
 
     ProjectPreview:
       type: object
@@ -851,6 +854,8 @@ components:
           $ref: '#/components/schemas/Tags'
         stages:
           $ref: '#/components/schemas/Stages'
+        totalFunded:
+          $ref: '#/components/schemas/ETHAmount'
       required:
         - id
         - status
@@ -863,6 +868,7 @@ components:
         - finalizedBy
         - tags
         - stages
+        - totalFunded
 
     PostProjectData:
       type: object
