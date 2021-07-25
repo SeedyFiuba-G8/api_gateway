@@ -2,7 +2,10 @@ const _ = require('lodash');
 
 module.exports = {
   logger: {
-    format: 'local'
+    format: 'local',
+    http: {
+      enabled: false
+    }
   },
   monitoring: false,
   services: {
