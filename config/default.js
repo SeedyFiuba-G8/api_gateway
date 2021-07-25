@@ -19,16 +19,11 @@ module.exports = {
     key: _.get(process.env, 'JWT_KEY', 'localkey'),
     expiration: '1h'
   },
-  log: {
+  logger: {
     console: {
       enabled: true,
-      level: 'info',
-      timestamp: true,
-      prettyPrint: false,
-      json: false,
-      colorize: false,
-      stringify: true,
-      label: 'api_gateway'
+      level: _.get(process.env, 'LOGGER_LEVEL', 'info'),
+      prettyPrint: true
     }
   },
   monitoring: true,

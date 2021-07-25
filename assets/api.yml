@@ -574,6 +574,10 @@ components:
       format: email
       example: 'example@email.com'
 
+    ETHAmount:
+      type: number
+      example: 0.000001
+
     FBToken:
       type: string
       example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
@@ -648,22 +652,8 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/Id'
-        email:
-          $ref: '#/components/schemas/Email'
-        firstName:
-          type: string
-          example: 'Memis'
-        lastName:
-          type: string
-          example: 'Pomofot'
-        address:
-          $ref: '#/components/schemas/Address'
       required:
         - id
-        - email
-        - firstName
-        - lastName
-        - address
 
     Profile:
       type: object
@@ -692,6 +682,10 @@ components:
           example: ['music', 'entertainment', 'productivity']
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
+        address:
+          $ref: '#/components/schemas/Address'
+        balance:
+          $ref: '#/components/schemas/ETHAmount'
       required:
         - firstName
         - lastName
