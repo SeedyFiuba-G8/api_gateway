@@ -57,6 +57,7 @@ module.exports = function $apiRouter(
       .get('/projects/:projectId', projectController.get)
       .delete('/projects/:projectId', forward2core)
       .patch('/projects/:projectId', projectController.update)
+      .post('/projects/:projectId/funds', forward2core)
 
       // REVIEWERS ------------------------------------------------------------
       .use('/reviewrequests', sessionMiddleware)
