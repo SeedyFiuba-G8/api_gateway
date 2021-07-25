@@ -61,7 +61,7 @@ function createContainer() {
   );
 
   container.register('logger', function $logger(config) {
-    return loggingComponents.logger(config);
+    return loggingComponents.logger(config.logger);
   });
 
   container.register('loggingMiddleware', function $loggingMiddleware(logger) {
