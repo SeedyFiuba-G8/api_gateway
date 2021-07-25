@@ -591,12 +591,20 @@ components:
       type: string
       example: 'https://imgur.com/gallery/rFvivtw'
 
-    StagesCost:
+    Stage:
+      type: object
+      properties:
+        cost:
+          $ref: '#/components/schemas/ETHAmount'
+        description:
+          type: string
+          example: 'In this stage, we will buy the equipment.'
+
+    Stages:
       type: array
       items:
-        type: number
+        $ref: '#/components/schemas/Stage'
       minItems: 1
-      example: [0.002, 0.0023, 0.001]
 
     # USERS
     AllUsers:
@@ -802,8 +810,8 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/Reviewers'
-        stagesCost:
-          $ref: '#/components/schemas/StagesCost'
+        stages:
+          $ref: '#/components/schemas/Stages'
       required:
         - id
         - status
@@ -817,7 +825,7 @@ components:
         - publishedOn
         - finalizedBy
         - tags
-        - stagesCost
+        - stages
 
     ProjectPreview:
       type: object
@@ -847,8 +855,8 @@ components:
           $ref: '#/components/schemas/Date'
         tags:
           $ref: '#/components/schemas/Tags'
-        stagesCost:
-          $ref: '#/components/schemas/StagesCost'
+        stages:
+          $ref: '#/components/schemas/Stages'
       required:
         - id
         - status
@@ -860,7 +868,7 @@ components:
         - city
         - finalizedBy
         - tags
-        - stagesCost
+        - stages
 
     PostProjectData:
       type: object
@@ -891,8 +899,8 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/ReviewersRaw'
-        stagesCost:
-          $ref: '#/components/schemas/StagesCost'
+        stages:
+          $ref: '#/components/schemas/Stages'
       required:
         - title
         - description
@@ -903,7 +911,7 @@ components:
         - finalizedBy
         - tags
         - reviewers
-        - stagesCost
+        - stages
 
     PatchProjectData:
       type: object
@@ -936,8 +944,8 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/ReviewersRaw'
-        stagesCost:
-          $ref: '#/components/schemas/StagesCost'
+        stages:
+          $ref: '#/components/schemas/Stages'
       minProperties: 1
 
     ProjectId:
