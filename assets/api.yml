@@ -307,6 +307,29 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  /projects/{projectId}/funds:
+    post:
+      summary: Fund a project
+      description: Allows a user to fund a project.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project to fund
+      requestBody:
+        $ref: '#/components/requestBodies/fundProjectData'
+      responses:
+        200:
+          $ref: '#/components/responses/fundProject'
+        default:
+          $ref: '#/components/responses/Error'
+
   # REVIEWERS
   /reviewrequests/{reviewerId}:
     get:
@@ -441,6 +464,13 @@ components:
             $ref: '#/components/schemas/LoginData'
 
     # PROJECTS
+    fundProjectData:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FundProjectData'
+
     postProject:
       required: true
       content:
@@ -505,6 +535,13 @@ components:
             $ref: '#/components/schemas/Session'
 
     # PROJECTS
+    fundProject:
+      description: Transaction initiated.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TxHash'
+
     getProjects:
       description: Projects info retrieved successfully.
       content:
@@ -617,6 +654,10 @@ components:
       type: string
       format: uuid
       example: '123e4567-e89b-12d3-a456-426614174000'
+
+    Hash:
+      type: string
+      example: '0x30b003c570eccaf1705acd4621f72993acb51715f8decbf61535f21376cfe1d2'
 
     Token:
       type: string
@@ -795,6 +836,14 @@ components:
             $ref: '#/components/schemas/ProjectPreview'
       required:
         - projects
+
+    FundProjectData:
+      type: object
+      properties:
+        amount:
+          $ref: '#/components/schemas/ETHAmount'
+      required:
+        - amount
 
     Project:
       type: object
@@ -1004,6 +1053,14 @@ components:
       items:
         type: string
       example: ['javascript', 'python', 'food']
+
+    TxHash:
+      type: object
+      properties:
+        txHash:
+          $ref: '#/components/schemas/Hash'
+      required:
+        - txHash
 
     # REVIEWERS
 
