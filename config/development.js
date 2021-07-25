@@ -1,11 +1,10 @@
 const _ = require('lodash');
 
 module.exports = {
-  log: {
-    console: {
-      level: 'debug',
-      prettyPrint: true,
-      colorize: true
+  logger: {
+    format: 'local',
+    http: {
+      enabled: false
     }
   },
   monitoring: false,

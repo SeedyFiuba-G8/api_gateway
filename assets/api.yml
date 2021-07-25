@@ -574,6 +574,10 @@ components:
       format: email
       example: 'example@email.com'
 
+    ETHAmount:
+      type: number
+      example: 0.000001
+
     FBToken:
       type: string
       example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
@@ -590,6 +594,21 @@ components:
     Picture:
       type: string
       example: 'https://imgur.com/gallery/rFvivtw'
+
+    Stage:
+      type: object
+      properties:
+        cost:
+          $ref: '#/components/schemas/ETHAmount'
+        description:
+          type: string
+          example: 'In this stage, we will buy the equipment.'
+
+    Stages:
+      type: array
+      items:
+        $ref: '#/components/schemas/Stage'
+      minItems: 1
 
     # USERS
     AllUsers:
@@ -633,22 +652,8 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/Id'
-        email:
-          $ref: '#/components/schemas/Email'
-        firstName:
-          type: string
-          example: 'Memis'
-        lastName:
-          type: string
-          example: 'Pomofot'
-        address:
-          $ref: '#/components/schemas/Address'
       required:
         - id
-        - email
-        - firstName
-        - lastName
-        - address
 
     Profile:
       type: object
@@ -677,6 +682,10 @@ components:
           example: ['music', 'entertainment', 'productivity']
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
+        address:
+          $ref: '#/components/schemas/Address'
+        balance:
+          $ref: '#/components/schemas/ETHAmount'
       required:
         - firstName
         - lastName
@@ -795,6 +804,10 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/Reviewers'
+        stages:
+          $ref: '#/components/schemas/Stages'
+        totalFunded:
+          $ref: '#/components/schemas/ETHAmount'
       required:
         - id
         - status
@@ -808,6 +821,8 @@ components:
         - publishedOn
         - finalizedBy
         - tags
+        - stages
+        - totalFunded
 
     ProjectPreview:
       type: object
@@ -837,6 +852,10 @@ components:
           $ref: '#/components/schemas/Date'
         tags:
           $ref: '#/components/schemas/Tags'
+        stages:
+          $ref: '#/components/schemas/Stages'
+        totalFunded:
+          $ref: '#/components/schemas/ETHAmount'
       required:
         - id
         - status
@@ -848,6 +867,8 @@ components:
         - city
         - finalizedBy
         - tags
+        - stages
+        - totalFunded
 
     PostProjectData:
       type: object
@@ -878,6 +899,8 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/ReviewersRaw'
+        stages:
+          $ref: '#/components/schemas/Stages'
       required:
         - title
         - description
@@ -888,6 +911,7 @@ components:
         - finalizedBy
         - tags
         - reviewers
+        - stages
 
     PatchProjectData:
       type: object
@@ -920,6 +944,8 @@ components:
           $ref: '#/components/schemas/Tags'
         reviewers:
           $ref: '#/components/schemas/ReviewersRaw'
+        stages:
+          $ref: '#/components/schemas/Stages'
       minProperties: 1
 
     ProjectId:
