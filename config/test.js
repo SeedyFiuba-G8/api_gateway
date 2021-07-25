@@ -1,4 +1,7 @@
 module.exports = {
+  logger: {
+    format: 'local'
+  },
   services: {
     apikeys: {
       baseUrl: 'http://apikeys-test/'
