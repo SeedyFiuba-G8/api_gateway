@@ -1577,6 +1577,9 @@ components:
             core:
               type: string
               example: 'ok'
+            sc:
+              type: string
+              example: 'ok'
             users:
               type: string
               example: 'ok'
@@ -1594,11 +1597,14 @@ components:
               $ref: '#/components/schemas/HealthServiceStatus'
             core:
               $ref: '#/components/schemas/HealthServiceStatus'
+            sc:
+              $ref: '#/components/schemas/HealthServiceStatus'
             users:
               $ref: '#/components/schemas/HealthServiceStatus'
           required:
             - apikeys
             - core
+            - sc
             - users
       required:
         - status
