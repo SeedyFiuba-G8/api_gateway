@@ -688,6 +688,10 @@ components:
         $ref: '#/components/schemas/Stage'
       minItems: 1
 
+    StageId:
+      type: integer
+      example: 1
+
     # USERS
     AllUsers:
       type: object
