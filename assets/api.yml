@@ -39,6 +39,37 @@ paths:
         - bearerAuth: []
       tags:
         - Users
+      parameters:
+        - in: query
+          name: firstName
+          required: false
+          schema:
+            type: string
+          description: First name of the user.
+        - in: query
+          name: lastName
+          required: false
+          schema:
+            type: string
+          description: Last name of the user.
+        - in: query
+          name: banned
+          required: false
+          schema:
+            type: boolean
+          description: User banned status.
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+          description: The number of users to be retrieved.
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+          description: The number of users we want to take as offset.
       responses:
         200:
           $ref: '#/components/responses/getAllUsers'
@@ -165,6 +196,12 @@ paths:
           schema:
             $ref: '#/components/schemas/Id'
           description: The userId of whom we want to retrieve projects.
+        - in: query
+          name: reviewerId
+          required: false
+          schema:
+            $ref: '#/components/schemas/Id'
+          description: The id of the reviewer of whom we want to retrieve projects.
         - in: query
           name: type
           required: false
