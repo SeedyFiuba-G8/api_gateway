@@ -236,7 +236,7 @@ paths:
 
     patch:
       summary: Modify the information of the project.
-      description: Allows an owner of a project or an admin to modify the information of a project.
+      description: Allows an owner of a project or an admin to modify the information of a project. Allows a reviewer of a project to approve stage(s), by patching approvedStage. Allows an entrepeneur to mark stage(s) as completed, by patching lastCompletedStage.
       security:
         - bearerAuth: []
       tags:
@@ -857,6 +857,8 @@ components:
           $ref: '#/components/schemas/Stages'
         totalFunded:
           $ref: '#/components/schemas/ETHAmount'
+        approvedStage:
+          $ref: '#/components/schemas/StageId'
       required:
         - id
         - status
@@ -872,6 +874,7 @@ components:
         - tags
         - stages
         - totalFunded
+        - approvedStage
 
     ProjectPreview:
       type: object
@@ -905,6 +908,8 @@ components:
           $ref: '#/components/schemas/Stages'
         totalFunded:
           $ref: '#/components/schemas/ETHAmount'
+        approvedStage:
+          $ref: '#/components/schemas/StageId'
       required:
         - id
         - status
@@ -918,6 +923,7 @@ components:
         - tags
         - stages
         - totalFunded
+        - approvedStage
 
     PostProjectData:
       type: object
@@ -995,6 +1001,10 @@ components:
           $ref: '#/components/schemas/ReviewersRaw'
         stages:
           $ref: '#/components/schemas/Stages'
+        approvedStage:
+          $ref: '#/components/schemas/StageId'
+        lastCompletedStage:
+          $ref: '#/components/schemas/StageId'
       minProperties: 1
 
     ProjectId:
@@ -1010,7 +1020,8 @@ components:
       enum:
         - DRAFT
         - FUNDING
-        - FINALIZED
+        - IN_PROGRESS
+        - COMPLETED
 
     FundingProjectStatus:
       type: string
@@ -1116,6 +1127,8 @@ components:
           $ref: '#/components/schemas/Date'
         status:
           $ref: '#/components/schemas/ReviewerStatus'
+        approvedStage:
+          $ref: '#/components/schemas/StageId'
       required:
         - projectId
         - userId
@@ -1128,6 +1141,7 @@ components:
         - publishedOn
         - finalizedBy
         - status
+        - approvedStage
 
     PutReviewRequest:
       type: object
