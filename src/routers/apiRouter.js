@@ -41,18 +41,6 @@ module.exports = function $apiRouter(
 
       .get('/users', sessionMiddleware, onlyAdmins, forward2users)
       .post('/users', userController.create)
-      .get(
-        '/users/metrics',
-        sessionMiddleware,
-        onlyAdmins,
-        metricController.getAccountBasic
-      )
-      .get(
-        '/users/metrics/events',
-        sessionMiddleware,
-        onlyAdmins,
-        metricController.getAccountEvents
-      )
       .post('/users/session', sessionController.loginUser)
       .get('/users/:userId', sessionMiddleware, userController.get)
       .patch('/users/:userId', sessionMiddleware, onlyUsers, forward2users)
@@ -77,5 +65,14 @@ module.exports = function $apiRouter(
 
       .get('/reviewrequests/:reviewerId', forward2core)
       .put('/reviewrequests/:reviewerId/:projectId', forward2core)
+
+      // METRICS --------------------------------------------------------------
+      .use('/metrics', sessionMiddleware)
+      .use('/metrics', onlyAdmins)
+
+      .get('/metrics/users', metricController.getAccountBasic)
+      .get('/metrics/projects', metricController.getProjectBasic)
+      .get('/metrics/events/users', metricController.getAccountEvents)
+      .get('/metrics/events/projects', metricController.getProjectEvents)
   );
 };
