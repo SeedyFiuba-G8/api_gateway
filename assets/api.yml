@@ -245,11 +245,11 @@ paths:
             $ref: '#/components/schemas/Id'
           description: The id of the reviewer of whom we want to retrieve projects.
         - in: query
-          name: tags
+          name: blocked
           required: false
           schema:
-            $ref: '#/components/schemas/Tags'
-          description: Tags of project to retrieve.
+            $ref: '#/components/schemas/Blocked'
+          description: Whether the project is blocked or not.
         - in: query
           name: type
           required: false
@@ -257,6 +257,12 @@ paths:
             type: string
             example: 'social'
           description: Type of project to retrieve.
+        - in: query
+          name: tags
+          required: false
+          schema:
+            $ref: '#/components/schemas/Tags'
+          description: Tags of project to retrieve.
         - in: query
           name: status
           required: false
@@ -856,6 +862,10 @@ components:
       type: string
       example: '0xf018Be4Fe4fBD4cA1B1162A44bB139a343C2087b'
 
+    Blocked:
+      type: boolean
+      example: false
+
     Date:
       type: string
       format: date-time
@@ -1142,6 +1152,8 @@ components:
           $ref: '#/components/schemas/Id'
         status:
           $ref: '#/components/schemas/ProjectStatus'
+        blocked:
+          $ref: '#/components/schemas/Blocked'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -1172,6 +1184,7 @@ components:
       required:
         - id
         - status
+        - blocked
         - title
         - description
         - type
