@@ -6,6 +6,7 @@ module.exports = function $forwardingController(
 ) {
   return expressify({
     core,
+    forward,
     users
   });
 
@@ -19,7 +20,7 @@ module.exports = function $forwardingController(
     return forward(req, res);
   }
 
-  // Private
+  // Aux
 
   function forward(req, res) {
     const { body, context, method, url } = req;

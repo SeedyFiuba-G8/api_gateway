@@ -4,6 +4,7 @@ module.exports = function $apiRouter(
   apiValidatorMiddleware,
   authMiddleware,
   forwardingController,
+  metricController,
   projectController,
   sessionController,
   sessionMiddleware,
@@ -57,11 +58,21 @@ module.exports = function $apiRouter(
       .get('/projects/:projectId', projectController.get)
       .delete('/projects/:projectId', forward2core)
       .patch('/projects/:projectId', projectController.update)
+      .post('/projects/:projectId/funds', forward2core)
 
       // REVIEWERS ------------------------------------------------------------
       .use('/reviewrequests', sessionMiddleware)
 
       .get('/reviewrequests/:reviewerId', forward2core)
       .put('/reviewrequests/:reviewerId/:projectId', forward2core)
+
+      // METRICS --------------------------------------------------------------
+      .use('/metrics', sessionMiddleware)
+      .use('/metrics', onlyAdmins)
+
+      .get('/metrics/users', metricController.getAccountBasic)
+      .get('/metrics/projects', metricController.getProjectBasic)
+      .get('/metrics/events/users', metricController.getAccountEvents)
+      .get('/metrics/events/projects', metricController.getProjectEvents)
   );
 };
