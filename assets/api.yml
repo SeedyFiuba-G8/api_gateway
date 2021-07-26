@@ -25,6 +25,7 @@ tags:
   - name: Users
   - name: Projects
   - name: Reviewers
+  - name: Metrics
   - name: Status
 
 # =============================================================================
@@ -387,6 +388,50 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  # METRICS
+  /users/metrics:
+    get:
+      summary: Get basic users metrics
+      description: Get metrics from users and admins.
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+        - Metrics
+      responses:
+        200:
+          $ref: '#/components/responses/getAccountBasicMetrics'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /users/metrics/events:
+    get:
+      summary: Get event metrics
+      description: Get event metrics from users and admins.
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+        - Metrics
+      parameters:
+        - in: query
+          name: initialDate
+          required: true
+          schema:
+            $ref: '#/components/schemas/Date'
+          description: Initial date to retrieve metrics.
+        - in: query
+          name: finalDate
+          required: false
+          schema:
+            $ref: '#/components/schemas/Date'
+          description: Final date to retrieve metrics.
+      responses:
+        200:
+          $ref: '#/components/responses/getAccountEventMetrics'
+        default:
+          $ref: '#/components/responses/Error'
+
   # STATUS
   /health:
     get:
@@ -590,6 +635,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ReviewRequests'
+
+    # METRICS
+    getAccountBasicMetrics:
+      description: Metrics retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountBasicMetrics'
+
+    getAccountEventMetrics:
+      description: Metrics retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountEventMetrics'
 
     # STATUS
     health:
@@ -1084,7 +1144,6 @@ components:
         - txHash
 
     # REVIEWERS
-
     Reviewer:
       type: object
       properties:
@@ -1191,6 +1250,88 @@ components:
           $ref: '#/components/schemas/PutReviewerStatus'
       required:
         - status
+
+    # METRICS
+    UserQuantities:
+      type: object
+      properties:
+        native:
+          type: integer
+          example: 23
+        federate:
+          type: integer
+          example: 12
+      required:
+        - native
+        - federate
+
+    AccountBasicMetrics:
+      type: object
+      properties:
+        admins:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 6045
+          required:
+            - total
+        users:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 6045
+            banned:
+              type: integer
+              example: 231
+          required:
+            - total
+            - banned
+      required:
+        - admins
+        - users
+
+    AccountEventMetrics:
+      type: object
+      properties:
+        admins:
+          type: object
+          properties:
+            register:
+              type: integer
+              example: 2
+            login:
+              type: integer
+              example: 54
+            ban:
+              type: integer
+              example: 23
+            unban:
+              type: integer
+              example: 12
+          required:
+            - register
+            - login
+            - ban
+            - unban
+        users:
+          type: object
+          properties:
+            register:
+              $ref: '#/components/schemas/UserQuantities'
+            login:
+              $ref: '#/components/schemas/UserQuantities'
+            passwordRecovery:
+              type: integer
+              example: 6
+          required:
+            - register
+            - login
+            - passwordRecovery
+      required:
+        - admins
+        - users
 
     # COMMON
     LoginData:
