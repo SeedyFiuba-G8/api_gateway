@@ -4,6 +4,7 @@ module.exports = function $apiRouter(
   apiValidatorMiddleware,
   authMiddleware,
   forwardingController,
+  metricController,
   projectController,
   sessionController,
   sessionMiddleware,
@@ -40,6 +41,18 @@ module.exports = function $apiRouter(
 
       .get('/users', sessionMiddleware, onlyAdmins, forward2users)
       .post('/users', userController.create)
+      .get(
+        '/users/metrics',
+        sessionMiddleware,
+        onlyAdmins,
+        metricController.getAccountBasic
+      )
+      .get(
+        '/users/metrics/events',
+        sessionMiddleware,
+        onlyAdmins,
+        metricController.getAccountEvents
+      )
       .post('/users/session', sessionController.loginUser)
       .get('/users/:userId', sessionMiddleware, userController.get)
       .patch('/users/:userId', sessionMiddleware, onlyUsers, forward2users)
