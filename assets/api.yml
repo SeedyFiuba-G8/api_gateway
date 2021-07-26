@@ -204,6 +204,12 @@ paths:
             $ref: '#/components/schemas/Id'
           description: The id of the reviewer of whom we want to retrieve projects.
         - in: query
+          name: tags
+          required: false
+          schema:
+            $ref: '#/components/schemas/Tags'
+          description: Tags of project to retrieve.
+        - in: query
           name: type
           required: false
           schema:
