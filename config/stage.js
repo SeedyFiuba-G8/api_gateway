@@ -1,7 +1,7 @@
 module.exports = {
   services: {
     apikeys: {
-      baseUrl: undefined
+      baseUrl: 'https://sf-tdp2-apikeys-dev.herokuapp.com/'
     },
     core: {
       baseUrl: 'https://sf-tdp2-core-dev.herokuapp.com/'
