@@ -1,7 +1,7 @@
 module.exports = function $metricController(
   apikeys,
   expressify,
-  forwardingController,
+  innerForward,
   services,
   urlFactory
 ) {
@@ -19,7 +19,7 @@ module.exports = function $metricController(
     );
     const { users: apikey } = await apikeys;
 
-    return forwardingController.forward(req, res, apikey);
+    return innerForward(req, res, apikey);
   }
 
   async function getAccountEvents(req, res) {
@@ -29,7 +29,7 @@ module.exports = function $metricController(
     );
     const { users: apikey } = await apikeys;
 
-    return forwardingController.forward(req, res, apikey);
+    return innerForward(req, res, apikey);
   }
 
   async function getProjectBasic(req, res) {
@@ -37,9 +37,9 @@ module.exports = function $metricController(
       req.originalUrl.replace(req.path, '/metrics'),
       services.core.baseUrl
     );
-    const { core: apikey } = await apikey;
+    const { core: apikey } = await apikeys;
 
-    return forwardingController.forward(req, res, apikey);
+    return innerForward(req, res, apikey);
   }
 
   async function getProjectEvents(req, res) {
@@ -49,6 +49,6 @@ module.exports = function $metricController(
     );
     const { core: apikey } = await apikeys;
 
-    return forwardingController.forward(req, res, apikey);
+    return innerForward(req, res, apikey);
   }
 };
