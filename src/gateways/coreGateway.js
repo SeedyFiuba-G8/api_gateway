@@ -26,14 +26,18 @@ module.exports = function $coreGateway(
     ).then(({ data }) => data.id);
   }
 
-  async function get(projectId) {
+  async function get(context, projectId) {
     const url = urlFactory(`/projects/${projectId}`, services.core.baseUrl);
     const { core: apikey } = await apikeys;
 
-    return fetch(url, {
-      method: 'GET',
-      headers: apikeyUtils.headers(apikey)
-    }).then(({ data }) => data);
+    return fetch(
+      url,
+      {
+        method: 'GET',
+        headers: apikeyUtils.headers(apikey)
+      },
+      context
+    ).then(({ data }) => data);
   }
 
   async function update(context, projectId, projectInfo) {

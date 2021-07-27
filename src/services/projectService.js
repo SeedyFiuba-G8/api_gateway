@@ -15,7 +15,7 @@ module.exports = function $projectService(coreGateway, errors, usersGateway) {
   async function get(context, projectId) {
     const { type, id: requesterId } = context.session;
 
-    const project = await coreGateway.get(projectId);
+    const project = await coreGateway.get(context, projectId);
     const { reviewers, userId } = project;
 
     if (!reviewers) return project;
@@ -40,7 +40,7 @@ module.exports = function $projectService(coreGateway, errors, usersGateway) {
       };
     });
 
-    return project;
+    return type === 'ADMIN' ? _.omit(project, ['liked']) : project;
   }
 
   async function update(context, projectId, newProjectInfo) {

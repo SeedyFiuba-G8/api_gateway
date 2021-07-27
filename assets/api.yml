@@ -149,7 +149,7 @@ paths:
 
   /users/{userId}/fundings:
     get:
-      summary: Get the project fundings made by a user.
+      summary: Get the project fundings made by a user
       description: Allows a user to retrieve a the project funding information of a user by its id.
       tags:
         - Wallets
@@ -168,7 +168,7 @@ paths:
 
   /users/fundings:
     get:
-      summary: Get the project fundings made by a user.
+      summary: Get the project fundings made by a user
       description: Allows a user to retrieve all project funding information.
       tags:
         - Wallets
@@ -279,7 +279,7 @@ paths:
           name: blocked
           required: false
           schema:
-            $ref: '#/components/schemas/Blocked'
+            $ref: '#/components/schemas/Boolean'
           description: Whether the project is blocked or not.
         - in: query
           name: type
@@ -357,7 +357,7 @@ paths:
           $ref: '#/components/responses/Error'
 
     patch:
-      summary: Modify the information of the project.
+      summary: Modify the information of the project
       description: Allows an owner of a project or an admin to modify >
         the information of a project. Allows a reviewer of a project to >
         mark stage(s) as completed, by patching lastCompletedStage.
@@ -381,7 +381,7 @@ paths:
           $ref: '#/components/responses/Error'
 
     delete:
-      summary: Delete a project by ID
+      summary: Delete a project by id
       description: Allows an owner of a project or an admin to delete a project.
       security:
         - bearerAuth: []
@@ -461,6 +461,47 @@ paths:
       responses:
         204:
           description: 'Project unblocked successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /projects/{projectId}/like:
+    post:
+      summary: Like a project
+      description: Allow users to like projects.
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project
+      responses:
+        204:
+          description: 'Project liked successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+    delete:
+      summary: Dislike a project
+      description: Allow users to dislike projects.
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project
+      responses:
+        204:
+          description: 'Project disliked successfully.'
         default:
           $ref: '#/components/responses/Error'
 
@@ -926,7 +967,7 @@ components:
       type: string
       example: '0xf018Be4Fe4fBD4cA1B1162A44bB139a343C2087b'
 
-    Blocked:
+    Boolean:
       type: boolean
       example: false
 
@@ -1155,11 +1196,13 @@ components:
         status:
           $ref: '#/components/schemas/ProjectStatus'
         blocked:
-          $ref: '#/components/schemas/Blocked'
+          $ref: '#/components/schemas/Boolean'
         userId:
           $ref: '#/components/schemas/Id'
         reviewerId:
           $ref: '#/components/schemas/Id'
+        liked:
+          $ref: '#/components/schemas/Boolean'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -1227,7 +1270,7 @@ components:
         status:
           $ref: '#/components/schemas/ProjectStatus'
         blocked:
-          $ref: '#/components/schemas/Blocked'
+          $ref: '#/components/schemas/Boolean'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'

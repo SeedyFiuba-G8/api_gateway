@@ -71,6 +71,8 @@ module.exports = function $apiRouter(
       .post('/projects/:projectId/funds', forward2core)
       .post('/projects/:projectId/block', onlyAdmins, forward2core)
       .delete('/projects/:projectId/block', onlyAdmins, forward2core)
+      .post('/projects/:projectId/like', onlyUsers, forward2core)
+      .delete('/projects/:projectId/like', onlyUsers, forward2core)
 
       // REVIEWERS ------------------------------------------------------------
       .use('/reviewrequests', sessionMiddleware)
