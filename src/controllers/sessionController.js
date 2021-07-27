@@ -29,8 +29,23 @@ module.exports = function $sessionController(
 
     if (credentials.fbToken && type === 'USER') {
       const { core: coreApikey } = await apikeys;
-      const postWalletUrl = urlFactory('wallets', services.core.baseUrl);
+
       try {
+        const getWalletUrl = urlFactory(
+          `wallets/${session.id}`,
+          services.core.baseUrl
+        );
+
+        await forwardingService.forward(
+          {},
+          {
+            method: 'GET',
+            url: getWalletUrl,
+            headers: apikeyUtils.headers(coreApikey)
+          }
+        );
+      } catch (err) {
+        const postWalletUrl = urlFactory('wallets', services.core.baseUrl);
         const postWalletRes = await forwardingService.forward(
           {},
           {
@@ -43,9 +58,6 @@ module.exports = function $sessionController(
         logger.info(
           `Wallet address ${postWalletRes.data} created for user ${session.id}`
         );
-      } catch (err) {
-        // Wallet already exists
-        return res.status(200).json(session);
       }
     }
 
