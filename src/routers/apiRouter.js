@@ -78,6 +78,14 @@ module.exports = function $apiRouter(
       .get('/reviewrequests/:reviewerId', forward2core)
       .put('/reviewrequests/:reviewerId/:projectId', forward2core)
 
+      // WALLETS --------------------------------------------------------------
+      .post(
+        '/wallets/:walletAddress/funds',
+        sessionMiddleware,
+        onlyUsers,
+        forward2core
+      )
+
       // METRICS --------------------------------------------------------------
       .use('/metrics', sessionMiddleware)
       .use('/metrics', onlyAdmins)

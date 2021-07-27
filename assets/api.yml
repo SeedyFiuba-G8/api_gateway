@@ -153,6 +153,8 @@ paths:
       description: Allows a user to retrieve a the project funding information of a user by its id.
       tags:
         - Wallets
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: userId
@@ -172,6 +174,8 @@ paths:
       description: Allows a user to retrieve all project funding information.
       tags:
         - Wallets
+      security:
+        - bearerAuth: []
       responses:
         200:
           $ref: '#/components/responses/getAllFundings'
@@ -216,6 +220,30 @@ paths:
       responses:
         204:
           description: 'User unbanned successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+  # WALLETS
+  /wallets/{walletAddress}/funds:
+    post:
+      summary: Transfer funds to an external wallet
+      description: Allows a user to transfer funds to walletAddress.
+      tags:
+        - Wallets
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: walletAddress
+          schema:
+            $ref: '#/components/schemas/Address'
+          required: true
+          description: address of the wallet we want to transfer funds
+      requestBody:
+        $ref: '#/components/requestBodies/transferFunds'
+      responses:
+        200:
+          $ref: '#/components/responses/transferFunds'
         default:
           $ref: '#/components/responses/Error'
 
@@ -713,7 +741,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/FundProjectData'
+            $ref: '#/components/schemas/PostFundsData'
 
     postProject:
       required: true
@@ -728,6 +756,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PatchProjectData'
+
+    # WALLETS
+    transferFunds:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostFundsData'
 
     # REVIEWERS
     putReviewRequest:
@@ -842,6 +878,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ReviewRequests'
+
+    # WALLETS
+    transferFunds:
+      description: Funds transferring transaction initialized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TxHash'
 
     # METRICS
     getAccountBasicMetrics:
@@ -1139,7 +1183,7 @@ components:
       required:
         - projects
 
-    FundProjectData:
+    PostFundsData:
       type: object
       properties:
         amount:
