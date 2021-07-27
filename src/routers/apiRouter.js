@@ -41,21 +41,16 @@ module.exports = function $apiRouter(
 
       .get('/users', sessionMiddleware, onlyAdmins, forward2users)
       .post('/users', userController.create)
-      .get(
-        '/users/metrics',
-        sessionMiddleware,
-        onlyAdmins,
-        metricController.getAccountBasic
-      )
-      .get(
-        '/users/metrics/events',
-        sessionMiddleware,
-        onlyAdmins,
-        metricController.getAccountEvents
-      )
       .post('/users/session', sessionController.loginUser)
       .get('/users/:userId', sessionMiddleware, userController.get)
       .patch('/users/:userId', sessionMiddleware, onlyUsers, forward2users)
+      .post('/users/:userId/ban', sessionMiddleware, onlyAdmins, forward2users)
+      .delete(
+        '/users/:userId/ban',
+        sessionMiddleware,
+        onlyAdmins,
+        forward2users
+      )
 
       // ADMINS ---------------------------------------------------------------
 
@@ -71,11 +66,22 @@ module.exports = function $apiRouter(
       .delete('/projects/:projectId', forward2core)
       .patch('/projects/:projectId', projectController.update)
       .post('/projects/:projectId/funds', forward2core)
+      .post('/projects/:projectId/block', onlyAdmins, forward2core)
+      .delete('/projects/:projectId/block', onlyAdmins, forward2core)
 
       // REVIEWERS ------------------------------------------------------------
       .use('/reviewrequests', sessionMiddleware)
 
       .get('/reviewrequests/:reviewerId', forward2core)
       .put('/reviewrequests/:reviewerId/:projectId', forward2core)
+
+      // METRICS --------------------------------------------------------------
+      .use('/metrics', sessionMiddleware)
+      .use('/metrics', onlyAdmins)
+
+      .get('/metrics/users', metricController.getAccountBasic)
+      .get('/metrics/projects', metricController.getProjectBasic)
+      .get('/metrics/events/users', metricController.getAccountEvents)
+      .get('/metrics/events/projects', metricController.getProjectEvents)
   );
 };

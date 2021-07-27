@@ -6,7 +6,9 @@ module.exports = function $metricController(
 ) {
   return expressify({
     getAccountBasic,
-    getAccountEvents
+    getAccountEvents,
+    getProjectBasic,
+    getProjectEvents
   });
 
   function getAccountBasic(req, res) {
@@ -21,6 +23,22 @@ module.exports = function $metricController(
     req.url = urlFactory(
       req.originalUrl.replace(req.path, '/metrics/events'),
       services.users.baseUrl
+    );
+    return forwardingController.forward(req, res);
+  }
+
+  function getProjectBasic(req, res) {
+    req.url = urlFactory(
+      req.originalUrl.replace(req.path, '/metrics'),
+      services.core.baseUrl
+    );
+    return forwardingController.forward(req, res);
+  }
+
+  function getProjectEvents(req, res) {
+    req.url = urlFactory(
+      req.originalUrl.replace(req.path, '/metrics/events'),
+      services.core.baseUrl
     );
     return forwardingController.forward(req, res);
   }

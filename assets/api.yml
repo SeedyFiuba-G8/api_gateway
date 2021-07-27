@@ -147,6 +147,47 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  /users/{userId}/ban:
+    post:
+      summary: Ban a user
+      description: Allow admins to ban users.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        204:
+          description: 'User banned successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+    delete:
+      summary: Unban a user
+      description: Allow admins to unban users.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        204:
+          description: 'User unbanned successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
   # ADMINS
   /admins:
     post:
@@ -204,12 +245,24 @@ paths:
             $ref: '#/components/schemas/Id'
           description: The id of the reviewer of whom we want to retrieve projects.
         - in: query
+          name: blocked
+          required: false
+          schema:
+            $ref: '#/components/schemas/Blocked'
+          description: Whether the project is blocked or not.
+        - in: query
           name: type
           required: false
           schema:
             type: string
             example: 'social'
           description: Type of project to retrieve.
+        - in: query
+          name: tags
+          required: false
+          schema:
+            $ref: '#/components/schemas/Tags'
+          description: Tags of project to retrieve.
         - in: query
           name: status
           required: false
@@ -339,6 +392,47 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  /projects/{projectId}/block:
+    post:
+      summary: Block a project
+      description: Allow admins to block projects.
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project to block
+      responses:
+        204:
+          description: 'Project blocked successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+    delete:
+      summary: Unblock a user
+      description: Allow admins to unblock projects.
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project to block
+      responses:
+        204:
+          description: 'Project unblocked successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
   # REVIEWERS
   /reviewrequests/{reviewerId}:
     get:
@@ -391,7 +485,7 @@ paths:
           $ref: '#/components/responses/Error'
 
   # METRICS
-  /users/metrics:
+  /metrics/users:
     get:
       summary: Get basic users metrics
       description: Get metrics from users and admins.
@@ -406,7 +500,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
-  /users/metrics/events:
+  /metrics/events/users:
     get:
       summary: Get event metrics
       description: Get event metrics from users and admins.
@@ -431,6 +525,62 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/getAccountEventMetrics'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /metrics/projects:
+    get:
+      summary: Get basic project metrics
+      description: Get metrics from projects.
+      parameters:
+        - in: query
+          name: userId
+          required: false
+          schema:
+            $ref: '#/components/schemas/Id'
+          description: The userId of whom we want to retrieve metrics.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+        - Metrics
+      responses:
+        200:
+          $ref: '#/components/responses/getProjectBasicMetrics'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /metrics/events/projects:
+    get:
+      summary: Get event metrics
+      description: Get event metrics from projects.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+        - Metrics
+      parameters:
+        - in: query
+          name: userId
+          required: false
+          schema:
+            $ref: '#/components/schemas/Id'
+          description: The userId of whom we want to retrieve metrics.
+        - in: query
+          name: initialDate
+          required: true
+          schema:
+            $ref: '#/components/schemas/Date'
+          description: Initial date to retrieve metrics.
+        - in: query
+          name: finalDate
+          required: false
+          schema:
+            $ref: '#/components/schemas/Date'
+          description: Final date to retrieve metrics.
+      responses:
+        200:
+          $ref: '#/components/responses/getProjectEventMetrics'
         default:
           $ref: '#/components/responses/Error'
 
@@ -653,6 +803,20 @@ components:
           schema:
             $ref: '#/components/schemas/AccountEventMetrics'
 
+    getProjectBasicMetrics:
+      description: Metrics retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectBasicMetrics'
+
+    getProjectEventMetrics:
+      description: Metrics retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectEventMetrics'
+
     # STATUS
     health:
       description: Microservice general health state reported.
@@ -699,6 +863,10 @@ components:
     Address:
       type: string
       example: '0xf018Be4Fe4fBD4cA1B1162A44bB139a343C2087b'
+
+    Blocked:
+      type: boolean
+      example: false
 
     Date:
       type: string
@@ -983,6 +1151,8 @@ components:
           $ref: '#/components/schemas/Id'
         status:
           $ref: '#/components/schemas/ProjectStatus'
+        blocked:
+          $ref: '#/components/schemas/Blocked'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -1011,6 +1181,7 @@ components:
       required:
         - id
         - status
+        - blocked
         - title
         - description
         - type
@@ -1324,6 +1495,44 @@ components:
         - admins
         - users
 
+    ProjectBasicMetrics:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 6045
+        draft:
+          type: integer
+          example: 2014
+        funding:
+          type: integer
+          example: 2000
+        inProgress:
+          type: integer
+          example: 2031
+        completed:
+          type: integer
+          example: 2031
+      required:
+        - total
+        - draft
+        - funding
+        - inProgress
+        - completed
+
+    ProjectEventMetrics:
+      type: object
+      properties:
+        create:
+          type: integer
+          example: 223
+        publish:
+          type: integer
+          example: 54
+      required:
+        - create
+        - publish
+
     # COMMON
     LoginData:
       type: object
@@ -1372,6 +1581,9 @@ components:
             core:
               type: string
               example: 'ok'
+            sc:
+              type: string
+              example: 'ok'
             users:
               type: string
               example: 'ok'
@@ -1389,11 +1601,14 @@ components:
               $ref: '#/components/schemas/HealthServiceStatus'
             core:
               $ref: '#/components/schemas/HealthServiceStatus'
+            sc:
+              $ref: '#/components/schemas/HealthServiceStatus'
             users:
               $ref: '#/components/schemas/HealthServiceStatus'
           required:
             - apikeys
             - core
+            - sc
             - users
       required:
         - status
