@@ -585,6 +585,16 @@ paths:
           $ref: '#/components/responses/Error'
 
   # STATUS
+  /info:
+    get:
+      tags:
+        - Status
+      responses:
+        200:
+          $ref: '#/components/responses/info'
+        default:
+          $ref: '#/components/responses/Error'
+
   /health:
     get:
       tags:
@@ -818,8 +828,15 @@ components:
             $ref: '#/components/schemas/ProjectEventMetrics'
 
     # STATUS
+    info:
+      description: Microservices general info reported.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Info'
+
     health:
-      description: Microservice general health state reported.
+      description: Microservices general health state reported.
       content:
         application/json:
           schema:
@@ -1590,6 +1607,20 @@ components:
         - token
 
     # STATUS
+    Info:
+      type: object
+      properties:
+        apigateway:
+          $ref: '#/components/schemas/InfoServiceStatus'
+        apikeys:
+          $ref: '#/components/schemas/InfoServiceStatus'
+        core:
+          $ref: '#/components/schemas/InfoServiceStatus'
+        sc:
+          $ref: '#/components/schemas/InfoServiceStatus'
+        users:
+          $ref: '#/components/schemas/InfoServiceStatus'
+
     Ping:
       type: object
       properties:
@@ -1603,23 +1634,26 @@ components:
       type: object
       properties:
         status:
-          type: string
-          example: 'ok'
+          $ref: '#/components/schemas/PingServiceStatus'
         services:
           type: object
           properties:
             apikeys:
-              type: string
-              example: 'ok'
+              $ref: '#/components/schemas/PingServiceStatus'
             core:
-              type: string
-              example: 'ok'
+              $ref: '#/components/schemas/PingServiceStatus'
             sc:
-              type: string
-              example: 'ok'
+              $ref: '#/components/schemas/PingServiceStatus'
             users:
-              type: string
-              example: 'ok'
+              $ref: '#/components/schemas/PingServiceStatus'
+          required:
+            - apikeys
+            - core
+            - sc
+            - users
+      required:
+        - status
+        - services
 
     Health:
       type: object
@@ -1651,6 +1685,28 @@ components:
       oneOf:
         - type: object
           example: { 'database': 'UP' }
+        - type: string
+          example: 'timed out'
+
+    PingServiceStatus:
+      type: string
+      example: 'ok'
+
+    CorrectInfoServiceStatus:
+      type: object
+      properties:
+        creationDate:
+          $ref: '#/components/schemas/Date'
+        description:
+          type: string
+          example: 'Service description!'
+      required:
+        - creationDate
+        - description
+
+    InfoServiceStatus:
+      oneOf:
+        - $ref: '#/components/schemas/CorrectInfoServiceStatus'
         - type: string
           example: 'timed out'
 #

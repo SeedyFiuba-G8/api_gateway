@@ -33,6 +33,7 @@ module.exports = function $apiRouter(
 
       // STATUS ---------------------------------------------------------------
 
+      .get('/info', statusController.info)
       .get('/health', statusController.health)
       .get('/ping', statusController.ping)
       .get('/pingAll', statusController.pingAll)

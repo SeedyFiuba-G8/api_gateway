@@ -84,6 +84,14 @@ function createContainer() {
     return config.services;
   });
 
+  container.register('serviceInfo', function $serverInfo() {
+    return {
+      creationDate: new Date(),
+      description:
+        'API Gateway Microservice, represents the public access point to our API.'
+    };
+  });
+
   container.register('urlFactory', function $commonUrlFactory() {
     return gatewayComponents.urlFactory();
   });
