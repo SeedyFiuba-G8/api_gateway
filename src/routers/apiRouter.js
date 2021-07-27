@@ -44,6 +44,13 @@ module.exports = function $apiRouter(
       .post('/users/session', sessionController.loginUser)
       .get('/users/:userId', sessionMiddleware, userController.get)
       .patch('/users/:userId', sessionMiddleware, onlyUsers, forward2users)
+      .post('/users/:userId/ban', sessionMiddleware, onlyAdmins, forward2users)
+      .delete(
+        '/users/:userId/ban',
+        sessionMiddleware,
+        onlyAdmins,
+        forward2users
+      )
 
       // ADMINS ---------------------------------------------------------------
 
@@ -59,6 +66,8 @@ module.exports = function $apiRouter(
       .delete('/projects/:projectId', forward2core)
       .patch('/projects/:projectId', projectController.update)
       .post('/projects/:projectId/funds', forward2core)
+      .post('/projects/:projectId/block', onlyAdmins, forward2core)
+      .delete('/projects/:projectId/block', onlyAdmins, forward2core)
 
       // REVIEWERS ------------------------------------------------------------
       .use('/reviewrequests', sessionMiddleware)

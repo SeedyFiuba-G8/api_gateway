@@ -147,6 +147,47 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  /users/{userId}/ban:
+    post:
+      summary: Ban a user
+      description: Allow admins to ban users.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        204:
+          description: 'User banned successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+    delete:
+      summary: Unban a user
+      description: Allow admins to unban users.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        204:
+          description: 'User unbanned successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
   # ADMINS
   /admins:
     post:
@@ -204,12 +245,24 @@ paths:
             $ref: '#/components/schemas/Id'
           description: The id of the reviewer of whom we want to retrieve projects.
         - in: query
+          name: blocked
+          required: false
+          schema:
+            $ref: '#/components/schemas/Blocked'
+          description: Whether the project is blocked or not.
+        - in: query
           name: type
           required: false
           schema:
             type: string
             example: 'social'
           description: Type of project to retrieve.
+        - in: query
+          name: tags
+          required: false
+          schema:
+            $ref: '#/components/schemas/Tags'
+          description: Tags of project to retrieve.
         - in: query
           name: status
           required: false
@@ -274,7 +327,9 @@ paths:
 
     patch:
       summary: Modify the information of the project.
-      description: Allows an owner of a project or an admin to modify the information of a project. Allows a reviewer of a project to approve stage(s), by patching approvedStage. Allows an entrepeneur to mark stage(s) as completed, by patching lastCompletedStage.
+      description: Allows an owner of a project or an admin to modify >
+        the information of a project. Allows a reviewer of a project to >
+        mark stage(s) as completed, by patching lastCompletedStage.
       security:
         - bearerAuth: []
       tags:
@@ -334,6 +389,47 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/fundProject'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /projects/{projectId}/block:
+    post:
+      summary: Block a project
+      description: Allow admins to block projects.
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project to block
+      responses:
+        204:
+          description: 'Project blocked successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+    delete:
+      summary: Unblock a user
+      description: Allow admins to unblock projects.
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project to block
+      responses:
+        204:
+          description: 'Project unblocked successfully.'
         default:
           $ref: '#/components/responses/Error'
 
@@ -768,6 +864,10 @@ components:
       type: string
       example: '0xf018Be4Fe4fBD4cA1B1162A44bB139a343C2087b'
 
+    Blocked:
+      type: boolean
+      example: false
+
     Date:
       type: string
       format: date-time
@@ -1028,8 +1128,14 @@ components:
           $ref: '#/components/schemas/Stages'
         totalFunded:
           $ref: '#/components/schemas/ETHAmount'
-        approvedStage:
-          $ref: '#/components/schemas/StageId'
+        contributors:
+          type: integer
+          example: 2
+          description: Number of distinct users that contributed to the project.
+        contributions:
+          type: integer
+          example: 5
+          description: Number of contributions made to the project.
       required:
         - id
         - status
@@ -1045,7 +1151,8 @@ components:
         - tags
         - stages
         - totalFunded
-        - approvedStage
+        - contributors
+        - contributions
 
     ProjectPreview:
       type: object
@@ -1054,6 +1161,8 @@ components:
           $ref: '#/components/schemas/Id'
         status:
           $ref: '#/components/schemas/ProjectStatus'
+        blocked:
+          $ref: '#/components/schemas/Blocked'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -1079,11 +1188,18 @@ components:
           $ref: '#/components/schemas/Stages'
         totalFunded:
           $ref: '#/components/schemas/ETHAmount'
-        approvedStage:
-          $ref: '#/components/schemas/StageId'
+        contributors:
+          type: integer
+          example: 2
+          description: Number of distinct users that contributed to the project.
+        contributions:
+          type: integer
+          example: 5
+          description: Number of contributions made to the project.
       required:
         - id
         - status
+        - blocked
         - title
         - description
         - type
@@ -1094,7 +1210,8 @@ components:
         - tags
         - stages
         - totalFunded
-        - approvedStage
+        - contributors
+        - contributions
 
     PostProjectData:
       type: object
@@ -1172,8 +1289,6 @@ components:
           $ref: '#/components/schemas/ReviewersRaw'
         stages:
           $ref: '#/components/schemas/Stages'
-        approvedStage:
-          $ref: '#/components/schemas/StageId'
         lastCompletedStage:
           $ref: '#/components/schemas/StageId'
       minProperties: 1
@@ -1297,8 +1412,14 @@ components:
           $ref: '#/components/schemas/Date'
         status:
           $ref: '#/components/schemas/ReviewerStatus'
-        approvedStage:
-          $ref: '#/components/schemas/StageId'
+        contributors:
+          type: integer
+          example: 2
+          description: Number of distinct users that contributed to the project.
+        contributions:
+          type: integer
+          example: 5
+          description: Number of contributions made to the project.
       required:
         - projectId
         - userId
@@ -1311,7 +1432,8 @@ components:
         - publishedOn
         - finalizedBy
         - status
-        - approvedStage
+        - contributors
+        - contributions
 
     PutReviewRequest:
       type: object
@@ -1489,6 +1611,9 @@ components:
             core:
               type: string
               example: 'ok'
+            sc:
+              type: string
+              example: 'ok'
             users:
               type: string
               example: 'ok'
@@ -1506,11 +1631,14 @@ components:
               $ref: '#/components/schemas/HealthServiceStatus'
             core:
               $ref: '#/components/schemas/HealthServiceStatus'
+            sc:
+              $ref: '#/components/schemas/HealthServiceStatus'
             users:
               $ref: '#/components/schemas/HealthServiceStatus'
           required:
             - apikeys
             - core
+            - sc
             - users
       required:
         - status
