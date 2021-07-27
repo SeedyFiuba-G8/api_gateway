@@ -39,6 +39,8 @@ module.exports = function $apiRouter(
 
       // USERS ----------------------------------------------------------------
 
+      .get('/users/:userId/fundings', sessionMiddleware, forward2core)
+      .get('/users/fundings', sessionMiddleware, forward2core)
       .get('/users', sessionMiddleware, onlyAdmins, forward2users)
       .post('/users', userController.create)
       .post('/users/session', sessionController.loginUser)
