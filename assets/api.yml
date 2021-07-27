@@ -329,6 +329,12 @@ paths:
             $ref: '#/components/schemas/ProjectStatus'
           description: Status of project to retrieve.
         - in: query
+          name: onlyFavorites
+          required: false
+          schema:
+            $ref: '#/components/schemas/Boolean'
+          description: Flag to retrieve only favorite projects.
+        - in: query
           name: limit
           required: false
           schema:
@@ -1318,6 +1324,8 @@ components:
         status:
           $ref: '#/components/schemas/ProjectStatus'
         blocked:
+          $ref: '#/components/schemas/Boolean'
+        liked:
           $ref: '#/components/schemas/Boolean'
         title:
           type: string
