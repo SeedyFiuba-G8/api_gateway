@@ -32,7 +32,7 @@ module.exports = function $sessionController(
 
       try {
         const getWalletUrl = urlFactory(
-          `wallets/${req.params.userId}`,
+          `wallets/${session.id}`,
           services.core.baseUrl
         );
 
