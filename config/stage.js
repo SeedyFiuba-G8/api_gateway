@@ -7,7 +7,7 @@ module.exports = {
       baseUrl: 'https://sf-tdp2-core-dev.herokuapp.com/'
     },
     sc: {
-      baseUrl: 'https://sf-tdp2-users-dev.herokuapp.com/'
+      baseUrl: 'https://sf-tdp2-sc-dev.herokuapp.com/'
     },
     users: {
       baseUrl: 'https://sf-tdp2-users-dev.herokuapp.com/'
