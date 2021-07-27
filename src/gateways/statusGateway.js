@@ -1,13 +1,21 @@
-module.exports = function $statusGateway(fetch, urlFactory) {
+module.exports = function $statusGateway(
+  apikeys,
+  apikeyUtils,
+  fetch,
+  urlFactory
+) {
   return {
     ping,
     health
   };
 
-  function health(baseUrl) {
+  async function health(baseUrl, service) {
     const url = urlFactory('/health', baseUrl);
+    const key = (await apikeys)[service];
 
-    return fetch(url)
+    return fetch(url, {
+      headers: apikeyUtils.headers(key)
+    })
       .then(({ data }) => data)
       .catch((err) => {
         if (err.status === 504) {
@@ -18,10 +26,13 @@ module.exports = function $statusGateway(fetch, urlFactory) {
       });
   }
 
-  function ping(baseUrl) {
+  async function ping(baseUrl, service) {
     const url = urlFactory('/ping', baseUrl);
+    const key = (await apikeys)[service];
 
-    return fetch(url)
+    return fetch(url, {
+      headers: apikeyUtils.headers(key)
+    })
       .then(() => 'ok')
       .catch((err) => {
         if (err.status === 504) {

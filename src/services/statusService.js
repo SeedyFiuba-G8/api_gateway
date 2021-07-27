@@ -27,7 +27,7 @@ module.exports = function statusService(services, statusGateway) {
       }
 
       promisesToAwait.push(
-        method(baseUrl).then((res) => _.set(response, service, res))
+        method(baseUrl, service).then((res) => _.set(response, service, res))
       );
     });
 
