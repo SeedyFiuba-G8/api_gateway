@@ -63,7 +63,7 @@ module.exports = function $apiRouter(
       // PROJECTS -------------------------------------------------------------
       .use('/projects', sessionMiddleware)
 
-      .get('/projects', forward2core)
+      .get('/projects', projectController.getAll)
       .post('/projects', onlyUsers, projectController.create)
       .get('/projects/:projectId', projectController.get)
       .delete('/projects/:projectId', forward2core)

@@ -6,10 +6,20 @@ module.exports = function $usersGateway(
   urlFactory
 ) {
   return {
+    get,
     getIds,
     getNames,
     login
   };
+
+  async function get(userId) {
+    const url = urlFactory(`/users/${userId}`, services.users.baseUrl);
+    const { users: apikey } = await apikeys;
+
+    return fetch(url, {
+      headers: apikeyUtils.headers(apikey)
+    }).then(({ data }) => data);
+  }
 
   async function getIds(emails) {
     const url = urlFactory('/emailtranslation', services.users.baseUrl);
