@@ -304,6 +304,12 @@ paths:
             $ref: '#/components/schemas/Id'
           description: The id of the reviewer of whom we want to retrieve projects.
         - in: query
+          name: recommended
+          required: false
+          schema:
+            $ref: '#/components/schemas/Boolean'
+          description: Fetch only recommendations.
+        - in: query
           name: blocked
           required: false
           schema:
@@ -1078,6 +1084,12 @@ components:
       format: uuid
       example: '123e4567-e89b-12d3-a456-426614174000'
 
+    Interests:
+      type: array
+      items:
+        type: string
+      example: ['music', 'entertainment', 'productivity']
+
     Hash:
       type: string
       example: '0x30b003c570eccaf1705acd4621f72993acb51715f8decbf61535f21376cfe1d2'
@@ -1151,10 +1163,7 @@ components:
           type: string
           example: 'Argentina'
         interests:
-          type: array
-          items:
-            type: string
-          example: ['music', 'entertainment', 'productivity']
+          $ref: '#/components/schemas/Interests'
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
       minProperties: 1
@@ -1188,10 +1197,7 @@ components:
           type: string
           example: 'Argentina'
         interests:
-          type: array
-          items:
-            type: string
-          example: ['music', 'entertainment', 'productivity']
+          $ref: '#/components/schemas/Interests'
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
         address:
