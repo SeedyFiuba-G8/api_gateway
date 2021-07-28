@@ -45,6 +45,12 @@ module.exports = function $apiRouter(
       .get('/users', sessionMiddleware, onlyAdmins, forward2users)
       .post('/users', userController.create)
       .post('/users/session', sessionController.loginUser)
+      .delete(
+        '/users/session',
+        sessionMiddleware,
+        onlyUsers,
+        sessionController.remove
+      )
       .get('/users/:userId', sessionMiddleware, userController.get)
       .patch('/users/:userId', sessionMiddleware, onlyUsers, forward2users)
       .post('/users/:userId/ban', sessionMiddleware, onlyAdmins, forward2users)

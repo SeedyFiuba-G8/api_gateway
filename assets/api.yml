@@ -103,6 +103,24 @@ paths:
           $ref: '#/components/responses/postSession'
         default:
           $ref: '#/components/responses/Error'
+    delete:
+      summary: Log out a user
+      description: Allows a user to log out, invalidate its token and remove its push notifications token
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+      parameters:
+        - in: header
+          name: expo-token
+          schema:
+            $ref: '#/components/schemas/ExpoToken'
+          description: push expoToken of the user
+      responses:
+        200:
+          description: 'Session ended successfully.'
+        default:
+          $ref: '#/components/responses/Error'
 
   /users/{userId}:
     get:

@@ -10,7 +10,8 @@ module.exports = function $sessionController(
 ) {
   return expressify({
     loginAdmin,
-    loginUser
+    loginUser,
+    remove
   });
 
   async function loginAdmin(req, res) {
@@ -19,6 +20,36 @@ module.exports = function $sessionController(
 
   async function loginUser(req, res) {
     return login(req, res, 'USER');
+  }
+
+  async function remove(req, res) {
+    const { core: coreApikey } = await apikeys;
+    const userId = req.context.session.id;
+    const expoToken = req.headers['expo-token'];
+
+    // Annulate JWT
+
+    // Remove push notification tokens
+    if (expoToken) {
+      const deleteExpoTokenUrl = urlFactory(
+        `users/${userId}/pushToken`,
+        services.core.baseUrl
+      );
+      await forwardingService.forward(
+        {},
+        {
+          method: 'DELETE',
+          url: deleteExpoTokenUrl,
+          headers: {
+            'expo-token': expoToken,
+            ...apikeyUtils.headers(coreApikey)
+          }
+        }
+      );
+      logger.debug(`Deleting expo token for user ${userId}`);
+    }
+
+    return res.status(200).json();
   }
 
   // Private
