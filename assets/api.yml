@@ -1065,6 +1065,10 @@ components:
       type: number
       example: 0.000001
 
+    ExpoToken:
+      type: string
+      example: 'ExponentPushToken[AbCdEfGHO1YJKlm_NStuvw]'
+
     FBToken:
       type: string
       example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
@@ -1826,6 +1830,8 @@ components:
           $ref: '#/components/schemas/Id'
         token:
           $ref: '#/components/schemas/Token'
+        expoToken:
+          $ref: '#/components/schemas/ExpoToken'
       required:
         - id
         - token
