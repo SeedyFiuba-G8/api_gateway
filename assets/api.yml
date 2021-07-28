@@ -168,6 +168,29 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  /users/{userId}/message:
+    post:
+      summary: Post a notification message to userId
+      description: Allows a user to post a expo message push notification to another user.
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: id of the user who will receive the notification message
+      requestBody:
+        $ref: '#/components/requestBodies/pushMessageData'
+      responses:
+        200:
+          $ref: '#/components/responses/pushMessage'
+        default:
+          $ref: '#/components/responses/Error'
+
   /users/fundings:
     get:
       summary: Get the project fundings made by a user
@@ -796,6 +819,13 @@ components:
               - $ref: '#/components/schemas/LoginData'
               - $ref: '#/components/schemas/FBLoginData'
 
+    pushMessageData:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PushMessageData'
+
     # ADMINS
     postAdmin:
       required: true
@@ -902,6 +932,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Fundings'
+
+    pushMessage:
+      description: Message pushed successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Id'
 
     # COMMON
     postSession:
@@ -1258,6 +1295,15 @@ components:
         - password
         - firstName
         - lastName
+
+    PushMessageData:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Hola! Como va?'
+      required:
+        - message
 
     # ADMINS
     AdminRegisterData:

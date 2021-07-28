@@ -48,6 +48,12 @@ module.exports = function $apiRouter(
       .get('/users/:userId', sessionMiddleware, userController.get)
       .patch('/users/:userId', sessionMiddleware, onlyUsers, forward2users)
       .post('/users/:userId/ban', sessionMiddleware, onlyAdmins, forward2users)
+      .post(
+        '/users/:userId/message',
+        sessionMiddleware,
+        onlyUsers,
+        userController.postMessage
+      )
       .delete(
         '/users/:userId/ban',
         sessionMiddleware,
