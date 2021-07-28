@@ -539,6 +539,29 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  /projects/{projectId}/rating:
+    put:
+      summary: Rate a project
+      description: Allow users to rate projects.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project
+      requestBody:
+        $ref: '#/components/requestBodies/putRatingRequest'
+      responses:
+        204:
+          description: 'Project rated successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
   # REVIEWERS
   /reviewrequests/{reviewerId}:
     get:
@@ -804,6 +827,13 @@ components:
           schema:
             $ref: '#/components/schemas/PatchProjectData'
 
+    putRatingRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PutRatingRequest'
+
     # WALLETS
     transferFunds:
       required: true
@@ -1056,6 +1086,19 @@ components:
       type: string
       example: 'https://imgur.com/gallery/rFvivtw'
 
+    Rating:
+      type: object
+      properties:
+        samples:
+          type: integer
+          example: 25
+        mean:
+          type: number
+          example: 3.6
+      required:
+        - samples
+        - mean
+
     Stage:
       type: object
       properties:
@@ -1256,6 +1299,8 @@ components:
         likes:
           type: integer
           example: 345
+        rating:
+          $ref: '#/components/schemas/Rating'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -1302,6 +1347,7 @@ components:
         - blocked
         - userId
         - likes
+        - rating
         - title
         - description
         - type
@@ -1623,6 +1669,15 @@ components:
         - status
         - contributors
         - contributions
+
+    PutRatingRequest:
+      type: object
+      properties:
+        rating:
+          type: integer
+          example: 4
+      required:
+        - rating
 
     PutReviewRequest:
       type: object
