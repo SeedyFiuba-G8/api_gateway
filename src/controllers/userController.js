@@ -9,7 +9,8 @@ module.exports = function $userController(
 ) {
   return expressify({
     create,
-    get
+    get,
+    postMessage
   });
 
   async function create(req, res) {
@@ -82,5 +83,32 @@ module.exports = function $userController(
     return res
       .status(getUserRes.status)
       .json({ ...getUserRes.data, ...getWalletRes.data });
+  }
+
+  async function postMessage(req, res) {
+    const { core: coreApikey, users: userApikey } = await apikeys;
+    const getUserUrl = urlFactory(
+      `users/${req.context.session.id}`,
+      services.users.baseUrl
+    );
+    const postMessageUrl = urlFactory(req.originalUrl, services.core.baseUrl);
+
+    const getUserRes = await forwardingService.forward(req.context, {
+      method: 'GET',
+      url: getUserUrl,
+      headers: apikeyUtils.headers(userApikey)
+    });
+
+    const postMessageRes = await forwardingService.forward(req.context, {
+      method: 'POST',
+      url: postMessageUrl,
+      body: {
+        fromUser: `${getUserRes.data.firstName} ${getUserRes.data.lastName}`,
+        message: req.body.message
+      },
+      headers: apikeyUtils.headers(coreApikey)
+    });
+
+    return res.status(postMessageRes.status).json(postMessageRes.data);
   }
 };

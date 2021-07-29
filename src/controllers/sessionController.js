@@ -10,7 +10,8 @@ module.exports = function $sessionController(
 ) {
   return expressify({
     loginAdmin,
-    loginUser
+    loginUser,
+    remove
   });
 
   async function loginAdmin(req, res) {
@@ -21,15 +22,44 @@ module.exports = function $sessionController(
     return login(req, res, 'USER');
   }
 
+  async function remove(req, res) {
+    const { core: coreApikey } = await apikeys;
+    const userId = req.context.session.id;
+    const expoToken = req.headers['expo-token'];
+
+    // Annulate JWT
+
+    // Remove push notification tokens
+    if (expoToken) {
+      const deleteExpoTokenUrl = urlFactory(
+        `users/${userId}/pushToken`,
+        services.core.baseUrl
+      );
+      await forwardingService.forward(
+        {},
+        {
+          method: 'DELETE',
+          url: deleteExpoTokenUrl,
+          headers: {
+            'expo-token': expoToken,
+            ...apikeyUtils.headers(coreApikey)
+          }
+        }
+      );
+      logger.debug(`Deleting expo token for user ${userId}`);
+    }
+
+    return res.status(200).json();
+  }
+
   // Private
 
   async function login(req, res, type) {
+    const { core: coreApikey } = await apikeys;
     const credentials = req.body;
     const session = await sessionService.login(credentials, type);
 
     if (credentials.fbToken && type === 'USER') {
-      const { core: coreApikey } = await apikeys;
-
       try {
         const getWalletUrl = urlFactory(
           `wallets/${session.id}`,
@@ -59,6 +89,23 @@ module.exports = function $sessionController(
           `Wallet address ${postWalletRes.data} created for user ${session.id}`
         );
       }
+    }
+
+    if (credentials.expoToken) {
+      const pushExpoTokenUrl = urlFactory(
+        `users/${session.id}/pushToken`,
+        services.core.baseUrl
+      );
+      await forwardingService.forward(
+        {},
+        {
+          body: { token: credentials.expoToken },
+          method: 'POST',
+          url: pushExpoTokenUrl,
+          headers: apikeyUtils.headers(coreApikey)
+        }
+      );
+      logger.debug(`Expo token pushed for user ${session.id}`);
     }
 
     return res.status(200).json(session);
