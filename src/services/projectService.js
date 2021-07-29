@@ -40,7 +40,7 @@ module.exports = function $projectService(coreGateway, errors, usersGateway) {
       };
     });
 
-    return type === 'ADMIN' ? _.omit(project, ['liked']) : project;
+    return type === 'ADMIN' ? _.omit(project, ['liked, rated']) : project;
   }
 
   async function update(context, projectId, newProjectInfo) {
