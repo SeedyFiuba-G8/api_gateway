@@ -16,7 +16,7 @@ module.exports = function $sessionMiddleware(config, errors) {
     try {
       sessionPayload = await jwt.verify(token, config.jwt.key);
     } catch (err) {
-      return next(err);
+      return next(errors.create(401, 'Invalid authorization token'));
     }
 
     _.set(req, 'context.session', {
