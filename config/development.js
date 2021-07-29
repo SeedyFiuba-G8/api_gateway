@@ -10,7 +10,11 @@ module.exports = {
   monitoring: false,
   services: {
     apikeys: {
-      baseUrl: undefined
+      baseUrl: _.get(
+        process.env,
+        'APIKEYS_URL',
+        'https://sf-tdp2-apikeys-dev.herokuapp.com/'
+      )
     },
     core: {
       baseUrl: _.get(

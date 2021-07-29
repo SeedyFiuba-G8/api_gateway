@@ -103,6 +103,24 @@ paths:
           $ref: '#/components/responses/postSession'
         default:
           $ref: '#/components/responses/Error'
+    delete:
+      summary: Log out a user
+      description: Allows a user to log out, invalidate its token and remove its push notifications token
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+      parameters:
+        - in: header
+          name: expo-token
+          schema:
+            $ref: '#/components/schemas/ExpoToken'
+          description: push expoToken of the user
+      responses:
+        200:
+          description: 'Session ended successfully.'
+        default:
+          $ref: '#/components/responses/Error'
 
   /users/{userId}:
     get:
@@ -147,6 +165,64 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  /users/{userId}/fundings:
+    get:
+      summary: Get the project fundings made by a user
+      description: Allows a user to retrieve a the project funding information of a user by its id.
+      tags:
+        - Wallets
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: id of the user whose project fundings we want to retrieve
+      responses:
+        200:
+          $ref: '#/components/responses/getWalletFundings'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /users/{userId}/message:
+    post:
+      summary: Post a notification message to userId
+      description: Allows a user to post a expo message push notification to another user.
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: id of the user who will receive the notification message
+      requestBody:
+        $ref: '#/components/requestBodies/pushMessageData'
+      responses:
+        200:
+          $ref: '#/components/responses/pushMessage'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /users/fundings:
+    get:
+      summary: Get the project fundings made by a user
+      description: Allows a user to retrieve all project funding information.
+      tags:
+        - Wallets
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/getAllFundings'
+        default:
+          $ref: '#/components/responses/Error'
+
   /users/{userId}/ban:
     post:
       summary: Ban a user
@@ -185,6 +261,30 @@ paths:
       responses:
         204:
           description: 'User unbanned successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+  # WALLETS
+  /wallets/{walletAddress}/funds:
+    post:
+      summary: Transfer funds to an external wallet
+      description: Allows a user to transfer funds to walletAddress.
+      tags:
+        - Wallets
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: walletAddress
+          schema:
+            $ref: '#/components/schemas/Address'
+          required: true
+          description: address of the wallet we want to transfer funds
+      requestBody:
+        $ref: '#/components/requestBodies/transferFunds'
+      responses:
+        200:
+          $ref: '#/components/responses/transferFunds'
         default:
           $ref: '#/components/responses/Error'
 
@@ -245,10 +345,16 @@ paths:
             $ref: '#/components/schemas/Id'
           description: The id of the reviewer of whom we want to retrieve projects.
         - in: query
+          name: recommended
+          required: false
+          schema:
+            $ref: '#/components/schemas/Boolean'
+          description: Fetch only recommendations.
+        - in: query
           name: blocked
           required: false
           schema:
-            $ref: '#/components/schemas/Blocked'
+            $ref: '#/components/schemas/Boolean'
           description: Whether the project is blocked or not.
         - in: query
           name: type
@@ -269,6 +375,12 @@ paths:
           schema:
             $ref: '#/components/schemas/ProjectStatus'
           description: Status of project to retrieve.
+        - in: query
+          name: onlyFavorites
+          required: false
+          schema:
+            $ref: '#/components/schemas/Boolean'
+          description: Flag to retrieve only favorite projects.
         - in: query
           name: limit
           required: false
@@ -326,7 +438,7 @@ paths:
           $ref: '#/components/responses/Error'
 
     patch:
-      summary: Modify the information of the project.
+      summary: Modify the information of the project
       description: Allows an owner of a project or an admin to modify >
         the information of a project. Allows a reviewer of a project to >
         mark stage(s) as completed, by patching lastCompletedStage.
@@ -350,7 +462,7 @@ paths:
           $ref: '#/components/responses/Error'
 
     delete:
-      summary: Delete a project by ID
+      summary: Delete a project by id
       description: Allows an owner of a project or an admin to delete a project.
       security:
         - bearerAuth: []
@@ -430,6 +542,70 @@ paths:
       responses:
         204:
           description: 'Project unblocked successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /projects/{projectId}/like:
+    post:
+      summary: Like a project
+      description: Allow users to like projects.
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project
+      responses:
+        204:
+          description: 'Project liked successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+    delete:
+      summary: Dislike a project
+      description: Allow users to dislike projects.
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project
+      responses:
+        204:
+          description: 'Project disliked successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /projects/{projectId}/rating:
+    put:
+      summary: Rate a project
+      description: Allow users to rate projects.
+      security:
+        - bearerAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the project
+      requestBody:
+        $ref: '#/components/requestBodies/putRatingRequest'
+      responses:
+        204:
+          description: 'Project rated successfully.'
         default:
           $ref: '#/components/responses/Error'
 
@@ -585,6 +761,16 @@ paths:
           $ref: '#/components/responses/Error'
 
   # STATUS
+  /info:
+    get:
+      tags:
+        - Status
+      responses:
+        200:
+          $ref: '#/components/responses/info'
+        default:
+          $ref: '#/components/responses/Error'
+
   /health:
     get:
       tags:
@@ -651,6 +837,13 @@ components:
               - $ref: '#/components/schemas/LoginData'
               - $ref: '#/components/schemas/FBLoginData'
 
+    pushMessageData:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PushMessageData'
+
     # ADMINS
     postAdmin:
       required: true
@@ -672,7 +865,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/FundProjectData'
+            $ref: '#/components/schemas/PostFundsData'
 
     postProject:
       required: true
@@ -687,6 +880,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PatchProjectData'
+
+    putRatingRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PutRatingRequest'
+
+    # WALLETS
+    transferFunds:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostFundsData'
 
     # REVIEWERS
     putReviewRequest:
@@ -728,6 +936,27 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PostUserData'
+
+    getWalletFundings:
+      description: Wallet fundings retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Fundings'
+
+    getAllFundings:
+      description: Fundings retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Fundings'
+
+    pushMessage:
+      description: Message pushed successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Id'
 
     # COMMON
     postSession:
@@ -788,6 +1017,14 @@ components:
           schema:
             $ref: '#/components/schemas/ReviewRequests'
 
+    # WALLETS
+    transferFunds:
+      description: Funds transferring transaction initialized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TxHash'
+
     # METRICS
     getAccountBasicMetrics:
       description: Metrics retrieved successfully.
@@ -818,8 +1055,15 @@ components:
             $ref: '#/components/schemas/ProjectEventMetrics'
 
     # STATUS
+    info:
+      description: Microservices general info reported.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Info'
+
     health:
-      description: Microservice general health state reported.
+      description: Microservices general health state reported.
       content:
         application/json:
           schema:
@@ -864,7 +1108,7 @@ components:
       type: string
       example: '0xf018Be4Fe4fBD4cA1B1162A44bB139a343C2087b'
 
-    Blocked:
+    Boolean:
       type: boolean
       example: false
 
@@ -882,6 +1126,10 @@ components:
       type: number
       example: 0.000001
 
+    ExpoToken:
+      type: string
+      example: 'ExponentPushToken[AbCdEfGHO1YJKlm_NStuvw]'
+
     FBToken:
       type: string
       example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
@@ -890,6 +1138,12 @@ components:
       type: string
       format: uuid
       example: '123e4567-e89b-12d3-a456-426614174000'
+
+    Interests:
+      type: array
+      items:
+        type: string
+      example: ['music', 'entertainment', 'productivity']
 
     Hash:
       type: string
@@ -902,6 +1156,23 @@ components:
     Picture:
       type: string
       example: 'https://imgur.com/gallery/rFvivtw'
+
+    Rated:
+      type: integer
+      example: 3
+
+    Rating:
+      type: object
+      properties:
+        samples:
+          type: integer
+          example: 25
+        mean:
+          type: number
+          example: 3.6
+      required:
+        - samples
+        - mean
 
     Stage:
       type: object
@@ -951,10 +1222,7 @@ components:
           type: string
           example: 'Argentina'
         interests:
-          type: array
-          items:
-            type: string
-          example: ['music', 'entertainment', 'productivity']
+          $ref: '#/components/schemas/Interests'
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
       minProperties: 1
@@ -988,10 +1256,7 @@ components:
           type: string
           example: 'Argentina'
         interests:
-          type: array
-          items:
-            type: string
-          example: ['music', 'entertainment', 'productivity']
+          $ref: '#/components/schemas/Interests'
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
         address:
@@ -1053,6 +1318,15 @@ components:
         - firstName
         - lastName
 
+    PushMessageData:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Hola! Como va?'
+      required:
+        - message
+
     # ADMINS
     AdminRegisterData:
       type: object
@@ -1077,7 +1351,7 @@ components:
       required:
         - projects
 
-    FundProjectData:
+    PostFundsData:
       type: object
       properties:
         amount:
@@ -1092,10 +1366,21 @@ components:
           $ref: '#/components/schemas/Id'
         status:
           $ref: '#/components/schemas/ProjectStatus'
+        blocked:
+          $ref: '#/components/schemas/Boolean'
         userId:
           $ref: '#/components/schemas/Id'
         reviewerId:
           $ref: '#/components/schemas/Id'
+        liked:
+          $ref: '#/components/schemas/Boolean'
+        likes:
+          type: integer
+          example: 345
+        rating:
+          $ref: '#/components/schemas/Rating'
+        rated:
+          $ref: '#/components/schemas/Rated'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -1139,7 +1424,11 @@ components:
       required:
         - id
         - status
+        - blocked
         - userId
+        - likes
+        - rating
+        - rated
         - title
         - description
         - type
@@ -1162,7 +1451,9 @@ components:
         status:
           $ref: '#/components/schemas/ProjectStatus'
         blocked:
-          $ref: '#/components/schemas/Blocked'
+          $ref: '#/components/schemas/Boolean'
+        liked:
+          $ref: '#/components/schemas/Boolean'
         title:
           type: string
           example: 'Prohibir la utilizacion de Winbugs globalmente'
@@ -1328,6 +1619,31 @@ components:
       required:
         - txHash
 
+    Funding:
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/Id'
+        txHash:
+          $ref: '#/components/schemas/Hash'
+        projectId:
+          $ref: '#/components/schemas/Id'
+        amount:
+          $ref: '#/components/schemas/ETHAmount'
+        date:
+          $ref: '#/components/schemas/Date'
+      required:
+        - userId
+        - txHash
+        - projectId
+        - amount
+        - date
+
+    Fundings:
+      type: array
+      items:
+        $ref: '#/components/schemas/Funding'
+
     # REVIEWERS
     Reviewer:
       type: object
@@ -1434,6 +1750,15 @@ components:
         - status
         - contributors
         - contributions
+
+    PutRatingRequest:
+      type: object
+      properties:
+        rating:
+          type: integer
+          example: 4
+      required:
+        - rating
 
     PutReviewRequest:
       type: object
@@ -1582,11 +1907,27 @@ components:
           $ref: '#/components/schemas/Id'
         token:
           $ref: '#/components/schemas/Token'
+        expoToken:
+          $ref: '#/components/schemas/ExpoToken'
       required:
         - id
         - token
 
     # STATUS
+    Info:
+      type: object
+      properties:
+        apigateway:
+          $ref: '#/components/schemas/InfoServiceStatus'
+        apikeys:
+          $ref: '#/components/schemas/InfoServiceStatus'
+        core:
+          $ref: '#/components/schemas/InfoServiceStatus'
+        sc:
+          $ref: '#/components/schemas/InfoServiceStatus'
+        users:
+          $ref: '#/components/schemas/InfoServiceStatus'
+
     Ping:
       type: object
       properties:
@@ -1600,23 +1941,26 @@ components:
       type: object
       properties:
         status:
-          type: string
-          example: 'ok'
+          $ref: '#/components/schemas/PingServiceStatus'
         services:
           type: object
           properties:
             apikeys:
-              type: string
-              example: 'ok'
+              $ref: '#/components/schemas/PingServiceStatus'
             core:
-              type: string
-              example: 'ok'
+              $ref: '#/components/schemas/PingServiceStatus'
             sc:
-              type: string
-              example: 'ok'
+              $ref: '#/components/schemas/PingServiceStatus'
             users:
-              type: string
-              example: 'ok'
+              $ref: '#/components/schemas/PingServiceStatus'
+          required:
+            - apikeys
+            - core
+            - sc
+            - users
+      required:
+        - status
+        - services
 
     Health:
       type: object
@@ -1648,6 +1992,28 @@ components:
       oneOf:
         - type: object
           example: { 'database': 'UP' }
+        - type: string
+          example: 'timed out'
+
+    PingServiceStatus:
+      type: string
+      example: 'ok'
+
+    CorrectInfoServiceStatus:
+      type: object
+      properties:
+        creationDate:
+          $ref: '#/components/schemas/Date'
+        description:
+          type: string
+          example: 'Service description!'
+      required:
+        - creationDate
+        - description
+
+    InfoServiceStatus:
+      oneOf:
+        - $ref: '#/components/schemas/CorrectInfoServiceStatus'
         - type: string
           example: 'timed out'
 #

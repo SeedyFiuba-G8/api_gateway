@@ -1,29 +1,57 @@
-module.exports = function $coreGateway(fetch, services, urlFactory) {
+module.exports = function $coreGateway(
+  apikeys,
+  apikeyUtils,
+  fetch,
+  services,
+  urlFactory
+) {
   return {
     create,
     get,
     update
   };
 
-  function create(context, projectInfo) {
+  async function create(context, projectInfo) {
     const url = urlFactory('/projects', services.core.baseUrl);
+    const { core: apikey } = await apikeys;
 
-    return fetch(url, { method: 'POST', body: projectInfo }, context).then(
-      ({ data }) => data.id
-    );
+    return fetch(
+      url,
+      {
+        method: 'POST',
+        body: projectInfo,
+        headers: apikeyUtils.headers(apikey)
+      },
+      context
+    ).then(({ data }) => data.id);
   }
 
-  function get(projectId) {
+  async function get(context, projectId) {
     const url = urlFactory(`/projects/${projectId}`, services.core.baseUrl);
+    const { core: apikey } = await apikeys;
 
-    return fetch(url, { method: 'GET' }).then(({ data }) => data);
+    return fetch(
+      url,
+      {
+        method: 'GET',
+        headers: apikeyUtils.headers(apikey)
+      },
+      context
+    ).then(({ data }) => data);
   }
 
-  function update(context, projectId, projectInfo) {
+  async function update(context, projectId, projectInfo) {
     const url = urlFactory(`/projects/${projectId}`, services.core.baseUrl);
+    const { core: apikey } = await apikeys;
 
-    return fetch(url, { method: 'PATCH', body: projectInfo }, context).then(
-      ({ data }) => data.id
-    );
+    return fetch(
+      url,
+      {
+        method: 'PATCH',
+        body: projectInfo,
+        headers: apikeyUtils.headers(apikey)
+      },
+      context
+    ).then(({ data }) => data.id);
   }
 };

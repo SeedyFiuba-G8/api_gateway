@@ -33,18 +33,33 @@ module.exports = function $apiRouter(
 
       // STATUS ---------------------------------------------------------------
 
+      .get('/info', statusController.info)
       .get('/health', statusController.health)
       .get('/ping', statusController.ping)
       .get('/pingAll', statusController.pingAll)
 
       // USERS ----------------------------------------------------------------
 
+      .get('/users/:userId/fundings', sessionMiddleware, forward2core)
+      .get('/users/fundings', sessionMiddleware, forward2core)
       .get('/users', sessionMiddleware, onlyAdmins, forward2users)
       .post('/users', userController.create)
       .post('/users/session', sessionController.loginUser)
+      .delete(
+        '/users/session',
+        sessionMiddleware,
+        onlyUsers,
+        sessionController.remove
+      )
       .get('/users/:userId', sessionMiddleware, userController.get)
       .patch('/users/:userId', sessionMiddleware, onlyUsers, forward2users)
       .post('/users/:userId/ban', sessionMiddleware, onlyAdmins, forward2users)
+      .post(
+        '/users/:userId/message',
+        sessionMiddleware,
+        onlyUsers,
+        userController.postMessage
+      )
       .delete(
         '/users/:userId/ban',
         sessionMiddleware,
@@ -60,7 +75,7 @@ module.exports = function $apiRouter(
       // PROJECTS -------------------------------------------------------------
       .use('/projects', sessionMiddleware)
 
-      .get('/projects', forward2core)
+      .get('/projects', projectController.getAll)
       .post('/projects', onlyUsers, projectController.create)
       .get('/projects/:projectId', projectController.get)
       .delete('/projects/:projectId', forward2core)
@@ -68,12 +83,23 @@ module.exports = function $apiRouter(
       .post('/projects/:projectId/funds', forward2core)
       .post('/projects/:projectId/block', onlyAdmins, forward2core)
       .delete('/projects/:projectId/block', onlyAdmins, forward2core)
+      .post('/projects/:projectId/like', onlyUsers, forward2core)
+      .delete('/projects/:projectId/like', onlyUsers, forward2core)
+      .put('/projects/:projectId/rating', onlyUsers, forward2core)
 
       // REVIEWERS ------------------------------------------------------------
       .use('/reviewrequests', sessionMiddleware)
 
       .get('/reviewrequests/:reviewerId', forward2core)
       .put('/reviewrequests/:reviewerId/:projectId', forward2core)
+
+      // WALLETS --------------------------------------------------------------
+      .post(
+        '/wallets/:walletAddress/funds',
+        sessionMiddleware,
+        onlyUsers,
+        forward2core
+      )
 
       // METRICS --------------------------------------------------------------
       .use('/metrics', sessionMiddleware)

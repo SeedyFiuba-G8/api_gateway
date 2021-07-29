@@ -1,6 +1,7 @@
 const dependable = require('dependable');
 const path = require('path');
 const apiComponents = require('@seedyfiuba/api_components');
+const apikeysComponents = require('@seedyfiuba/apikeys_components');
 const errorComponents = require('@seedyfiuba/error_components');
 const gatewayComponents = require('@seedyfiuba/gateway_components');
 const loggingComponents = require('@seedyfiuba/logging_components');
@@ -25,6 +26,17 @@ function createContainer() {
     }
   );
 
+  container.register(
+    'apikeys',
+    function $apikeys(config, fetch, logger, urlFactory) {
+      return apikeysComponents.apikeys(config, fetch, logger, urlFactory);
+    }
+  );
+
+  container.register('apikeyUtils', function $apikeyUtils(config, errors) {
+    return apikeysComponents.utils(config, errors);
+  });
+
   container.register('config', function $config() {
     if (!process.env.NODE_CONFIG_DIR) {
       process.env.NODE_CONFIG_DIR = `${__dirname}/../config`;
@@ -47,8 +59,8 @@ function createContainer() {
     return require('expressify')();
   });
 
-  container.register('fetch', function $commonFetch(config, errors) {
-    return gatewayComponents.fetch(config, errors);
+  container.register('fetch', function $commonFetch(config, errors, logger) {
+    return gatewayComponents.fetch(config, errors, logger);
   });
 
   container.register(
@@ -70,6 +82,14 @@ function createContainer() {
 
   container.register('services', function $services(config) {
     return config.services;
+  });
+
+  container.register('serviceInfo', function $serverInfo() {
+    return {
+      creationDate: new Date(),
+      description:
+        'API Gateway Microservice, represents the public access point to our API.'
+    };
   });
 
   container.register('urlFactory', function $commonUrlFactory() {

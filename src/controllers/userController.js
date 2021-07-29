@@ -1,4 +1,6 @@
 module.exports = function $userController(
+  apikeys,
+  apikeyUtils,
   expressify,
   forwardingService,
   logger,
@@ -7,10 +9,13 @@ module.exports = function $userController(
 ) {
   return expressify({
     create,
-    get
+    get,
+    postMessage
   });
 
   async function create(req, res) {
+    const { core: coreApikey, users: userApikey } = await apikeys;
+
     const postUserUrl = urlFactory(req.originalUrl, services.users.baseUrl);
     const postWalletUrl = urlFactory('wallets', services.core.baseUrl);
 
@@ -19,7 +24,8 @@ module.exports = function $userController(
     const postUserRes = await forwardingService.forward(context, {
       body,
       method,
-      url: postUserUrl
+      url: postUserUrl,
+      headers: apikeyUtils.headers(userApikey)
     });
 
     logger.info(
@@ -31,7 +37,8 @@ module.exports = function $userController(
       {
         body: { uid: postUserRes.data.id },
         method,
-        url: postWalletUrl
+        url: postWalletUrl,
+        headers: apikeyUtils.headers(coreApikey)
       }
     );
 
@@ -43,6 +50,8 @@ module.exports = function $userController(
   }
 
   async function get(req, res) {
+    const { core: coreApikey, users: userApikey } = await apikeys;
+
     const getUserUrl = urlFactory(req.originalUrl, services.users.baseUrl);
 
     const { body, context, method } = req;
@@ -50,7 +59,8 @@ module.exports = function $userController(
     const getUserRes = await forwardingService.forward(context, {
       body,
       method,
-      url: getUserUrl
+      url: getUserUrl,
+      headers: apikeyUtils.headers(userApikey)
     });
 
     if (context.session.id !== req.params.userId)
@@ -65,12 +75,40 @@ module.exports = function $userController(
       {},
       {
         method: 'GET',
-        url: getWalletUrl
+        url: getWalletUrl,
+        headers: apikeyUtils.headers(coreApikey)
       }
     );
 
     return res
       .status(getUserRes.status)
       .json({ ...getUserRes.data, ...getWalletRes.data });
+  }
+
+  async function postMessage(req, res) {
+    const { core: coreApikey, users: userApikey } = await apikeys;
+    const getUserUrl = urlFactory(
+      `users/${req.context.session.id}`,
+      services.users.baseUrl
+    );
+    const postMessageUrl = urlFactory(req.originalUrl, services.core.baseUrl);
+
+    const getUserRes = await forwardingService.forward(req.context, {
+      method: 'GET',
+      url: getUserUrl,
+      headers: apikeyUtils.headers(userApikey)
+    });
+
+    const postMessageRes = await forwardingService.forward(req.context, {
+      method: 'POST',
+      url: postMessageUrl,
+      body: {
+        fromUser: `${getUserRes.data.firstName} ${getUserRes.data.lastName}`,
+        message: req.body.message
+      },
+      headers: apikeyUtils.headers(coreApikey)
+    });
+
+    return res.status(postMessageRes.status).json(postMessageRes.data);
   }
 };

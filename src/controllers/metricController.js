@@ -1,6 +1,7 @@
 module.exports = function $metricController(
+  apikeys,
   expressify,
-  forwardingController,
+  innerForward,
   services,
   urlFactory
 ) {
@@ -11,35 +12,43 @@ module.exports = function $metricController(
     getProjectEvents
   });
 
-  function getAccountBasic(req, res) {
+  async function getAccountBasic(req, res) {
     req.url = urlFactory(
       req.originalUrl.replace(req.path, '/metrics'),
       services.users.baseUrl
     );
-    return forwardingController.forward(req, res);
+    const { users: apikey } = await apikeys;
+
+    return innerForward(req, res, apikey);
   }
 
-  function getAccountEvents(req, res) {
+  async function getAccountEvents(req, res) {
     req.url = urlFactory(
       req.originalUrl.replace(req.path, '/metrics/events'),
       services.users.baseUrl
     );
-    return forwardingController.forward(req, res);
+    const { users: apikey } = await apikeys;
+
+    return innerForward(req, res, apikey);
   }
 
-  function getProjectBasic(req, res) {
+  async function getProjectBasic(req, res) {
     req.url = urlFactory(
       req.originalUrl.replace(req.path, '/metrics'),
       services.core.baseUrl
     );
-    return forwardingController.forward(req, res);
+    const { core: apikey } = await apikeys;
+
+    return innerForward(req, res, apikey);
   }
 
-  function getProjectEvents(req, res) {
+  async function getProjectEvents(req, res) {
     req.url = urlFactory(
       req.originalUrl.replace(req.path, '/metrics/events'),
       services.core.baseUrl
     );
-    return forwardingController.forward(req, res);
+    const { core: apikey } = await apikeys;
+
+    return innerForward(req, res, apikey);
   }
 };

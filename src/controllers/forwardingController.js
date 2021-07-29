@@ -1,35 +1,26 @@
 module.exports = function $forwardingController(
+  apikeys,
   expressify,
-  forwardingService,
+  innerForward,
   services,
   urlFactory
 ) {
   return expressify({
     core,
-    forward,
     users
   });
 
-  function core(req, res) {
+  async function core(req, res) {
     req.url = urlFactory(req.originalUrl, services.core.baseUrl);
-    return forward(req, res);
+    const { core: apikey } = await apikeys;
+
+    return innerForward(req, res, apikey);
   }
 
-  function users(req, res) {
+  async function users(req, res) {
     req.url = urlFactory(req.originalUrl, services.users.baseUrl);
-    return forward(req, res);
-  }
+    const { users: apikey } = await apikeys;
 
-  // Aux
-
-  function forward(req, res) {
-    const { body, context, method, url } = req;
-
-    return forwardingService
-      .forward(context, { url, method, body })
-      .then(({ status, data }) => {
-        if (!data) return res.status(status).send();
-        return res.status(status).json(data);
-      });
+    return innerForward(req, res, apikey);
   }
 };

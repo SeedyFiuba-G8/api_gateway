@@ -1,7 +1,19 @@
-module.exports = function $projectController(projectService, expressify) {
+const _ = require('lodash');
+
+module.exports = function $projectController(
+  apikeys,
+  errors,
+  expressify,
+  innerForward,
+  projectService,
+  services,
+  urlFactory,
+  usersGateway
+) {
   return expressify({
     create,
     get,
+    getAll,
     update
   });
 
@@ -19,6 +31,32 @@ module.exports = function $projectController(projectService, expressify) {
     const project = await projectService.get(context, projectId);
 
     return res.status(200).json(project);
+  }
+
+  async function getAll(req, res) {
+    const { recommended } = req.query;
+    const { core: apikey } = await apikeys;
+
+    if (!recommended) {
+      req.url = urlFactory(
+        req.path,
+        services.core.baseUrl,
+        _.omit(req.query, ['recommended'])
+      );
+      return innerForward(req, res, apikey);
+    }
+
+    // Custom projects required
+    const { context } = req;
+    const { id: requesterId, type } = context.session;
+    if (type !== 'USER')
+      throw errors.create(400, 'Only users can use recommended query param.');
+
+    const { interests } = await usersGateway.get(requesterId);
+    if (interests.length) req.query.interests = interests;
+    req.url = urlFactory(req.path, services.core.baseUrl, req.query);
+
+    return innerForward(req, res, apikey);
   }
 
   async function update(req, res) {

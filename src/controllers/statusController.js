@@ -1,6 +1,11 @@
-module.exports = function $statusController(expressify, statusService) {
+module.exports = function $statusController(
+  serviceInfo,
+  expressify,
+  statusService
+) {
   return expressify({
     health,
+    info,
     ping,
     pingAll
   });
@@ -14,6 +19,15 @@ module.exports = function $statusController(expressify, statusService) {
     };
 
     return res.status(200).json(response);
+  }
+
+  async function info(req, res) {
+    const servicesInfo = await statusService.infoServices();
+
+    return res.status(200).json({
+      apigateway: serviceInfo,
+      ...servicesInfo
+    });
   }
 
   async function ping(req, res) {
