@@ -15,11 +15,19 @@ describe('statusController', () => {
       health: {
         database: 'UP'
       },
+      info: {
+        creationDate: '2021-06-01T01:00:00.000Z',
+        description: 'Microservice description.'
+      },
       ping: 'ok'
     },
     core: {
       health: {
         database: 'UP'
+      },
+      info: {
+        creationDate: '2021-06-01T01:00:00.000Z',
+        description: 'Microservice description.'
       },
       ping: 'ok'
     },
@@ -27,11 +35,19 @@ describe('statusController', () => {
       health: {
         database: 'UP'
       },
+      info: {
+        creationDate: '2021-06-01T01:00:00.000Z',
+        description: 'Microservice description.'
+      },
       ping: 'ok'
     },
     users: {
       health: {
         database: 'UP'
+      },
+      info: {
+        creationDate: '2021-06-01T01:00:00.000Z',
+        description: 'Microservice description.'
       },
       ping: 'ok'
     }
@@ -49,6 +65,11 @@ describe('statusController', () => {
           badStatus: () => statusNocks.nockApiKeysHealth(500),
           timeout: () => statusNocks.nockApiKeysTimeout('/health')
         },
+        info: {
+          ok: () => statusNocks.nockApiKeysInfo(),
+          badStatus: () => statusNocks.nockApiKeysInfo(500),
+          timeout: () => statusNocks.nockApiKeysTimeout('/info')
+        },
         ping: {
           ok: () => statusNocks.nockApiKeysPing(),
           badStatus: () => statusNocks.nockApiKeysPing(500),
@@ -60,6 +81,11 @@ describe('statusController', () => {
           ok: () => statusNocks.nockCoreHealth(),
           badStatus: () => statusNocks.nockCoreHealth(500),
           timeout: () => statusNocks.nockCoreTimeout('/health')
+        },
+        info: {
+          ok: () => statusNocks.nockCoreInfo(),
+          badStatus: () => statusNocks.nockCoreInfo(500),
+          timeout: () => statusNocks.nockCoreTimeout('/info')
         },
         ping: {
           ok: () => statusNocks.nockCorePing(),
@@ -73,6 +99,11 @@ describe('statusController', () => {
           badStatus: () => statusNocks.nockSCHealth(500),
           timeout: () => statusNocks.nockSCTimeout('/health')
         },
+        info: {
+          ok: () => statusNocks.nockSCInfo(),
+          badStatus: () => statusNocks.nockSCInfo(500),
+          timeout: () => statusNocks.nockSCTimeout('/info')
+        },
         ping: {
           ok: () => statusNocks.nockSCPing(),
           badStatus: () => statusNocks.nockSCPing(500),
@@ -84,6 +115,11 @@ describe('statusController', () => {
           ok: () => statusNocks.nockUsersHealth(),
           badStatus: () => statusNocks.nockUsersHealth(500),
           timeout: () => statusNocks.nockUsersTimeout('/health')
+        },
+        info: {
+          ok: () => statusNocks.nockUsersInfo(),
+          badStatus: () => statusNocks.nockUsersInfo(500),
+          timeout: () => statusNocks.nockUsersTimeout('/info')
         },
         ping: {
           ok: () => statusNocks.nockUsersPing(),
@@ -135,6 +171,65 @@ describe('statusController', () => {
             beforeEach(() => {
               response.services[service] = 'bad status';
               nockFuncs[service].health.badStatus();
+            });
+
+            it('should respond with correct status and body', () =>
+              request
+                .get(path)
+                .expect('Content-Type', /json/)
+                .expect(200, response));
+          });
+        });
+      });
+
+      describe('when all services are UP', () => {
+        it('should respond with correct status and body', () =>
+          request
+            .get(path)
+            .expect('Content-Type', /json/)
+            .expect(200, response));
+      });
+    });
+  });
+
+  describe('/info', () => {
+    const path = '/info';
+
+    describe('GET', () => {
+      let response;
+
+      beforeEach(() => {
+        response = {
+          apigateway: {
+            creationDate: '2021-06-01T01:00:00.000Z',
+            description: 'Microservice description.'
+          }
+        };
+        services.forEach((service) => {
+          response[service] = expected[service].info;
+          nockFuncs[service].info.ok();
+        });
+      });
+
+      services.forEach((service) => {
+        describe(`when ${service} is down`, () => {
+          describe(`when ${service} times out`, () => {
+            beforeEach(() => {
+              response[service] = 'timed out';
+              nockFuncs[service].info.timeout();
+            });
+
+            it('should respond with correct status and body', () =>
+              request
+                .get(path)
+                .expect('Content-Type', /json/)
+                .expect(200, response));
+          });
+
+          describe(`when ${service} returns bad status`, () => {
+            beforeEach(() => {
+              response[service] = 'bad status';
+              nockFuncs[service].info.badStatus();
             });
 
             it('should respond with correct status and body', () =>
