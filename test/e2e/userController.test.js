@@ -132,10 +132,6 @@ describe('userController', () => {
     beforeEach(() => {
       baseNocks.users.get({ path: `/users/${fakeId}` }, () => [200, userInfo]);
       baseNocks.core.post({ path }, () => [200, fakeId]);
-      axiosMock.onAny().reply((config) => {
-        console.log('unhandled', config.method, config.url);
-        return [404];
-      });
     });
 
     describe('POST', () => {
