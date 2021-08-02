@@ -34,27 +34,17 @@ module.exports = function $projectController(
   }
 
   async function getAll(req, res) {
+    validateGetAllReq(req);
+
     const { recommended } = req.query;
+    if (recommended === true) return getAllRecommended(req, res);
+
     const { core: apikey } = await apikeys;
-
-    if (!recommended) {
-      req.url = urlFactory(
-        req.path,
-        services.core.baseUrl,
-        _.omit(req.query, ['recommended'])
-      );
-      return innerForward(req, res, apikey);
-    }
-
-    // Custom projects required
-    const { context } = req;
-    const { id: requesterId, type } = context.session;
-    if (type !== 'USER')
-      throw errors.create(400, 'Only users can use recommended query param.');
-
-    const { interests } = await usersGateway.get(requesterId);
-    if (interests.length) req.query.interests = interests;
-    req.url = urlFactory(req.path, services.core.baseUrl, req.query);
+    req.url = urlFactory(
+      req.path,
+      services.core.baseUrl,
+      _.omit(req.query, ['recommended'])
+    );
 
     return innerForward(req, res, apikey);
   }
@@ -66,5 +56,47 @@ module.exports = function $projectController(
     const id = await projectService.update(context, projectId, newProjectInfo);
 
     return res.status(200).json({ id });
+  }
+
+  // Aux
+
+  async function getAllRecommended(req, res) {
+    const { context } = req;
+    const { id: requesterId } = context.session;
+    const { core: apikey } = await apikeys;
+
+    const { interests } = await usersGateway.get(requesterId);
+    if (interests.length) req.query.interests = interests;
+    req.url = urlFactory(req.path, services.core.baseUrl, req.query);
+
+    return innerForward(req, res, apikey);
+  }
+
+  function validateGetAllReq(req) {
+    const { recommended, lat, long, radius } = req.query;
+    if (
+      recommended === undefined &&
+      lat === undefined &&
+      long === undefined &&
+      radius === undefined
+    )
+      return;
+
+    const { context } = req;
+    const { type } = context.session;
+
+    if (type !== 'USER')
+      throw errors.create(
+        400,
+        'Only users can use recommended,lat,long,radius query params.'
+      );
+
+    if (
+      recommended !== undefined &&
+      (lat !== undefined || long !== undefined || radius !== undefined)
+    )
+      throw errors.create(
+        'Invalid use of query params: recommended and near params used at the same time!'
+      );
   }
 };
