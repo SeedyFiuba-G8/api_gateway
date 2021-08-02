@@ -181,10 +181,6 @@ describe('projectController', () => {
           }
         }
       ]);
-      axiosMock.onAny().reply((config) => {
-        console.log('unhandled', config.method, config.url);
-        return [404];
-      });
     });
 
     describe('GET', () => {
