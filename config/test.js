@@ -7,6 +7,7 @@ module.exports = {
   },
   services: {
     apikeys: {
+      enabled: false,
       baseUrl: 'http://apikeys-test/'
     },
     core: {
