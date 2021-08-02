@@ -96,10 +96,6 @@ describe('forwardingController', () => {
 
     beforeEach(() => {
       baseNocks.users.patch({ path, params: patchBody }, () => [200]);
-      axiosMock.onAny().reply((config) => {
-        console.log('unhandled: ', config.method, config.url);
-        return [404];
-      });
     });
 
     describe('PATCH', () => {
@@ -120,10 +116,6 @@ describe('forwardingController', () => {
     beforeEach(() => {
       baseNocks.users.post({ path }, () => [204]);
       baseNocks.users.delete({ path }, () => [204]);
-      axiosMock.onAny().reply((config) => {
-        console.log('unhandled: ', config.method, config.url);
-        return [404];
-      });
     });
 
     describe('POST', () => {
@@ -148,4 +140,80 @@ describe('forwardingController', () => {
   });
 });
 
-describe('forwardingController.core', () => {});
+describe('forwardingController.core', () => {
+  let request;
+  let spyjwt;
+  let axiosMock;
+  let baseNocks;
+
+  beforeEach(() => {
+    spyjwt = {};
+    request = supertest(container.get('app'));
+    axiosMock = container.get('axiosMock');
+    baseNocks = container.get('baseNocks');
+
+    spyjwt.sign = jest.spyOn(jwt, 'sign').mockImplementation(({ type }) => {
+      if (type === 'USER') return fakeUserToken;
+      return fakeAdminToken;
+    });
+    spyjwt.verify = jest
+      .spyOn(jwt, 'verify')
+      .mockImplementation(async (token) => {
+        switch (token) {
+          case fakeUserToken: {
+            return { id: fakeId, type: 'USER' };
+          }
+          case fakeAdminToken: {
+            return { id: fakeId, type: 'ADMIN' };
+          }
+          default:
+            throw Error({ name: 'JsonWebTokenError' });
+        }
+      });
+  });
+
+  afterEach(() => {
+    axiosMock.reset();
+    jest.clearAllMocks();
+  });
+  
+  describe('/users/:userId/fundings', () => {
+    const path = `/users/${fakeId}/fundings`;
+    const transactionList = [
+      {
+        userId: '123e4567-e89b-12d3-a456-426614174000',
+        txHash:
+          '0x30b003c570eccaf1705acd4621f72993acb51715f8decbf61535f21376cfe1d2',
+        projectId: '123e4567-e89b-12d3-a456-426614174000',
+        amount: 0.000001,
+        date: '2021-06-13T21:29:29.330Z'
+      }
+    ];
+
+    beforeEach(() => {
+      baseNocks.core.get({ path }, () => [200, transactionList]);
+    });
+
+    describe('GET', () => {
+      describe('when a user wants to get their sent fundings', () => {
+        it('should return with status 200 and a list of transactions', () =>
+          request
+            .get(path)
+            .set(bearerAuthHeader, `Bearer ${fakeUserToken}`)
+            .expect(200, transactionList));
+      });
+    })
+    
+  });
+
+// '/users/fundings'
+// '/projects/:projectId'
+// '/projects/:projectId/funds'
+// '/projects/:projectId/block'
+// '/projects/:projectId/block'
+// '/projects/:projectId/like'
+// '/projects/:projectId/like'
+// '/projects/:projectId/rating'
+// '/reviewrequests/:reviewerId'
+// '/reviewrequests/:reviewerId/:projectId'
+});
