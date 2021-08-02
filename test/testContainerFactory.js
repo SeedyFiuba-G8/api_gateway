@@ -7,6 +7,14 @@ function createContainer() {
   const container = containerFactory.createContainer();
   const entries = ['support'];
 
+  container.register('serviceInfo', function $serverInfo() {
+    return {
+      creationDate: new Date('2021-06-01T01:00:00.000Z'),
+      description:
+        'Microservice description.'
+    };
+  });
+
   container.register('axiosMock', function $axiosMock() {
     return new AxiosMockAdapter(axios);
   });
