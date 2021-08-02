@@ -1112,6 +1112,10 @@ components:
       type: boolean
       example: false
 
+    Coordinate:
+      type: number
+      example: 38.8951
+
     Date:
       type: string
       format: date-time
@@ -1395,12 +1399,10 @@ components:
         objective:
           type: string
           example: 'Salvar a la gente de esta maldicion'
-        country:
-          type: string
-          example: 'Argentina'
-        city:
-          type: string
-          example: 'Buenos Aires'
+        lat:
+          $ref: '#/components/schemas/Coordinate'
+        long:
+          $ref: '#/components/schemas/Coordinate'
         publishedOn:
           $ref: '#/components/schemas/Date'
         finalizedBy:
@@ -1433,8 +1435,6 @@ components:
         - description
         - type
         - objective
-        - country
-        - city
         - publishedOn
         - finalizedBy
         - tags
@@ -1465,12 +1465,10 @@ components:
         type:
           type: string
           example: 'social'
-        country:
-          type: string
-          example: 'Argentina'
-        city:
-          type: string
-          example: 'Buenos Aires'
+        lat:
+          $ref: '#/components/schemas/Coordinate'
+        long:
+          $ref: '#/components/schemas/Coordinate'
         finalizedBy:
           $ref: '#/components/schemas/Date'
         tags:
@@ -1495,8 +1493,6 @@ components:
         - description
         - type
         - objective
-        - country
-        - city
         - finalizedBy
         - tags
         - stages
@@ -1521,12 +1517,10 @@ components:
         objective:
           type: string
           example: 'Salvar a la gente de esta maldicion'
-        country:
-          type: string
-          example: 'Argentina'
-        city:
-          type: string
-          example: 'Buenos Aires'
+        lat:
+          $ref: '#/components/schemas/Coordinate'
+        long:
+          $ref: '#/components/schemas/Coordinate'
         finalizedBy:
           $ref: '#/components/schemas/Date'
         tags:
@@ -1540,8 +1534,6 @@ components:
         - description
         - type
         - objective
-        - country
-        - city
         - finalizedBy
         - tags
         - reviewers
@@ -1566,12 +1558,6 @@ components:
         objective:
           type: string
           example: 'Salvar a la gente de esta maldicion'
-        country:
-          type: string
-          example: 'Argentina'
-        city:
-          type: string
-          example: 'Buenos Aires'
         finalizedBy:
           $ref: '#/components/schemas/Date'
         tags:
@@ -1716,12 +1702,10 @@ components:
         objective:
           type: string
           example: 'Salvar a la gente de esta maldicion'
-        country:
-          type: string
-          example: 'Argentina'
-        city:
-          type: string
-          example: 'Buenos Aires'
+        lat:
+          $ref: '#/components/schemas/Coordinate'
+        long:
+          $ref: '#/components/schemas/Coordinate'
         publishedOn:
           $ref: '#/components/schemas/Date'
         finalizedBy:
@@ -1743,11 +1727,13 @@ components:
         - description
         - type
         - objective
-        - country
-        - city
         - publishedOn
         - finalizedBy
         - status
+        - stages
+        - projectStatus
+        - currentStage
+        - totalFunded
         - contributors
         - contributions
 
