@@ -1232,6 +1232,8 @@ components:
       properties:
         fbToken:
           $ref: '#/components/schemas/FBToken'
+        expoToken:
+          $ref: '#/components/schemas/ExpoToken'
       required:
         - fbToken
 
@@ -1902,6 +1904,8 @@ components:
         password:
           type: string
           example: 'SomePassword123'
+        expoToken:
+          $ref: '#/components/schemas/ExpoToken'
       required:
         - email
 
@@ -1912,8 +1916,6 @@ components:
           $ref: '#/components/schemas/Id'
         token:
           $ref: '#/components/schemas/Token'
-        expoToken:
-          $ref: '#/components/schemas/ExpoToken'
       required:
         - id
         - token
