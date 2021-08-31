@@ -15,7 +15,7 @@ If you were to deploy this application, you should:
 - Create your Heroku app to host our `main` (and optionally `dev` branch). Keep in mind this Heroku app should have the following `ENV_VARS`:
   - `NODE_ENV`: `production`, `stage`.
   - `APIKEYS_KEY`: the master key to auth with our [API Keys microservice](https://github.com/SeedyFiuba-G8/microservice_apikeys).
-  - `DATABASE_URL`: url to PostgreSQL database.
+  - `JWT_KEY`: secret to initialize JWT.
   - NewRelic monitoring: `NEW_RELIC_LICENSE_KEY`, `NEW_RELIC_APP_NAME`.
   - SumoLogic logs: `SUMOLOGIC_HOST`, `SUMOLOGIC_PATH`.
   - `[LOGGER_LEVEL]` _(self-explaining)_. Possible values: `debug`, `info`, `warn`, `error`.
