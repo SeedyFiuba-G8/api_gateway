@@ -5,7 +5,7 @@
 
 Don't trust our tests too much. Written in JavaScript (Node.js).
 
-## :broken_heart: DISCLAIMER: ¡Currently offline!
+## DISCLAIMER: ¡Currently offline! :broken_heart:
 
 Since we used **Heroku** to host our microservices, as they offer a limited number of free applications, we decided to remove them. CI/CD has been manually disabled.
 
